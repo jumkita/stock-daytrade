@@ -1,0 +1,11 @@
+# Streamlit 設定（スマホから同じWi-Fiでアクセスするため 0.0.0.0 で待ち受け）
+# enableCORS=true でスマホ等クロスオリジンアクセスを許可し、XSRF と競合しないようにする
+[server]
+address = "0.0.0.0"
+port = 8501
+enableCORS = true
+enableXsrfProtection = true
+
+# ブラウザを自動で開かない（バッチで起動時は手動で開く想定）
+[browser]
+gatherUsageStats = false
