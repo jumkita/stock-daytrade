@@ -332,25 +332,13 @@ def main():
     if "scan_thread" not in st.session_state:
         st.session_state.scan_thread = None
 
-    # ----- モード選択 -----
-    mode = st.radio(
-        "モード",
-        ["単一銘柄分析", "市場スキャンモード"],
-        horizontal=True,
-        label_visibility="collapsed",
-    )
-
     with st.sidebar:
         st.header("設定")
         if not api_ready:
             st.warning("⚠️ APIキーが設定されていません。AI分析機能は利用できません。")
         period = st.selectbox("分析期間", ["3mo", "6mo", "1y", "2y"], index=0)
-        if mode == "単一銘柄分析":
-            ticker = st.text_input("銘柄コード", value="8473.T", help="例: 7203.T, 8473.T")
-            current_ticker = ticker
-        else:
-            ticker = None
-            current_ticker = None
+        ticker = st.text_input("銘柄コード", value=st.session_state.get("ticker_input", "8473.T"), help="例: 7203.T, 8473.T", key="ticker_input")
+        current_ticker = ticker
 
         valuation_logic = None
         multiplier_disabled = False
@@ -398,25 +386,17 @@ def main():
             if st.session_state.get("gemini_test_msg") is not None:
                 st.write(st.session_state.gemini_test_msg)
 
-    if mode == "単一銘柄分析":
-        st.subheader(f"銘柄: {ticker}")
-        _render_detail_chart(ticker, ebitda_mult, period)
-        return
+    # ----- 単一銘柄分析（常に表示） -----
+    st.subheader(f"単一銘柄分析: {ticker}")
+    _render_detail_chart(ticker, ebitda_mult, period)
 
-    # ----- 市場スキャンモード -----
-    st.subheader("市場スキャンモード")
-    st.caption(
-        f"対象: {len(TARGET_TICKERS)} 銘柄（日経225）— "
-        "直近3日以内に「勝率・収益性の高いサイン」が1つ以上出た銘柄を抽出（バックテスト: 勝率50%以上・PF≥1.0・約定5回以上）。"
-        " 乖離率20%以上でさらに絞り込み。"
-    )
+    st.divider()
 
     # ----- 本日の買いシグナル（16:00想定＝X投稿と同じ内容） -----
-    st.divider()
     st.subheader("本日の買いシグナル（16:00想定）")
     st.caption(
         "X 自動投稿（毎日16:00）と同じ条件で表示します。"
-        " 大引け日で買いサインが出た銘柄のみ（乖離率・AI判定は使わない）。最大3銘柄。"
+        " 大引け日で買いサインが出た銘柄のみ（乖離率・AI判定は使わない）。"
     )
     if "daily_buy_signals" not in st.session_state:
         st.session_state.daily_buy_signals = None
@@ -484,6 +464,14 @@ def main():
         st.caption("「表示を更新」を押すと、X 投稿と同じ条件で本日の買いシグナルを取得します。")
 
     st.divider()
+
+    # ----- 市場スキャン -----
+    st.subheader("市場スキャン（厳選銘柄）")
+    st.caption(
+        f"対象: {len(TARGET_TICKERS)} 銘柄（日経225）— "
+        "直近3日以内に「勝率・収益性の高いサイン」が1つ以上出た銘柄を抽出（バックテスト: 勝率50%以上・PF≥1.0・約定5回以上）。"
+        " 乖離率20%以上でさらに絞り込み。"
+    )
 
     # スキャン中は進捗と中断ボタンを表示（スレッドで実行中のため）
     scan_thread = st.session_state.get("scan_thread")
@@ -666,13 +654,15 @@ def main():
             st.subheader("詳細分析")
             options = [f"{r['ticker']} - {r['name']}" for r in results]
             selected = st.selectbox(
-                "詳細表示する銘柄を選択（表の行に対応）",
+                "詳細表示する銘柄を選択（上段の単一銘柄分析に反映）",
                 options=options,
                 key="screener_detail_select",
             )
             if selected:
                 ticker_for_detail = selected.split(" - ")[0].strip()
-                _render_detail_chart(ticker_for_detail, ebitda_mult, period)
+                if ticker_for_detail != st.session_state.get("ticker_input"):
+                    st.session_state["ticker_input"] = ticker_for_detail
+                    st.rerun()
 
         # デバッグ用: スキャンした全銘柄のリスト（理論株価 None/0 の可視化）
         debug_list = getattr(st.session_state, "screen_debug", None)
