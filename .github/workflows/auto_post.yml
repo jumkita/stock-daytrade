@@ -35,8 +35,15 @@ jobs:
           pwd
           echo "=== ルート直下の .py ファイル ==="
           ls -la *.py 2>/dev/null || true
-          echo "=== ルート直下の一覧 ==="
-          ls -la
+          echo "=== logic.py の有無 ==="
+          ls -la logic.py 2>/dev/null || echo "logic.py が見つかりません"
 
       - name: Run auto_post.py
-        run: PYTHONPATH="$GITHUB_WORKSPACE" python auto_post.py
+        working-directory: ${{ github.workspace }}
+        run: |
+          python -c "
+          import sys
+          import runpy
+          sys.path.insert(0, '${{ github.workspace }}')
+          runpy.run_path('${{ github.workspace }}/auto_post.py', run_name='__main__')
+          "
