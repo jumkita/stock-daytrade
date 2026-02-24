@@ -456,8 +456,12 @@ def main():
             label_visibility="collapsed",
         )
         if st.session_state.daily_buy_signals:
-            st.caption("※機械的スクリーニング結果。投資判断は自己責任で。")
-            df_16 = pd.DataFrame(st.session_state.daily_buy_signals)
+            full_list = st.session_state.daily_buy_signals
+            n = len(full_list)
+            st.caption(f"**全 {n} 銘柄**　※機械的スクリーニング結果。投資判断は自己責任で。")
+            if n == 3:
+                st.info("3銘柄だけの場合は、GitHub の JSON が古い可能性があります。Actions でワークフローを1回実行すると「all」が入り全銘柄表示になります。「表示を更新」でも全銘柄取得できます。")
+            df_16 = pd.DataFrame(full_list)
             df_16 = df_16.rename(columns={"ticker": "銘柄コード", "name": "銘柄名", "buy_signals": "検出シグナル", "signal_count": "シグナル数"})
             st.dataframe(df_16[["銘柄コード", "銘柄名", "検出シグナル", "シグナル数"]], hide_index=True, use_container_width=True)
     else:
