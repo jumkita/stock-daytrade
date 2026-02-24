@@ -15,6 +15,8 @@ env:
 jobs:
   post:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -49,7 +51,16 @@ jobs:
 
       - name: Run auto_post.py
         working-directory: ${{ github.workspace }}
+        env:
+          DAILY_SIGNALS_JSON_PATH: ${{ github.workspace }}/daily_buy_signals.json
         run: |
           WP="$GITHUB_WORKSPACE"
           export PYTHONPATH="$WP"
           python "$WP/auto_post.py"
+
+      - name: 結果をリポジトリにコミット・プッシュ（Streamlit で自動表示用）
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add daily_buy_signals.json
+          git diff --staged --quiet && echo "変更なし" || (git commit -m "chore: Update daily buy signals [automated]" && git push)
