@@ -420,7 +420,7 @@ def main():
                         results_16.sort(key=lambda x: x["signal_count"], reverse=True)
                         picked = results_16[:3]
                         tweet_text = build_tweet(picked)
-                        st.session_state.daily_buy_signals = picked
+                        st.session_state.daily_buy_signals = results_16
                         st.session_state.daily_buy_signals_text = tweet_text
                     else:
                         st.session_state.daily_buy_signals = []
