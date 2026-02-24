@@ -27,7 +27,14 @@ logging.getLogger("yfinance").setLevel(logging.WARNING)
 
 import pandas as pd
 
-from logic import fetch_ohlcv, detect_all_patterns
+from logic import (
+    fetch_ohlcv,
+    detect_all_patterns,
+    filter_signals_by_pro_filters,
+    compute_tp_sl,
+    build_signal_rationale,
+    is_provisional_market_session,
+)
 from screener import TARGET_TICKERS, get_ticker_name
 
 MAX_TWEET_LEN = 280
@@ -37,58 +44,82 @@ SLEEP_SEC = 0.5
 
 def scan_buy_signal_only() -> list[dict[str, Any]]:
     """
-    乖離率・AI判定は一切使わず、大引け日（直近1日足）で買いサインが1つ以上出た銘柄を返す。
+    大引け日で買いサインが出た銘柄のうち、プロフィルタを満たすもののみ抽出。
+    15:10〜15:30 JST の場合は「暫定」として直近1日足を当日扱いし、出来高1.4倍以上・MA±7%の
+    バッファを許容。TP/SL は暫定終値ベースで再計算する。
     """
+    provisional = is_provisional_market_session()
     results = []
     for idx, ticker in enumerate(TARGET_TICKERS):
         time.sleep(SLEEP_SEC)
         try:
-            df = fetch_ohlcv(ticker, period="1mo", interval="1d")
+            df = fetch_ohlcv(ticker, period="3mo", interval="1d")
         except Exception:
             continue
-        if df is None or len(df) < 2:
+        if df is None or len(df) < 76:
             continue
         try:
             patterns = detect_all_patterns(df)
         except Exception:
             patterns = []
         n = len(df)
-        # 最終日（大引けの日）のみで買いサインが出ているか
-        buy_on_last_day = [
-            name for i, name, side in patterns
-            if side == "buy" and i == n - 1
-        ]
+        buy_on_last_day = [(i, name, side) for i, name, side in patterns if side == "buy" and i == n - 1]
         if not buy_on_last_day:
             continue
+        filtered = filter_signals_by_pro_filters(df, buy_on_last_day, side="buy", provisional=provisional)
+        if not filtered:
+            continue
+        buy_names = [name for _, name, _ in filtered]
+        tp_sl = compute_tp_sl(df, bar_index=n - 1)
+        rationale = build_signal_rationale(
+            df, n - 1,
+            multiple=1.4 if provisional else 1.5,
+            ma_pct_display=7 if provisional else None,
+        )
         name = get_ticker_name(ticker)
         results.append({
             "ticker": ticker,
             "name": name,
-            "buy_signals": ", ".join(buy_on_last_day),
-            "signal_count": len(buy_on_last_day),
+            "buy_signals": ", ".join(buy_names),
+            "signal_count": len(buy_names),
+            "entry": tp_sl.get("entry"),
+            "tp": tp_sl.get("tp"),
+            "sl": tp_sl.get("sl"),
+            "rationale": rationale,
+            "provisional": provisional,
         })
     return results
 
 
 def build_tweet(picked: list[dict[str, Any]]) -> str:
-    """投稿文を組み立てる。280文字を超えないよう調整する。"""
+    """投稿文を組み立てる（エントリー・TP・SL・根拠付き）。280文字を超えないよう調整する。"""
+    provisional = any(r.get("provisional") for r in picked)
     lines = ["【本日の買いシグナル点灯銘柄】"]
+    if provisional:
+        lines.append("※15:15暫定（大引け前の暫定値・TP/SLは暫定終値ベース）")
     for r in picked:
-        lines.append(f"■ {r['ticker']} {r['name']}")
-        lines.append(f"・検出シグナル: {r['buy_signals']}")
+        lines.append(f"■ {r['name']} ({r['ticker']})")
+        lines.append(f"・シグナル: {r['buy_signals']}")
+        entry = r.get("entry")
+        tp_val = r.get("tp")
+        sl_val = r.get("sl")
+        if entry is not None:
+            lines.append(f"・エントリー想定: ¥{entry:,.0f}")
+        if tp_val is not None:
+            lines.append(f"・利確(TP): ¥{tp_val:,.0f}")
+        if sl_val is not None:
+            lines.append(f"・損切り(SL): ¥{sl_val:,.0f}")
+        rationale = r.get("rationale") or "—"
+        lines.append(f"・根拠: {rationale}")
     lines.append("")
     lines.append("※機械的スクリーニング結果。投資判断は自己責任で。")
     lines.append("#日本株 #プライスアクション")
     text = "\n".join(lines)
     if len(text) <= MAX_TWEET_LEN:
         return text
-    # 収まらない場合は銘柄数を減らすかシグナル名を省略
     if len(picked) > 1:
         return build_tweet(picked[:1])
-    single = picked[0]
-    sig = single["buy_signals"]
-    if len(sig) > 50:
-        single = {**single, "buy_signals": sig[:47] + "…"}
+    single = {**picked[0], "buy_signals": (picked[0].get("buy_signals") or "")[:47] + "…"}
     return build_tweet([single])
 
 

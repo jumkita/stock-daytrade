@@ -6,7 +6,13 @@ Ambiguous 対策済み。Model A (Business) / B (Financials) の2軸。app/scree
 from __future__ import annotations
 
 import logging
+from datetime import datetime, time, timezone, timedelta
 from typing import Any, Optional
+
+# 日本時間（JST = UTC+9）
+JST = timezone(timedelta(hours=9))
+PROVISIONAL_START = time(15, 10)  # 15:10 JST
+PROVISIONAL_END = time(15, 30)    # 15:30 JST（yfinance 約15分遅延を考慮）
 
 import numpy as np
 import pandas as pd
@@ -326,7 +332,11 @@ def sotp_full(
 
 
 def fetch_ohlcv(ticker_symbol: str, period: str = "6mo", interval: str = "1d") -> Optional[pd.DataFrame]:
-    """yfinance で OHLCV を取得。"""
+    """
+    yfinance で OHLCV を取得。直近数日分を含む period を指定し、最新行を当日バーとして扱う。
+    15:10〜15:30 JST ではその最新行を「未確定の1日足」として暫定値に利用する想定。
+    データ欠損・取得不可時はエラー出力せず None を返す。
+    """
     try:
         df = yf.download(ticker_symbol, period=period, interval=interval, auto_adjust=True, progress=False, threads=False)
         if df is None or getattr(df, "empty", True):
@@ -336,9 +346,10 @@ def fetch_ohlcv(ticker_symbol: str, period: str = "6mo", interval: str = "1d") -
         for c in ("Open", "High", "Low", "Close"):
             if c not in df.columns:
                 return None
-        df = df[["Open", "High", "Low", "Close"]].dropna(how="all")
+        cols = ["Open", "High", "Low", "Close"]
         if "Volume" in df.columns:
-            df = df[["Open", "High", "Low", "Close", "Volume"]]
+            cols = ["Open", "High", "Low", "Close", "Volume"]
+        df = df[cols].dropna(how="all")
         return df.reset_index()
     except Exception:
         return None
@@ -581,6 +592,172 @@ def _custom_sell_patterns(df: pd.DataFrame) -> list[tuple[int, str, str]]:
             if gaps >= 3:
                 out.append((i, "三空踏み上げ", "sell"))
     return out
+
+
+# ========== プロフィルタ（出来高スパイク・MA近接）と TP/SL 算出 ==========
+
+
+def is_provisional_market_session() -> bool:
+    """
+    現在時刻が 15:10〜15:30 JST かどうか。
+    この帯では直近の未確定1日足を「当日暫定」として扱い、判定に5%程度のバッファを許容する。
+    """
+    now_jst = datetime.now(JST).time()
+    return PROVISIONAL_START <= now_jst <= PROVISIONAL_END
+
+
+def _volume_spike_ok(df: pd.DataFrame, bar_index: int, avg_days: int = 5, multiple: float = 1.5) -> bool:
+    """直近 avg_days 営業日の平均出来高に対し、当日出来高が multiple 倍以上であることを確認。"""
+    if df is None or bar_index < avg_days or "Volume" not in df.columns:
+        return False
+    try:
+        vol = df["Volume"]
+        if pd.isna(vol.iloc[bar_index]) or vol.iloc[bar_index] <= 0:
+            return False
+        start = bar_index - avg_days
+        avg_vol = vol.iloc[start:bar_index].mean()
+        if pd.isna(avg_vol) or avg_vol <= 0:
+            return False
+        return float(vol.iloc[bar_index]) >= multiple * float(avg_vol)
+    except Exception:
+        return False
+
+
+def _ma_proximity_ok(df: pd.DataFrame, bar_index: int, pct: float = 0.02, windows: tuple[int, int] = (25, 75)) -> bool:
+    """現在価格が指定 MA の ±pct 以内にあるか（反転の節目で出たサインのみ採用）。"""
+    if df is None or "Close" not in df.columns:
+        return False
+    try:
+        close = float(df["Close"].iloc[bar_index])
+        if close <= 0 or pd.isna(close):
+            return False
+        for w in windows:
+            if bar_index + 1 < w:
+                continue
+            ma = df["Close"].iloc[bar_index - w + 1 : bar_index + 1].mean()
+            if pd.isna(ma) or ma <= 0:
+                continue
+            dev = abs(close - ma) / ma
+            if dev <= pct:
+                return True
+        return False
+    except Exception:
+        return False
+
+
+def filter_signals_by_pro_filters(
+    df: pd.DataFrame,
+    patterns: list[tuple[int, str, str]],
+    side: str = "buy",
+    provisional: bool = False,
+) -> list[tuple[int, str, str]]:
+    """
+    出来高スパイク・MA近接の両方を満たすシグナルのみに絞る。
+    provisional=True のときは 15:15 暫定用にバッファを許容（出来高1.4倍以上・MA±7%）。
+    """
+    if df is None or not patterns:
+        return []
+    vol_multiple = 1.4 if provisional else 1.5
+    ma_pct = 0.07 if provisional else 0.02
+    out = []
+    for i, name, s in patterns:
+        if s != side:
+            continue
+        if _volume_spike_ok(df, i, multiple=vol_multiple) and _ma_proximity_ok(df, i, pct=ma_pct):
+            out.append((i, name, s))
+    return out
+
+
+def compute_tp_sl(
+    df: pd.DataFrame,
+    bar_index: Optional[int] = None,
+    atr_period: int = 14,
+    rr_ratio: float = 2.0,
+) -> dict[str, Any]:
+    """
+    利確(TP)・損切り(SL)を算出。
+    SL = max(直近5日安値, 現在値 - 2*ATR) のうち高い方（保守的）。
+    TP = 現在値 + (現在値 - SL) * rr_ratio（リスク:リワード = 1:rr_ratio）。
+    """
+    if df is None or getattr(df, "empty", True) or len(df) < 2:
+        return {"entry": None, "sl": None, "tp": None, "risk": None, "reward": None}
+    n = len(df)
+    i = bar_index if bar_index is not None else n - 1
+    i = max(0, min(i, n - 1))
+    try:
+        close = float(df["Close"].iloc[i])
+        low_5d = float(df["Low"].iloc[max(0, i - 4) : i + 1].min())
+    except Exception:
+        return {"entry": None, "sl": None, "tp": None, "risk": None, "reward": None}
+
+    atr_val: Optional[float] = None
+    if _TALIB_AVAILABLE and i >= atr_period:
+        try:
+            h = np.asarray(df["High"], dtype=np.float64)
+            l_ = np.asarray(df["Low"], dtype=np.float64)
+            c = np.asarray(df["Close"], dtype=np.float64)
+            atr = talib.ATR(h, l_, c, timeperiod=atr_period)
+            if not np.isnan(atr[i]) and atr[i] > 0:
+                atr_val = float(atr[i])
+        except Exception:
+            pass
+    if atr_val is None:
+        atr_val = 0.0
+
+    sl_candidate_atr = close - 2.0 * atr_val if atr_val > 0 else None
+    sl = max(low_5d, sl_candidate_atr) if sl_candidate_atr is not None else low_5d
+    if sl >= close:
+        sl = low_5d
+    risk = close - sl
+    reward = risk * rr_ratio
+    tp = close + reward
+
+    return {
+        "entry": round(close, 2),
+        "sl": round(sl, 2),
+        "tp": round(tp, 2),
+        "risk": round(risk, 2),
+        "reward": round(reward, 2),
+    }
+
+
+def build_signal_rationale(
+    df: pd.DataFrame,
+    bar_index: int,
+    avg_days: int = 5,
+    multiple: float = 1.5,
+    ma_pct_display: Optional[float] = None,
+) -> str:
+    """出来高・MA近接の根拠テキストを生成。provisional 時は ma_pct_display=7 で ±7% 表示。"""
+    parts = []
+    if df is None or "Volume" not in df.columns:
+        return "—"
+    try:
+        vol = df["Volume"]
+        if bar_index >= avg_days and not pd.isna(vol.iloc[bar_index]):
+            start = bar_index - avg_days
+            avg_vol = vol.iloc[start:bar_index].mean()
+            if not pd.isna(avg_vol) and avg_vol > 0:
+                ratio = float(vol.iloc[bar_index]) / float(avg_vol)
+                parts.append(f"出来高{ratio:.1f}倍")
+    except Exception:
+        pass
+    ma_thresh = ma_pct_display if ma_pct_display is not None else 2.0
+    try:
+        close = float(df["Close"].iloc[bar_index])
+        for w in (25, 75):
+            if bar_index + 1 < w:
+                continue
+            ma = df["Close"].iloc[bar_index - w + 1 : bar_index + 1].mean()
+            if pd.isna(ma) or ma <= 0:
+                continue
+            dev_pct = (close - ma) / ma * 100
+            if abs(dev_pct) <= ma_thresh:
+                parts.append(f"MA{w}±{int(ma_thresh)}%")
+                break
+    except Exception:
+        pass
+    return " ".join(parts) if parts else "—"
 
 
 BUY_PATTERNS_TALIB = [

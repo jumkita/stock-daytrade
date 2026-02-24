@@ -458,12 +458,37 @@ def main():
         if st.session_state.daily_buy_signals:
             full_list = st.session_state.daily_buy_signals
             n = len(full_list)
-            st.caption(f"**全 {n} 銘柄**　※機械的スクリーニング結果。投資判断は自己責任で。")
+            provisional_note = any(x.get("provisional") for x in full_list if isinstance(x, dict))
+            cap = f"**全 {n} 銘柄**　※機械的スクリーニング結果。投資判断は自己責任で。"
+            if provisional_note:
+                cap += "　※15:15暫定（大引け前の暫定値・TP/SLは暫定終値ベース）"
+            st.caption(cap)
             if n == 3:
                 st.info("3銘柄だけの場合は、GitHub の JSON が古い可能性があります。Actions でワークフローを1回実行すると「all」が入り全銘柄表示になります。「表示を更新」でも全銘柄取得できます。")
             df_16 = pd.DataFrame(full_list)
-            df_16 = df_16.rename(columns={"ticker": "銘柄コード", "name": "銘柄名", "buy_signals": "検出シグナル", "signal_count": "シグナル数"})
-            st.dataframe(df_16[["銘柄コード", "銘柄名", "検出シグナル", "シグナル数"]], hide_index=True, use_container_width=True)
+            rename_map = {
+                "ticker": "銘柄コード", "name": "銘柄名", "buy_signals": "検出シグナル", "signal_count": "シグナル数",
+                "entry": "エントリー想定", "tp": "利確(TP)", "sl": "損切り(SL)", "rationale": "根拠",
+            }
+            df_16 = df_16.rename(columns={k: v for k, v in rename_map.items() if k in df_16.columns})
+            base_cols = ["銘柄コード", "銘柄名", "検出シグナル", "シグナル数"]
+            opt_cols = ["エントリー想定", "利確(TP)", "損切り(SL)", "根拠"]
+            display_cols = [c for c in base_cols + opt_cols if c in df_16.columns]
+            def _fmt_price(x):
+                if x is None or (isinstance(x, float) and pd.isna(x)):
+                    return "—"
+                try:
+                    v = float(x)
+                    return f"¥{v:,.0f}" if v == v else "—"
+                except (TypeError, ValueError):
+                    return "—"
+            if "エントリー想定" in df_16.columns:
+                df_16["エントリー想定"] = df_16["エントリー想定"].apply(_fmt_price)
+            if "利確(TP)" in df_16.columns:
+                df_16["利確(TP)"] = df_16["利確(TP)"].apply(_fmt_price)
+            if "損切り(SL)" in df_16.columns:
+                df_16["損切り(SL)"] = df_16["損切り(SL)"].apply(_fmt_price)
+            st.dataframe(df_16[display_cols], hide_index=True, use_container_width=True)
     else:
         st.caption("「表示を更新」を押すと、X 投稿と同じ条件で本日の買いシグナルを取得します。")
 
