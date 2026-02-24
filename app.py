@@ -455,9 +455,9 @@ def main():
             try:
                 with urllib.request.urlopen(daily_json_url, timeout=10) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
-                picked = data.get("picked", [])
+                all_list = data.get("all", data.get("picked", []))
                 tweet_text = data.get("tweet_text", "")
-                st.session_state.daily_buy_signals = picked if isinstance(picked, list) else []
+                st.session_state.daily_buy_signals = all_list if isinstance(all_list, list) else []
                 st.session_state.daily_buy_signals_text = tweet_text or "本日は買いシグナル点灯銘柄はありませんでした。"
                 st.success("読み込みました。")
             except Exception as e:

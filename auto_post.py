@@ -134,20 +134,23 @@ def main() -> int:
         print("本日は買いシグナル点灯銘柄はありませんでした。")
         tweet_text = "本日は買いシグナル点灯銘柄はありませんでした。"
         picked = []
+        all_results = []
     else:
-        # シグナル数が多い順に並べ、最大 PICK_MAX 件
+        # シグナル数が多い順に並べ、最大 PICK_MAX 件をツイート用にピック
         results.sort(key=lambda x: x["signal_count"], reverse=True)
+        all_results = results
         picked = results[:PICK_MAX]
         tweet_text = build_tweet(picked)
         print(tweet_text)
         print("---")
 
-    # ワークフロー用: 結果を JSON で保存（Streamlit 等で URL から読み込み可能に）
+    # ワークフロー用: 結果を JSON で保存（買いサイン全銘柄 + ツイート用トップ3）
     json_path = os.environ.get("DAILY_SIGNALS_JSON_PATH", "").strip()
     if json_path:
         try:
             data = {
                 "updated": datetime.now(timezone.utc).isoformat(),
+                "all": all_results,
                 "picked": picked,
                 "tweet_text": tweet_text,
             }
