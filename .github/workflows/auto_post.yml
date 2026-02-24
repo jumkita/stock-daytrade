@@ -39,7 +39,4 @@ jobs:
           ls -la
 
       - name: Run auto_post.py
-        run: |
-          cd "$GITHUB_WORKSPACE"
-          export PYTHONPATH="$GITHUB_WORKSPACE"
-          python auto_post.py
+        run: PYTHONPATH="$GITHUB_WORKSPACE" python auto_post.py
