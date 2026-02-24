@@ -29,7 +29,17 @@ jobs:
           pip install -r requirements.txt
           pip install tweepy
 
+      - name: リポジトリのファイル確認（logic.py が同じ階層にあるか）
+        run: |
+          echo "=== カレントディレクトリ ==="
+          pwd
+          echo "=== ルート直下の .py ファイル ==="
+          ls -la *.py 2>/dev/null || true
+          echo "=== ルート直下の一覧 ==="
+          ls -la
+
       - name: Run auto_post.py
         run: |
+          cd "$GITHUB_WORKSPACE"
           export PYTHONPATH="$GITHUB_WORKSPACE"
           python auto_post.py
