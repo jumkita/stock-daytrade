@@ -7,3 +7,4 @@ mplfinance
 matplotlib
 xlrd
 tweepy
+google-genai
