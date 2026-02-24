@@ -1,0 +1,135 @@
+# -*- coding: utf-8 -*-
+"""
+買いシグナル点灯銘柄を抽出し、X (Twitter) へ自動投稿するバッチ。
+乖離率・AI判定は使わず、大引け日（その日足）で買いサインが出ている銘柄のみを対象とする。
+"""
+from __future__ import annotations
+
+import os
+import sys
+import time
+from typing import Any
+
+# プロジェクトルートをパスに追加
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import pandas as pd
+
+from logic import fetch_ohlcv, detect_all_patterns
+from screener import TARGET_TICKERS, get_ticker_name
+
+MAX_TWEET_LEN = 280
+PICK_MAX = 3
+SLEEP_SEC = 0.5
+
+
+def scan_buy_signal_only() -> list[dict[str, Any]]:
+    """
+    乖離率・AI判定は一切使わず、大引け日（直近1日足）で買いサインが1つ以上出た銘柄を返す。
+    """
+    results = []
+    for idx, ticker in enumerate(TARGET_TICKERS):
+        time.sleep(SLEEP_SEC)
+        try:
+            df = fetch_ohlcv(ticker, period="1mo", interval="1d")
+        except Exception:
+            continue
+        if df is None or len(df) < 2:
+            continue
+        try:
+            patterns = detect_all_patterns(df)
+        except Exception:
+            patterns = []
+        n = len(df)
+        # 最終日（大引けの日）のみで買いサインが出ているか
+        buy_on_last_day = [
+            name for i, name, side in patterns
+            if side == "buy" and i == n - 1
+        ]
+        if not buy_on_last_day:
+            continue
+        name = get_ticker_name(ticker)
+        results.append({
+            "ticker": ticker,
+            "name": name,
+            "buy_signals": ", ".join(buy_on_last_day),
+            "signal_count": len(buy_on_last_day),
+        })
+    return results
+
+
+def build_tweet(picked: list[dict[str, Any]]) -> str:
+    """投稿文を組み立てる。280文字を超えないよう調整する。"""
+    lines = ["【本日の買いシグナル点灯銘柄】"]
+    for r in picked:
+        lines.append(f"■ {r['ticker']} {r['name']}")
+        lines.append(f"・検出シグナル: {r['buy_signals']}")
+    lines.append("")
+    lines.append("※機械的スクリーニング結果。投資判断は自己責任で。")
+    lines.append("#日本株 #プライスアクション")
+    text = "\n".join(lines)
+    if len(text) <= MAX_TWEET_LEN:
+        return text
+    # 収まらない場合は銘柄数を減らすかシグナル名を省略
+    if len(picked) > 1:
+        return build_tweet(picked[:1])
+    single = picked[0]
+    sig = single["buy_signals"]
+    if len(sig) > 50:
+        single = {**single, "buy_signals": sig[:47] + "…"}
+    return build_tweet([single])
+
+
+def post_to_x(text: str) -> bool:
+    """tweepy で X に投稿する。"""
+    try:
+        import tweepy
+    except ImportError:
+        print("tweepy がインストールされていません。pip install tweepy", file=sys.stderr)
+        return False
+
+    api_key = os.environ.get("X_API_KEY", "").strip()
+    api_secret = os.environ.get("X_API_SECRET", "").strip()
+    access_token = os.environ.get("X_ACCESS_TOKEN", "").strip()
+    access_secret = os.environ.get("X_ACCESS_TOKEN_SECRET", "").strip()
+
+    if not all([api_key, api_secret, access_token, access_secret]):
+        print("X API の環境変数が未設定です。X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET", file=sys.stderr)
+        return False
+
+    try:
+        client = tweepy.Client(
+            consumer_key=api_key,
+            consumer_secret=api_secret,
+            access_token=access_token,
+            access_token_secret=access_secret,
+        )
+        client.create_tweet(text=text)
+        return True
+    except Exception as e:
+        print(f"X 投稿エラー: {e}", file=sys.stderr)
+        return False
+
+
+def main() -> int:
+    results = scan_buy_signal_only()
+    if not results:
+        print("本日は買いシグナル点灯銘柄はありませんでした。")
+        return 0
+
+    # シグナル数が多い順に並べ、最大 PICK_MAX 件
+    results.sort(key=lambda x: x["signal_count"], reverse=True)
+    picked = results[:PICK_MAX]
+
+    tweet_text = build_tweet(picked)
+    print(tweet_text)
+    print("---")
+
+    if not post_to_x(tweet_text):
+        return 1
+    print("投稿しました。")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
