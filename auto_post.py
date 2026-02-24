@@ -16,8 +16,10 @@ _cwd = os.getcwd()
 if _cwd and _cwd not in sys.path:
     sys.path.insert(0, _cwd)
 
+import json
 import logging
 import time
+from datetime import datetime, timezone
 from typing import Any
 
 # yfinance の delisted/404 などの ERROR ログを抑制（銘柄スキャン時に大量に出るため）
@@ -130,15 +132,33 @@ def main() -> int:
     results = scan_buy_signal_only()
     if not results:
         print("本日は買いシグナル点灯銘柄はありませんでした。")
+        tweet_text = "本日は買いシグナル点灯銘柄はありませんでした。"
+        picked = []
+    else:
+        # シグナル数が多い順に並べ、最大 PICK_MAX 件
+        results.sort(key=lambda x: x["signal_count"], reverse=True)
+        picked = results[:PICK_MAX]
+        tweet_text = build_tweet(picked)
+        print(tweet_text)
+        print("---")
+
+    # ワークフロー用: 結果を JSON で保存（Streamlit 等で URL から読み込み可能に）
+    json_path = os.environ.get("DAILY_SIGNALS_JSON_PATH", "").strip()
+    if json_path:
+        try:
+            data = {
+                "updated": datetime.now(timezone.utc).isoformat(),
+                "picked": picked,
+                "tweet_text": tweet_text,
+            }
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            print(f"結果を保存しました: {json_path}")
+        except Exception as e:
+            print(f"JSON 保存エラー: {e}", file=sys.stderr)
+
+    if not results:
         return 0
-
-    # シグナル数が多い順に並べ、最大 PICK_MAX 件
-    results.sort(key=lambda x: x["signal_count"], reverse=True)
-    picked = results[:PICK_MAX]
-
-    tweet_text = build_tweet(picked)
-    print(tweet_text)
-    print("---")
 
     ok, err = post_to_x(tweet_text)
     if ok:
