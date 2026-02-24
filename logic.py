@@ -645,6 +645,87 @@ def _ma_proximity_ok(df: pd.DataFrame, bar_index: int, pct: float = 0.02, window
         return False
 
 
+def get_volume_ratio(df: pd.DataFrame, bar_index: int, avg_days: int = 5) -> Optional[float]:
+    """直近 avg_days 営業日の平均出来高に対する当日出来高の倍率。取得不可時は None。"""
+    if df is None or bar_index < avg_days or "Volume" not in df.columns:
+        return None
+    try:
+        vol = df["Volume"]
+        if pd.isna(vol.iloc[bar_index]) or vol.iloc[bar_index] <= 0:
+            return None
+        start = bar_index - avg_days
+        avg_vol = vol.iloc[start:bar_index].mean()
+        if pd.isna(avg_vol) or avg_vol <= 0:
+            return None
+        return float(vol.iloc[bar_index]) / float(avg_vol)
+    except Exception:
+        return None
+
+
+def get_ma_deviation(df: pd.DataFrame, bar_index: int, windows: tuple[int, int] = (25, 75)) -> Optional[float]:
+    """現在価格の MA からの最小絶対乖離（比率）。例: 0.02 = ±2%。取得不可時は None。"""
+    if df is None or "Close" not in df.columns:
+        return None
+    try:
+        close = float(df["Close"].iloc[bar_index])
+        if close <= 0 or pd.isna(close):
+            return None
+        min_dev: Optional[float] = None
+        for w in windows:
+            if bar_index + 1 < w:
+                continue
+            ma = df["Close"].iloc[bar_index - w + 1 : bar_index + 1].mean()
+            if pd.isna(ma) or ma <= 0:
+                continue
+            dev = abs(close - ma) / ma
+            if min_dev is None or dev < min_dev:
+                min_dev = float(dev)
+        return min_dev
+    except Exception:
+        return None
+
+
+def compute_conviction_score(df: pd.DataFrame, bar_index: int) -> float:
+    """
+    確信度スコア（Conviction Score）を算出する。
+    スコア = (当日出来高/5日平均出来高) + (1 / (1 + |MAからの乖離率|))
+    出来高が爆発しており、かつMAに極めて近い銘柄ほど高スコア。
+    """
+    vol_ratio = get_volume_ratio(df, bar_index)
+    ma_dev = get_ma_deviation(df, bar_index)
+    term_vol = float(vol_ratio) if vol_ratio is not None else 0.0
+    term_ma = 1.0 / (1.0 + (float(ma_dev) if ma_dev is not None else 1.0))
+    return round(term_vol + term_ma, 4)
+
+
+def classify_signal_status(
+    df: pd.DataFrame,
+    bar_index: int,
+    provisional: bool = False,
+) -> Optional[tuple[str, str]]:
+    """
+    本命 / 出来高待ち / 押し目待ち のいずれかに分類する。
+    Returns:
+        ("active", "—") 本命
+        ("volume_watch", "出来高不足") 出来高待ち
+        ("price_watch", "MA乖離（押し目待ち）") 押し目待ち
+        該当なしなら None
+    """
+    vol_ratio = get_volume_ratio(df, bar_index)
+    ma_dev = get_ma_deviation(df, bar_index)
+    if vol_ratio is None or ma_dev is None:
+        return None
+    vol_active = 1.4 if provisional else 1.5
+    ma_active = 0.07 if provisional else 0.02
+    if vol_ratio >= vol_active and ma_dev <= ma_active:
+        return ("active", "—")
+    if ma_dev <= 0.02 and 1.0 <= vol_ratio < vol_active:
+        return ("volume_watch", "出来高不足")
+    if vol_ratio >= vol_active and 0.02 < ma_dev <= 0.05:
+        return ("price_watch", "MA乖離（押し目待ち）")
+    return None
+
+
 def filter_signals_by_pro_filters(
     df: pd.DataFrame,
     patterns: list[tuple[int, str, str]],
@@ -652,7 +733,7 @@ def filter_signals_by_pro_filters(
     provisional: bool = False,
 ) -> list[tuple[int, str, str]]:
     """
-    出来高スパイク・MA近接の両方を満たすシグナルのみに絞る。
+    出来高スパイク・MA近接の両方を満たすシグナルのみに絞る（本命のみ）。
     provisional=True のときは 15:15 暫定用にバッファを許容（出来高1.4倍以上・MA±7%）。
     """
     if df is None or not patterns:

@@ -30,9 +30,10 @@ import pandas as pd
 from logic import (
     fetch_ohlcv,
     detect_all_patterns,
-    filter_signals_by_pro_filters,
+    classify_signal_status,
     compute_tp_sl,
     build_signal_rationale,
+    compute_conviction_score,
     is_provisional_market_session,
 )
 from screener import TARGET_TICKERS, get_ticker_name
@@ -42,14 +43,15 @@ PICK_MAX = 3
 SLEEP_SEC = 0.5
 
 
-def scan_buy_signal_only() -> list[dict[str, Any]]:
+def scan_buy_signal_only() -> dict[str, list[dict[str, Any]]]:
     """
-    大引け日で買いサインが出た銘柄のうち、プロフィルタを満たすもののみ抽出。
-    15:10〜15:30 JST の場合は「暫定」として直近1日足を当日扱いし、出来高1.4倍以上・MA±7%の
-    バッファを許容。TP/SL は暫定終値ベースで再計算する。
+    大引け日で買いサインが出た銘柄を「本命」「出来高待ち」「押し目待ち」に分類して返す。
+    Returns:
+        {"active": [本命のみ], "watch": [出来高待ち・押し目待ち]}。X投稿・JSON の picked は active のみ使用。
     """
     provisional = is_provisional_market_session()
-    results = []
+    active: list[dict[str, Any]] = []
+    watch: list[dict[str, Any]] = []
     for idx, ticker in enumerate(TARGET_TICKERS):
         time.sleep(SLEEP_SEC)
         try:
@@ -66,10 +68,11 @@ def scan_buy_signal_only() -> list[dict[str, Any]]:
         buy_on_last_day = [(i, name, side) for i, name, side in patterns if side == "buy" and i == n - 1]
         if not buy_on_last_day:
             continue
-        filtered = filter_signals_by_pro_filters(df, buy_on_last_day, side="buy", provisional=provisional)
-        if not filtered:
+        status_reason = classify_signal_status(df, n - 1, provisional=provisional)
+        if status_reason is None:
             continue
-        buy_names = [name for _, name, _ in filtered]
+        status, reason_short = status_reason
+        buy_names = [name for _, name, _ in buy_on_last_day]
         tp_sl = compute_tp_sl(df, bar_index=n - 1)
         rationale = build_signal_rationale(
             df, n - 1,
@@ -77,7 +80,8 @@ def scan_buy_signal_only() -> list[dict[str, Any]]:
             ma_pct_display=7 if provisional else None,
         )
         name = get_ticker_name(ticker)
-        results.append({
+        conviction = compute_conviction_score(df, n - 1)
+        item = {
             "ticker": ticker,
             "name": name,
             "buy_signals": ", ".join(buy_names),
@@ -87,14 +91,21 @@ def scan_buy_signal_only() -> list[dict[str, Any]]:
             "sl": tp_sl.get("sl"),
             "rationale": rationale,
             "provisional": provisional,
-        })
-    return results
+            "status": status,
+            "reason_short": reason_short,
+            "conviction_score": conviction,
+        }
+        if status == "active":
+            active.append(item)
+        else:
+            watch.append(item)
+    return {"active": active, "watch": watch}
 
 
 def build_tweet(picked: list[dict[str, Any]]) -> str:
-    """投稿文を組み立てる（エントリー・TP・SL・根拠付き）。280文字を超えないよう調整する。"""
+    """投稿文を組み立てる（確信度上位最大3銘柄・エントリー・TP・SL・根拠付き）。280文字を超えないよう調整する。"""
     provisional = any(r.get("provisional") for r in picked)
-    lines = ["【本日の買いシグナル点灯銘柄】"]
+    lines = ["【本日の厳選3銘柄】"]
     if provisional:
         lines.append("※15:15暫定（大引け前の暫定値・TP/SLは暫定終値ベース）")
     for r in picked:
@@ -160,22 +171,21 @@ def post_to_x(text: str) -> tuple[bool, str | None]:
 
 
 def main() -> int:
-    results = scan_buy_signal_only()
-    if not results:
-        print("本日は買いシグナル点灯銘柄はありませんでした。")
-        tweet_text = "本日は買いシグナル点灯銘柄はありませんでした。"
-        picked = []
-        all_results = []
-    else:
-        # シグナル数が多い順に並べ、最大 PICK_MAX 件をツイート用にピック
-        results.sort(key=lambda x: x["signal_count"], reverse=True)
-        all_results = results
-        picked = results[:PICK_MAX]
+    scan_result = scan_buy_signal_only()
+    active = scan_result["active"]
+    watch = scan_result["watch"]
+    combined = active + watch
+    combined.sort(key=lambda x: float(x.get("conviction_score", 0)), reverse=True)
+    picked = combined[:PICK_MAX]
+    all_results = active
+
+    tweet_text = "本日は買いシグナル点灯銘柄はありませんでした。"
+    if picked:
         tweet_text = build_tweet(picked)
         print(tweet_text)
         print("---")
 
-    # ワークフロー用: 結果を JSON で保存（買いサイン全銘柄 + ツイート用トップ3）
+    # ワークフロー用: 本命(active)・ウォッチ(watch) を JSON で保存。X 投稿は確信度上位最大3銘柄。
     json_path = os.environ.get("DAILY_SIGNALS_JSON_PATH", "").strip()
     if json_path:
         try:
@@ -184,6 +194,7 @@ def main() -> int:
                 "all": all_results,
                 "picked": picked,
                 "tweet_text": tweet_text,
+                "watch": watch,
             }
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
@@ -191,7 +202,7 @@ def main() -> int:
         except Exception as e:
             print(f"JSON 保存エラー: {e}", file=sys.stderr)
 
-    if not results:
+    if not picked:
         return 0
 
     ok, err = post_to_x(tweet_text)
