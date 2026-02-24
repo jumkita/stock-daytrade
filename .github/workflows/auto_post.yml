@@ -41,9 +41,6 @@ jobs:
       - name: Run auto_post.py
         working-directory: ${{ github.workspace }}
         run: |
-          python -c "
-          import sys
-          import runpy
-          sys.path.insert(0, '${{ github.workspace }}')
-          runpy.run_path('${{ github.workspace }}/auto_post.py', run_name='__main__')
-          "
+          WP="$GITHUB_WORKSPACE"
+          export PYTHONPATH="$WP"
+          python "$WP/auto_post.py"
