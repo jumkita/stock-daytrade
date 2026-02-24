@@ -1,0 +1,24 @@
+{
+  "updated": "2026-02-24T13:57:48.643350+00:00",
+  "picked": [
+    {
+      "ticker": "2269.T",
+      "name": "MEIJI HOLDINGS CO LTD",
+      "buy_signals": "二本たくり線, スパイクロー, 赤三兵, 二本たくり線",
+      "signal_count": 4
+    },
+    {
+      "ticker": "4005.T",
+      "name": "SUMITOMO CHEMICAL COMPANY",
+      "buy_signals": "陰線後の陽線, ピンバー, スパイクロー, インサイドバー",
+      "signal_count": 4
+    },
+    {
+      "ticker": "4043.T",
+      "name": "TOKUYAMA CORP",
+      "buy_signals": "陰線後の陽線, ピンバー, スパイクロー, リバーサルロー",
+      "signal_count": 4
+    }
+  ],
+  "tweet_text": "【本日の買いシグナル点灯銘柄】\n■ 2269.T MEIJI HOLDINGS CO LTD\n・検出シグナル: 二本たくり線, スパイクロー, 赤三兵, 二本たくり線\n■ 4005.T SUMITOMO CHEMICAL COMPANY\n・検出シグナル: 陰線後の陽線, ピンバー, スパイクロー, インサイドバー\n■ 4043.T TOKUYAMA CORP\n・検出シグナル: 陰線後の陽線, ピンバー, スパイクロー, リバーサルロー\n\n※機械的スクリーニング結果。投資判断は自己責任で。\n#日本株 #プライスアクション"
+}
