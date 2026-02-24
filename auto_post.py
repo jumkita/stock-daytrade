@@ -7,11 +7,21 @@ from __future__ import annotations
 
 import os
 import sys
+
+# スクリプト配置ディレクトリとカレントを sys.path の先頭に（Actions 等で import 失敗しないよう）
+_script_dir = os.path.dirname(os.path.abspath(__file__))
+if _script_dir and _script_dir not in sys.path:
+    sys.path.insert(0, _script_dir)
+_cwd = os.getcwd()
+if _cwd and _cwd not in sys.path:
+    sys.path.insert(0, _cwd)
+
+import logging
 import time
 from typing import Any
 
-# プロジェクトルートをパスに追加
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# yfinance の delisted/404 などの ERROR ログを抑制（銘柄スキャン時に大量に出るため）
+logging.getLogger("yfinance").setLevel(logging.WARNING)
 
 import pandas as pd
 
@@ -80,13 +90,17 @@ def build_tweet(picked: list[dict[str, Any]]) -> str:
     return build_tweet([single])
 
 
-def post_to_x(text: str) -> bool:
-    """tweepy で X に投稿する。"""
+def post_to_x(text: str) -> tuple[bool, str | None]:
+    """
+    tweepy で X に投稿する。
+    Returns:
+        (成功したか, エラーメッセージ or None)
+    """
     try:
         import tweepy
     except ImportError:
         print("tweepy がインストールされていません。pip install tweepy", file=sys.stderr)
-        return False
+        return False, "ImportError"
 
     api_key = os.environ.get("X_API_KEY", "").strip()
     api_secret = os.environ.get("X_API_SECRET", "").strip()
@@ -95,7 +109,7 @@ def post_to_x(text: str) -> bool:
 
     if not all([api_key, api_secret, access_token, access_secret]):
         print("X API の環境変数が未設定です。X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET", file=sys.stderr)
-        return False
+        return False, "env"
 
     try:
         client = tweepy.Client(
@@ -105,10 +119,11 @@ def post_to_x(text: str) -> bool:
             access_token_secret=access_secret,
         )
         client.create_tweet(text=text)
-        return True
+        return True, None
     except Exception as e:
+        err = str(e)
         print(f"X 投稿エラー: {e}", file=sys.stderr)
-        return False
+        return False, err
 
 
 def main() -> int:
@@ -125,10 +140,15 @@ def main() -> int:
     print(tweet_text)
     print("---")
 
-    if not post_to_x(tweet_text):
-        return 1
-    print("投稿しました。")
-    return 0
+    ok, err = post_to_x(tweet_text)
+    if ok:
+        print("投稿しました。")
+        return 0
+    # 402 Payment Required = API のクレジット不足。スクリーニングは成功しているので exit 0 にする
+    if err and ("402" in err or "Payment Required" in err):
+        print("※X 投稿はスキップしました（API クレジット不足 402）。上記はスクリーニング結果です。", file=sys.stderr)
+        return 0
+    return 1
 
 
 if __name__ == "__main__":
