@@ -113,6 +113,7 @@ def fetch_ohlc_yfinance(
     """
     try:
         import yfinance as yf
+        from logic import flatten_ohlcv_columns
     except ImportError:
         return None
     try:
@@ -126,8 +127,9 @@ def fetch_ohlc_yfinance(
         )
         if df is None or df.empty:
             return None
-        if isinstance(df.columns, pd.MultiIndex):
-            df.columns = df.columns.get_level_values(0)
+        df = flatten_ohlcv_columns(df)
+        if df is None:
+            return None
         for col in ["Open", "High", "Low", "Close"]:
             if col not in df.columns:
                 return None

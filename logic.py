@@ -331,18 +331,33 @@ def sotp_full(
     }
 
 
+def flatten_ohlcv_columns(df: Optional[pd.DataFrame]) -> Optional[pd.DataFrame]:
+    """
+    yfinance が返す DataFrame の columns が MultiIndex の場合に必ずフラット化する。
+    全てのデータ取得箇所で例外なく呼ぶこと。
+    """
+    if df is None or getattr(df, "empty", True):
+        return df
+    if isinstance(df.columns, pd.MultiIndex):
+        df = df.copy()
+        df.columns = df.columns.get_level_values(0)
+    return df
+
+
 def fetch_ohlcv(ticker_symbol: str, period: str = "6mo", interval: str = "1d") -> Optional[pd.DataFrame]:
     """
     yfinance で OHLCV を取得。直近数日分を含む period を指定し、最新行を当日バーとして扱う。
     15:10〜15:30 JST ではその最新行を「未確定の1日足」として暫定値に利用する想定。
     データ欠損・取得不可時はエラー出力せず None を返す。
+    取得直後に必ず flatten_ohlcv_columns で MultiIndex をフラット化する。
     """
     try:
         df = yf.download(ticker_symbol, period=period, interval=interval, auto_adjust=True, progress=False, threads=False)
         if df is None or getattr(df, "empty", True):
             return None
-        if isinstance(df.columns, pd.MultiIndex):
-            df.columns = df.columns.get_level_values(0)
+        df = flatten_ohlcv_columns(df)
+        if df is None:
+            return None
         for c in ("Open", "High", "Low", "Close"):
             if c not in df.columns:
                 return None
