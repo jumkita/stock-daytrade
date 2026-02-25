@@ -1,21 +1,9 @@
 {
-  "updated": "2026-02-25T15:08:19.553042+00:00",
+  "updated": "2026-02-25T23:52:23.008121+00:00",
   "backtest_driven": true,
-  "unique_tickers": 15,
-  "signal_count": 16,
+  "unique_tickers": 17,
+  "signal_count": 18,
   "items": [
-    {
-      "ticker": "1489.T",
-      "name": "1489.T",
-      "pattern_name": "包み線",
-      "win_rate": 0.6,
-      "sample_count": 75,
-      "avg_return_pct": 38.7867,
-      "entry": 3305.0,
-      "tp": 4586.9,
-      "sl": 2664.05,
-      "formatted_line": "【1489.T】 | 包み線 | 勝率: 60% (サンプル75回) | 平均リターン: +38.79% | 現在値: ¥3,305 | TP: ¥4,587 | SL: ¥2,664"
-    },
     {
       "ticker": "1568.T",
       "name": "1568.T",
@@ -32,25 +20,37 @@
       "ticker": "2326.T",
       "name": "2326.T",
       "pattern_name": "二本たくり線",
-      "win_rate": 0.7857,
-      "sample_count": 28,
-      "avg_return_pct": 1.947,
+      "win_rate": 0.7692,
+      "sample_count": 26,
+      "avg_return_pct": 1.7836,
       "entry": 5350.0,
-      "tp": 5454.16,
-      "sl": 5297.92,
-      "formatted_line": "【2326.T】 | 二本たくり線 | 勝率: 79% (サンプル28回) | 平均リターン: +1.95% | 現在値: ¥5,350 | TP: ¥5,454 | SL: ¥5,298"
+      "tp": 5445.42,
+      "sl": 5302.29,
+      "formatted_line": "【2326.T】 | 二本たくり線 | 勝率: 77% (サンプル26回) | 平均リターン: +1.78% | 現在値: ¥5,350 | TP: ¥5,445 | SL: ¥5,302"
     },
     {
       "ticker": "3110.T",
       "name": "3110.T",
       "pattern_name": "包み線",
-      "win_rate": 0.6471,
-      "sample_count": 102,
-      "avg_return_pct": 2.4114,
+      "win_rate": 0.64,
+      "sample_count": 100,
+      "avg_return_pct": 2.3884,
       "entry": 27680.0,
-      "tp": 28347.48,
-      "sl": 27346.26,
-      "formatted_line": "【3110.T】 | 包み線 | 勝率: 65% (サンプル102回) | 平均リターン: +2.41% | 現在値: ¥27,680 | TP: ¥28,347 | SL: ¥27,346"
+      "tp": 28341.11,
+      "sl": 27349.45,
+      "formatted_line": "【3110.T】 | 包み線 | 勝率: 64% (サンプル100回) | 平均リターン: +2.39% | 現在値: ¥27,680 | TP: ¥28,341 | SL: ¥27,349"
+    },
+    {
+      "ticker": "3662.T",
+      "name": "3662.T",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.6429,
+      "sample_count": 14,
+      "avg_return_pct": 1.6275,
+      "entry": 1015.0,
+      "tp": 1031.52,
+      "sl": 1006.74,
+      "formatted_line": "【3662.T】 | 二本たくり線 | 勝率: 64% (サンプル14回) | 平均リターン: +1.63% | 現在値: ¥1,015 | TP: ¥1,032 | SL: ¥1,007"
     },
     {
       "ticker": "3663.T",
@@ -78,7 +78,7 @@
     },
     {
       "ticker": "4186.T",
-      "name": "4186.T",
+      "name": "TOKYO OHKA KOGYO CO",
       "pattern_name": "二本たくり線",
       "win_rate": 0.6897,
       "sample_count": 29,
@@ -92,13 +92,13 @@
       "ticker": "5105.T",
       "name": "TOYO TIRE CORPORATION",
       "pattern_name": "スパイクロー",
-      "win_rate": 0.7222,
-      "sample_count": 36,
-      "avg_return_pct": 1.6964,
+      "win_rate": 0.7027,
+      "sample_count": 37,
+      "avg_return_pct": 1.7024,
       "entry": 4820.0,
-      "tp": 4901.77,
-      "sl": 4779.12,
-      "formatted_line": "【5105.T】 | スパイクロー | 勝率: 72% (サンプル36回) | 平均リターン: +1.70% | 現在値: ¥4,820 | TP: ¥4,902 | SL: ¥4,779"
+      "tp": 4902.06,
+      "sl": 4778.97,
+      "formatted_line": "【5105.T】 | スパイクロー | 勝率: 70% (サンプル37回) | 平均リターン: +1.70% | 現在値: ¥4,820 | TP: ¥4,902 | SL: ¥4,779"
     },
     {
       "ticker": "5602.T",
@@ -125,28 +125,52 @@
       "formatted_line": "【5805.T】 | ピンバー | 勝率: 62% (サンプル39回) | 平均リターン: +2.98% | 現在値: ¥15,800 | TP: ¥16,272 | SL: ¥15,564"
     },
     {
+      "ticker": "6201.T",
+      "name": "TOYOTA INDUSTRIES CORP",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.6548,
+      "sample_count": 84,
+      "avg_return_pct": 1.5571,
+      "entry": 20200.0,
+      "tp": 20514.53,
+      "sl": 20042.73,
+      "formatted_line": "【6201.T】 | インサイドバー | 勝率: 65% (サンプル84回) | 平均リターン: +1.56% | 現在値: ¥20,200 | TP: ¥20,515 | SL: ¥20,043"
+    },
+    {
       "ticker": "6323.T",
       "name": "RORZE CORP",
       "pattern_name": "陰線後の陽線",
       "win_rate": 0.6122,
       "sample_count": 147,
       "avg_return_pct": 2.1032,
-      "entry": 3443.0,
-      "tp": 3515.41,
-      "sl": 3406.79,
-      "formatted_line": "【6323.T】 | 陰線後の陽線 | 勝率: 61% (サンプル147回) | 平均リターン: +2.10% | 現在値: ¥3,443 | TP: ¥3,515 | SL: ¥3,407"
+      "entry": 3426.0,
+      "tp": 3498.06,
+      "sl": 3389.97,
+      "formatted_line": "【6323.T】 | 陰線後の陽線 | 勝率: 61% (サンプル147回) | 平均リターン: +2.10% | 現在値: ¥3,426 | TP: ¥3,498 | SL: ¥3,390"
     },
     {
       "ticker": "6507.T",
       "name": "SINFONIA TECHNOLOGY CO LTD",
       "pattern_name": "二本たくり線",
-      "win_rate": 0.6364,
-      "sample_count": 33,
-      "avg_return_pct": 1.7158,
+      "win_rate": 0.6471,
+      "sample_count": 34,
+      "avg_return_pct": 1.8985,
       "entry": 12410.0,
-      "tp": 12622.93,
-      "sl": 12303.53,
-      "formatted_line": "【6507.T】 | 二本たくり線 | 勝率: 64% (サンプル33回) | 平均リターン: +1.72% | 現在値: ¥12,410 | TP: ¥12,623 | SL: ¥12,304"
+      "tp": 12645.6,
+      "sl": 12292.2,
+      "formatted_line": "【6507.T】 | 二本たくり線 | 勝率: 65% (サンプル34回) | 平均リターン: +1.90% | 現在値: ¥12,410 | TP: ¥12,646 | SL: ¥12,292"
+    },
+    {
+      "ticker": "7003.T",
+      "name": "MITSUI E&S CO LTD",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.6064,
+      "sample_count": 94,
+      "avg_return_pct": 3.1383,
+      "entry": 7808.0,
+      "tp": 8053.04,
+      "sl": 7685.48,
+      "formatted_line": "【7003.T】 | インサイドバー | 勝率: 61% (サンプル94回) | 平均リターン: +3.14% | 現在値: ¥7,808 | TP: ¥8,053 | SL: ¥7,685"
     },
     {
       "ticker": "7280.T",
@@ -164,13 +188,13 @@
       "ticker": "8053.T",
       "name": "SUMITOMO CORP",
       "pattern_name": "リバーサルロー",
-      "win_rate": 0.7895,
-      "sample_count": 19,
-      "avg_return_pct": 1.9689,
+      "win_rate": 0.75,
+      "sample_count": 20,
+      "avg_return_pct": 1.7733,
       "entry": 6427.0,
-      "tp": 6553.54,
-      "sl": 6363.73,
-      "formatted_line": "【8053.T】 | リバーサルロー | 勝率: 79% (サンプル19回) | 平均リターン: +1.97% | 現在値: ¥6,427 | TP: ¥6,554 | SL: ¥6,364"
+      "tp": 6540.97,
+      "sl": 6370.02,
+      "formatted_line": "【8053.T】 | リバーサルロー | 勝率: 75% (サンプル20回) | 平均リターン: +1.77% | 現在値: ¥6,427 | TP: ¥6,541 | SL: ¥6,370"
     },
     {
       "ticker": "8088.T",
