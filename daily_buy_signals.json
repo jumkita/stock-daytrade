@@ -1,57 +1,57 @@
 {
-  "updated": "2026-02-25T10:19:02.810782+00:00",
+  "updated": "2026-02-25T10:35:09.310845+00:00",
   "active": [],
   "high_potential": [],
   "watch": [
     {
-      "ticker": "5411.T",
-      "name": "JFE HOLDINGS INC",
-      "watchlist_score": 7.6452,
-      "reason_short": "逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち",
-      "entry": 2170.5,
-      "tp": 2270.5,
-      "sl": 2120.5,
-      "conviction_score": 7.6452
-    },
-    {
-      "ticker": "9064.T",
-      "name": "YAMATO HOLDINGS CO LTD",
-      "watchlist_score": 7.3047,
-      "reason_short": "陰線後の陽線点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
-      "entry": 1881.0,
-      "tp": 1953.0,
-      "sl": 1845.0,
-      "conviction_score": 7.3047
-    },
-    {
-      "ticker": "6506.T",
-      "name": "YASKAWA ELECTRIC CORP",
-      "watchlist_score": 6.7523,
-      "reason_short": "陰線後の陽線, 逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
-      "entry": 5403.0,
-      "tp": 6119.0,
-      "sl": 5045.0,
-      "conviction_score": 6.7523
-    },
-    {
-      "ticker": "6594.T",
-      "name": "NIDEC CORPORATION",
-      "watchlist_score": 6.4111,
-      "reason_short": "逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち",
-      "entry": 2391.0,
-      "tp": 2591.0,
-      "sl": 2291.0,
-      "conviction_score": 6.4111
-    },
-    {
-      "ticker": "9301.T",
-      "name": "MITSUBISHI LOGISTICS CORP",
-      "watchlist_score": 4.8151,
+      "ticker": "9842.T",
+      "name": "9842.T",
+      "watchlist_score": 14.9893,
       "reason_short": "逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
-      "entry": 1396.5,
-      "tp": 1502.5,
-      "sl": 1343.5,
-      "conviction_score": 4.8151
+      "entry": 2035.0,
+      "tp": 2105.0,
+      "sl": 2000.0,
+      "conviction_score": 14.9893
+    },
+    {
+      "ticker": "4626.T",
+      "name": "4626.T",
+      "watchlist_score": 13.8977,
+      "reason_short": "逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち",
+      "entry": 5428.0,
+      "tp": 5574.0,
+      "sl": 5355.0,
+      "conviction_score": 13.8977
+    },
+    {
+      "ticker": "7513.T",
+      "name": "7513.T",
+      "watchlist_score": 12.6144,
+      "reason_short": "ピンバー, 逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
+      "entry": 1341.0,
+      "tp": 1387.0,
+      "sl": 1318.0,
+      "conviction_score": 12.6144
+    },
+    {
+      "ticker": "7630.T",
+      "name": "7630.T",
+      "watchlist_score": 11.2433,
+      "reason_short": "逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち",
+      "entry": 919.0,
+      "tp": 919.0,
+      "sl": 919.0,
+      "conviction_score": 11.2433
+    },
+    {
+      "ticker": "8273.T",
+      "name": "8273.T",
+      "watchlist_score": 10.354,
+      "reason_short": "包み線点灯。出来高の本格的な増加（1.5倍超え）待ち",
+      "entry": 3130.0,
+      "tp": 3220.0,
+      "sl": 3085.0,
+      "conviction_score": 10.354
     }
   ],
   "all": [],
