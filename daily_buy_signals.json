@@ -1,57 +1,62 @@
 {
-  "updated": "2026-02-25T12:41:50.816137+00:00",
+  "updated": "2026-02-25T12:54:16.482109+00:00",
   "active": [],
   "high_potential": [],
   "watch": [
     {
-      "ticker": "7063.T",
-      "name": "7063.T",
-      "watchlist_score": 77.7051,
-      "reason_short": "陰線後の陽線点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
-      "entry": 129.0,
-      "tp": 193.0,
-      "sl": 97.0,
-      "conviction_score": 77.7051
+      "ticker": "6217.T",
+      "name": "6217.T",
+      "watchlist_score": 23.4661,
+      "reason_short": "陰線後の陽線点灯。出来高増加待ち | 押し目形成中",
+      "entry": 561.0,
+      "tp": 709.0,
+      "sl": 487.0,
+      "conviction_score": 23.4661,
+      "formatted_line": "【6217.T】陰線後の陽線点灯。出来高増加待ち | 押し目形成中 | Score: 23.47 | 現在値: ¥561 | TP: ¥709 | SL: ¥487"
     },
     {
       "ticker": "3845.T",
       "name": "3845.T",
       "watchlist_score": 19.262,
-      "reason_short": "リバーサルロー, 包み線点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
+      "reason_short": "リバーサルロー, 包み線点灯。出来高増加待ち | 押し目形成中",
       "entry": 248.0,
       "tp": 280.0,
       "sl": 232.0,
-      "conviction_score": 19.262
+      "conviction_score": 19.262,
+      "formatted_line": "【3845.T】リバーサルロー, 包み線点灯。出来高増加待ち | 押し目形成中 | Score: 19.26 | 現在値: ¥248 | TP: ¥280 | SL: ¥232"
+    },
+    {
+      "ticker": "2345.T",
+      "name": "2345.T",
+      "watchlist_score": 11.3786,
+      "reason_short": "包み線, 赤三兵点灯。出来高増加待ち",
+      "entry": 233.0,
+      "tp": 297.0,
+      "sl": 201.0,
+      "conviction_score": 11.3786,
+      "formatted_line": "【2345.T】包み線, 赤三兵点灯。出来高増加待ち | Score: 11.38 | 現在値: ¥233 | TP: ¥297 | SL: ¥201"
+    },
+    {
+      "ticker": "8200.T",
+      "name": "8200.T",
+      "watchlist_score": 11.1535,
+      "reason_short": "インサイドバー点灯。出来高増加待ち",
+      "entry": 2284.0,
+      "tp": 2308.0,
+      "sl": 2272.0,
+      "conviction_score": 11.1535,
+      "formatted_line": "【8200.T】インサイドバー点灯。出来高増加待ち | Score: 11.15 | 現在値: ¥2,284 | TP: ¥2,308 | SL: ¥2,272"
     },
     {
       "ticker": "2292.T",
       "name": "2292.T",
       "watchlist_score": 11.0481,
-      "reason_short": "陰線後の陽線点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
+      "reason_short": "陰線後の陽線点灯。出来高増加待ち | 押し目形成中",
       "entry": 3250.0,
       "tp": 3500.0,
       "sl": 3125.0,
-      "conviction_score": 11.0481
-    },
-    {
-      "ticker": "7611.T",
-      "name": "7611.T",
-      "watchlist_score": 10.0106,
-      "reason_short": "リバーサルロー, 包み線点灯。出来高の本格的な増加（1.5倍超え）待ち",
-      "entry": 3230.0,
-      "tp": 3310.0,
-      "sl": 3190.0,
-      "conviction_score": 10.0106
-    },
-    {
-      "ticker": "4530.T",
-      "name": "4530.T",
-      "watchlist_score": 9.0726,
-      "reason_short": "二本たくり線, 二本たくり線点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
-      "entry": 6030.0,
-      "tp": 6206.0,
-      "sl": 5942.0,
-      "conviction_score": 9.0726
+      "conviction_score": 11.0481,
+      "formatted_line": "【2292.T】陰線後の陽線点灯。出来高増加待ち | 押し目形成中 | Score: 11.05 | 現在値: ¥3,250 | TP: ¥3,500 | SL: ¥3,125"
     }
   ],
   "all": [],
