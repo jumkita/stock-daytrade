@@ -130,7 +130,7 @@ def _process_one_ticker(
     tp_sl = compute_tp_sl(df, bar_index=bar)
     rationale = build_signal_rationale(
         df, bar,
-        multiple=1.4 if provisional else 1.5,
+        multiple=1.2,
         ma_pct_display=7 if provisional else None,
     )
     conviction = compute_conviction_score(df, bar)
@@ -218,7 +218,12 @@ def build_tweet(picked: list[dict[str, Any]], watch_names: Optional[list[str]] =
         lines.append("※15:15暫定（大引け前の暫定値・TP/SLは暫定終値ベース）")
     for r in picked:
         label = "本命" if r.get("status") == "active" else "注目"
-        lines.append(f"■ [{label}] {r['name']} ({r['ticker']})")
+        name = r.get("name") or r.get("ticker", "")
+        # コードのみフォールバック（【】で囲まれている）なら重複表示しない
+        if name.startswith("【") and name.endswith("】"):
+            lines.append(f"■ [{label}] {name}")
+        else:
+            lines.append(f"■ [{label}] {name} ({r['ticker']})")
         lines.append(f"・シグナル: {r.get('buy_signals', '—')}")
         entry = r.get("entry")
         tp_val = r.get("tp")
@@ -231,6 +236,7 @@ def build_tweet(picked: list[dict[str, Any]], watch_names: Optional[list[str]] =
             lines.append(f"・損切り(SL): ¥{sl_val:,.0f}")
         rationale = r.get("rationale") or "—"
         lines.append(f"・根拠: {rationale}")
+        lines.append("")
     lines.append("")
     lines.append("※機械的スクリーニング結果。投資判断は自己責任で。")
     lines.append("#日本株 #プライスアクション")

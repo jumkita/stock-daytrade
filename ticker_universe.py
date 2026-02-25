@@ -6,10 +6,11 @@ CSV形式: 1列目または code/銘柄コード/コード 列に 4桁コード�
 """
 from __future__ import annotations
 
+import json
 import os
 import re
 from io import BytesIO
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 # 日経225（フォールバック用）
 NIKKEI_225_CODES = [
@@ -40,7 +41,10 @@ NIKKEI_225_CODES = [
 ]
 
 DEFAULT_CSV_PATH = "jpx_all_tickers.csv"
+DEFAULT_TICKER_MAPPING_PATH = "ticker_mapping.json"
 JPX_LIST_PAGE = "https://www.jpx.co.jp/markets/statistics-equities/misc/01.html"
+
+_name_mapping_cache: Optional[Dict[str, str]] = None
 
 
 def _normalize_code(raw: str) -> Optional[str]:
@@ -181,3 +185,86 @@ def get_ticker_universe(csv_path: Optional[str] = None) -> List[str]:
     if tickers:
         return tickers
     return [f"{c}.T" for c in NIKKEI_225_CODES]
+
+
+def load_ticker_name_mapping() -> Dict[str, str]:
+    """
+    銘柄コード → 銘柄名（日本語）のローカルマッピングを返す。
+    ticker_mapping.json を優先し、続けて CSV の name/銘柄名 列があればマージする。API 不要。
+    """
+    global _name_mapping_cache
+    if _name_mapping_cache is not None:
+        return _name_mapping_cache
+    out: Dict[str, str] = {}
+    root = os.path.dirname(os.path.abspath(__file__))
+    # 1) ticker_mapping.json
+    path_json = os.environ.get("TICKER_MAPPING_JSON", "").strip() or DEFAULT_TICKER_MAPPING_PATH
+    if not os.path.isabs(path_json):
+        path_json = os.path.join(root, path_json)
+    if os.path.isfile(path_json):
+        try:
+            with open(path_json, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, dict):
+                for k, v in data.items():
+                    if isinstance(v, str) and v.strip():
+                        key = k.strip()
+                        if key.endswith(".T"):
+                            out[key] = v.strip()
+                        else:
+                            out[f"{key}.T"] = v.strip()
+        except Exception:
+            pass
+    # 2) CSV の name / 銘柄名 列
+    path_csv = os.environ.get("JPX_TICKERS_CSV", "").strip() or DEFAULT_CSV_PATH
+    if not os.path.isabs(path_csv):
+        path_csv = os.path.join(root, path_csv)
+    if os.path.isfile(path_csv):
+        try:
+            import pandas as pd
+            df = pd.read_csv(path_csv, encoding="utf-8", dtype=str, nrows=5000)
+        except Exception:
+            try:
+                import pandas as pd
+                df = pd.read_csv(path_csv, encoding="cp932", dtype=str, nrows=5000)
+            except Exception:
+                df = None
+        if df is not None and not df.empty:
+            code_col = None
+            name_col = None
+            for c in df.columns:
+                cstr = str(c).strip()
+                if cstr.lower() in ("code", "symbol", "ticker") or "コード" in cstr:
+                    code_col = c
+                if cstr.lower() in ("name", "銘柄名", "名称", "会社名"):
+                    name_col = c
+            if code_col is None:
+                code_col = df.columns[0]
+            if name_col and name_col in df.columns:
+                for _, row in df.iterrows():
+                    t = _normalize_code(str(row.get(code_col, "")))
+                    name = str(row.get(name_col, "")).strip()
+                    if t and name and name not in ("nan", "-", ""):
+                        out[t] = name
+        except Exception:
+            pass
+    _name_mapping_cache = out
+    return out
+
+
+def get_ticker_name_local(ticker: str) -> str:
+    """
+    銘柄コードから表示用名称を返す。ローカル（ticker_mapping.json / CSV）のみ参照し、yfinance は使わない。
+    未登録時は【コード】形式で返し、重複表示を防ぐ。
+    """
+    if not ticker or not isinstance(ticker, str):
+        return ticker or ""
+    mapping = load_ticker_name_mapping()
+    t = ticker.strip()
+    if t in mapping:
+        return mapping[t]
+    code_only = t.replace(".T", "") if t.endswith(".T") else t
+    if f"{code_only}.T" in mapping:
+        return mapping[f"{code_only}.T"]
+    # フォールバック: コードのみを【】で囲み、他で (ticker) と重ねない
+    return f"【{t}】"

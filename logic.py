@@ -836,8 +836,8 @@ def classify_signal_status(
     ma_dev = get_ma_deviation(df, bar_index)
     if vol_ratio is None or ma_dev is None:
         return None
-    # 15:15 時点では引けにかけての出来高増加を見越し、閾値を 1.3 倍に補正
-    vol_active = 1.3 if provisional else 1.5
+    # 15:15 時点は大引け出来高未反映のため、本命条件を 1.2 倍に統一（時間補正）
+    vol_active = 1.2
     ma_active = 0.07 if provisional else 0.02
     if vol_ratio >= vol_active and ma_dev <= ma_active:
         return ("active", "—")
@@ -937,8 +937,8 @@ def _safe_num(val: Optional[float], default: float = 0.0) -> float:
         return default
 
 
-# 監視銘柄（Watchlist）用しきい値
-WATCH_VOL_RATIO_A = 1.2   # 条件A: 出来高1.2倍以上
+# 監視銘柄（Watchlist）用しきい値（15:15 は大引け未反映のため緩和）
+WATCH_VOL_RATIO_A = 1.0   # 条件A: 前日と同等以上で資金流入とみなす
 WATCH_VOL_RATIO_B = 2.0   # 条件B: 出来高2.0倍以上
 WATCH_MA_PCT_A = 0.05     # 条件A: MA乖離5%以内
 WATCH_MA_PCT_B = 0.03     # 条件B: MA乖離3%以内
@@ -975,7 +975,7 @@ def watchlist_eligible(
     """
     監視銘柄の足切り。意味のあるニアミスのみ。
     Returns: (合格するか, "A"|"B"|None)
-    - 条件A（形完成・エネルギー待ち）: パターン点灯 かつ 出来高1.2倍以上 かつ MA乖離5%以内
+    - 条件A（形完成・エネルギー待ち）: パターン点灯 かつ 出来高1.0倍以上 かつ MA乖離5%以内
     - 条件B（エネルギー爆発・形未完成）: パターン未点灯 かつ 出来高2.0倍以上 かつ MA乖離3%以内
     """
     v = _safe_num(vol_ratio, 0.0)
@@ -1022,11 +1022,11 @@ def filter_signals_by_pro_filters(
 ) -> list[tuple[int, str, str]]:
     """
     出来高スパイク・MA近接の両方を満たすシグナルのみに絞る（本命のみ）。
-    provisional=True のときは 15:15 暫定用（出来高1.3倍以上・MA±7%。引け増加分を見込んだ補正）。
+    provisional=True のときは 15:15 暫定用（出来高1.2倍以上・MA±7%。大引け未反映を考慮した時間補正）。
     """
     if df is None or not patterns:
         return []
-    vol_multiple = 1.3 if provisional else 1.5
+    vol_multiple = 1.2
     ma_pct = 0.07 if provisional else 0.02
     out = []
     for i, name, s in patterns:
