@@ -5,14 +5,16 @@ Ambiguous 対策済み。Model A (Business) / B (Financials) の2軸。app/scree
 """
 from __future__ import annotations
 
+import os
+import time
 import logging
-from datetime import datetime, time, timezone, timedelta
+from datetime import datetime, time as dt_time, timezone, timedelta
 from typing import Any, Optional
 
 # 日本時間（JST = UTC+9）
 JST = timezone(timedelta(hours=9))
-PROVISIONAL_START = time(15, 10)  # 15:10 JST
-PROVISIONAL_END = time(15, 30)    # 15:30 JST（yfinance 約15分遅延を考慮）
+PROVISIONAL_START = dt_time(15, 10)  # 15:10 JST
+PROVISIONAL_END = dt_time(15, 30)    # 15:30 JST（yfinance 約15分遅延を考慮）
 
 import numpy as np
 import pandas as pd
@@ -370,8 +372,13 @@ def fetch_ohlcv(ticker_symbol: str, period: str = "6mo", interval: str = "1d") -
         return None
 
 
-# バルク取得のチャンクサイズ（yfinance は一度に100〜200銘柄程度が安定）
-BULK_CHUNK_SIZE = 150
+# バルク取得のチャンクサイズ。小さいほど接続エラー時の影響が少ない（GitHub Actions 等で安定）
+# 環境変数 BULK_CHUNK_SIZE で上書き可（例: 80）
+try:
+    _chunk = int(os.environ.get("BULK_CHUNK_SIZE", "50"))
+    BULK_CHUNK_SIZE = max(20, min(200, _chunk))
+except (TypeError, ValueError):
+    BULK_CHUNK_SIZE = 50
 PREFILTER_PERIOD = "2mo"  # 20営業日以上の出来高・株価を得るため
 
 
@@ -411,10 +418,14 @@ def fetch_ohlcv_bulk(
     """
     result: dict[str, pd.DataFrame] = {}
     chunk_size = max(1, min(chunk_size, 200))
+    # GitHub Actions 等ではチャンク間に短い待機でレート制限・接続リセットを緩和
+    chunk_delay = 1.0 if os.environ.get("GITHUB_ACTIONS") else 0.0
     for start in range(0, len(tickers), chunk_size):
         chunk = tickers[start : start + chunk_size]
         if not chunk:
             continue
+        if chunk_delay > 0 and start > 0:
+            time.sleep(chunk_delay)
         try:
             raw = yf.download(
                 " ".join(chunk),

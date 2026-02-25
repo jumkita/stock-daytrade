@@ -42,9 +42,40 @@ NIKKEI_225_CODES = [
 
 DEFAULT_CSV_PATH = "jpx_all_tickers.csv"
 DEFAULT_TICKER_MAPPING_PATH = "ticker_mapping.json"
+DEFAULT_SKIP_TICKERS_PATH = "jpx_skip_tickers.txt"
 JPX_LIST_PAGE = "https://www.jpx.co.jp/markets/statistics-equities/misc/01.html"
 
+# 取得をスキップする銘柄（上場廃止・データなし等）。jpx_skip_tickers.txt で追加可能
+SKIP_TICKERS_DEFAULT = {"6576.T"}  # 上場廃止等で Yahoo にデータなし
+
 _name_mapping_cache: Optional[Dict[str, str]] = None
+_skip_tickers_cache: Optional[set] = None
+
+
+def get_skip_tickers() -> set:
+    """取得スキップする銘柄コードの set。jpx_skip_tickers.txt（1行1銘柄）＋既定の廃止銘柄。"""
+    global _skip_tickers_cache
+    if _skip_tickers_cache is not None:
+        return _skip_tickers_cache
+    out = set(SKIP_TICKERS_DEFAULT)
+    root = os.path.dirname(os.path.abspath(__file__))
+    path = os.environ.get("JPX_SKIP_TICKERS_PATH", "").strip() or DEFAULT_SKIP_TICKERS_PATH
+    if not os.path.isabs(path):
+        path = os.path.join(root, path)
+    if os.path.isfile(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    t = _normalize_code(line)
+                    if t:
+                        out.add(t)
+        except Exception:
+            pass
+    _skip_tickers_cache = out
+    return out
 
 
 def _normalize_code(raw: str) -> Optional[str]:
@@ -222,9 +253,10 @@ def get_ticker_universe_with_source(csv_path: Optional[str] = None) -> tuple[Lis
     root = os.path.dirname(os.path.abspath(__file__))
     if not os.path.isabs(path):
         path = os.path.join(root, path)
+    skip = get_skip_tickers()
     tickers = load_tickers_from_csv(path)
     if tickers:
-        return tickers, "csv"
+        return [t for t in tickers if t not in skip], "csv"
     # 同じベース名の Excel を試す（jpx_all_tickers.xlsx / .xls）
     base, _ = os.path.splitext(path)
     for ext in (".xlsx", ".xls"):
@@ -232,11 +264,11 @@ def get_ticker_universe_with_source(csv_path: Optional[str] = None) -> tuple[Lis
         if os.path.isfile(excel_path):
             tickers = load_tickers_from_excel(excel_path)
             if tickers:
-                return tickers, "excel"
+                return [t for t in tickers if t not in skip], "excel"
     tickers = fetch_jpx_tickers()
     if tickers:
-        return tickers, "jpx"
-    return [f"{c}.T" for c in NIKKEI_225_CODES], "nikkei225"
+        return [t for t in tickers if t not in skip], "jpx"
+    return [f"{c}.T" for c in NIKKEI_225_CODES if f"{c}.T" not in skip], "nikkei225"
 
 
 def load_ticker_name_mapping() -> Dict[str, str]:
