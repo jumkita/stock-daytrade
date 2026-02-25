@@ -426,9 +426,8 @@ def main():
                     combined = active_list + high_potential_list
                     combined.sort(key=lambda x: float(x.get("conviction_score", 0)), reverse=True)
                     picked = combined[:3]
-                    watch_names = [w["name"] for w in watch_list] if watch_list else None
                     if picked:
-                        tweet_text = build_tweet(picked, watch_names)
+                        tweet_text = build_tweet(picked, watch_items=watch_list if watch_list else None)
                     else:
                         tweet_text = "本日は買いシグナル点灯銘柄はありませんでした。"
                     st.session_state.daily_buy_signals = active_list

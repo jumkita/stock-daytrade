@@ -996,18 +996,18 @@ def build_watchlist_reason_short(
     condition_ab: Optional[str],
 ) -> str:
     """
-    監視銘柄の「何が足りないか」を条件に沿って出し分け。
-    - 条件A: 「〇〇（パターン名）点灯。出来高の本格的な増加（1.5倍超え）待ち」
-    - 条件B: 「強烈な資金流入（出来高〇倍）あり。買いパターンの形成待ち」
-    - MA乖離が3%〜5%: 「押し目形成中。MAタッチでの反発を確認せよ」を追記
+    監視銘柄の「何が足りないか」を条件に沿って出し分け。緩和ロジックに合わせた文面（1.5倍超えの固定表現は廃止）。
+    - 条件A: パターン名点灯。出来高増加待ち
+    - 条件B: 強烈な資金流入（出来高〇倍）あり。買いパターンの形成待ち
+    - MA乖離3%〜5%時は「 | 押し目形成中」を付与
     """
     ma = _safe_num(ma_dev, 0.0)
     ma_in_3_5 = 0.03 < ma <= 0.05
-    suffix = " 押し目形成中。MAタッチでの反発を確認せよ" if ma_in_3_5 else ""
+    suffix = " | 押し目形成中" if ma_in_3_5 else ""
 
     if condition_ab == "A":
         name = pattern_names.strip() or "買いパターン"
-        return f"{name}点灯。出来高の本格的な増加（1.5倍超え）待ち{suffix}".strip()
+        return f"{name}点灯。出来高増加待ち{suffix}".strip()
     if condition_ab == "B":
         v = _safe_num(vol_ratio, 0.0)
         vol_str = f"{v:.1f}" if v == v else "—"

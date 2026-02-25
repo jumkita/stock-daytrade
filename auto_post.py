@@ -67,6 +67,45 @@ def _safe_float_for_sort(val: Any) -> float:
         return 0.0
 
 
+def _display_name(ticker: str, name: str) -> str:
+    """Ticker の印字は1回のみ。名前が未設定またはコードと同一の場合は【コード】に統一。"""
+    t = (ticker or "").strip()
+    n = (name or "").strip()
+    if not t:
+        return n or "—"
+    if not n or n == t or n == t.replace(".T", "") or n == t.replace(".T", "") + ".T":
+        return f"【{t}】"
+    if n.startswith("【") and n.endswith("】"):
+        return n
+    return n
+
+
+def _fmt_price(val: Any) -> str:
+    """価格を ¥x,xxx 形式に。None/NaN は —。"""
+    if val is None:
+        return "—"
+    try:
+        f = float(val)
+        if f != f:
+            return "—"
+        return f"¥{f:,.0f}"
+    except (TypeError, ValueError):
+        return "—"
+
+
+def format_watchlist_line(item: dict) -> str:
+    """監視1件をパイプ区切りで1行に整形。例: 【4530.T】二本たくり線点灯。出来高増加待ち | 押し目形成中 | Score: 9.07 | 現在値: ¥6,030 | TP: ¥6,206 | SL: ¥5,942"""
+    ticker = item.get("ticker") or ""
+    code_display = f"【{ticker}】" if ticker else ""
+    reason = (item.get("reason_short") or "—").strip()
+    score = item.get("watchlist_score")
+    score_str = f"{float(score):.2f}" if score is not None and (isinstance(score, (int, float)) and score == score) else "—"
+    entry = _fmt_price(item.get("entry"))
+    tp = _fmt_price(item.get("tp"))
+    sl = _fmt_price(item.get("sl"))
+    return f"{code_display}{reason} | Score: {score_str} | 現在値: {entry} | TP: {tp} | SL: {sl}"
+
+
 def _process_one_ticker(
     ticker: str, provisional: bool
 ) -> Tuple[List[dict], List[dict], List[dict]]:
@@ -107,7 +146,7 @@ def _process_one_ticker(
                 pattern_found, pattern_names, vol_ratio, ma_dev, condition_ab
             )
             tp_sl = compute_tp_sl(df, bar_index=bar)
-            watch_candidates.append({
+            w = {
                 "ticker": ticker,
                 "name": name,
                 "watchlist_score": score,
@@ -116,7 +155,9 @@ def _process_one_ticker(
                 "tp": tp_sl.get("tp"),
                 "sl": tp_sl.get("sl"),
                 "conviction_score": score,
-            })
+            }
+            w["formatted_line"] = format_watchlist_line(w)
+            watch_candidates.append(w)
 
     if n < 76:
         return active, high_potential, watch_candidates
@@ -210,11 +251,14 @@ def scan_buy_signal_only() -> dict[str, list[dict[str, Any]]]:
     return {"active": active + high_potential, "watch": watch}
 
 
-def build_tweet(picked: list[dict[str, Any]], watch_names: Optional[list[str]] = None) -> str:
+def build_tweet(
+    picked: list[dict[str, Any]],
+    watch_names: Optional[list[str]] = None,
+    watch_items: Optional[list[dict[str, Any]]] = None,
+) -> str:
     """
-    投稿文を組み立てる（本命・注目から確信度上位最大3銘柄。監視は1行で言及）。
-    銘柄名はローカルマッピングのみ。未登録は【コード】とし (ticker) を重ねない。各銘柄ブロックの区切りに改行。
-    280文字を超えないよう調整する。
+    投稿文を組み立てる。Ticker は1回のみ【コード】で表示。数値はパイプ区切りで視認性を確保。
+    監視は watch_items があれば formatted_line（パイプ区切り1行）を優先。280文字を超えないよう調整する。
     """
     provisional = any(r.get("provisional") for r in picked)
     lines = ["【本日の厳選3銘柄】"]
@@ -222,35 +266,42 @@ def build_tweet(picked: list[dict[str, Any]], watch_names: Optional[list[str]] =
         lines.append("※15:15暫定（大引け前の暫定値・TP/SLは暫定終値ベース）")
     for r in picked:
         label = "本命" if r.get("status") == "active" else "注目"
-        name = (r.get("name") or r.get("ticker") or "").strip()
-        if name.startswith("【") and name.endswith("】"):
-            lines.append(f"■ [{label}] {name}")
-        else:
-            lines.append(f"■ [{label}] {name} ({r['ticker']})")
+        disp = _display_name(r.get("ticker") or "", r.get("name") or "")
+        lines.append(f"■ [{label}] {disp}")
         lines.append(f"・シグナル: {r.get('buy_signals', '—')}")
-        entry = r.get("entry")
-        tp_val = r.get("tp")
-        sl_val = r.get("sl")
-        if entry is not None:
-            lines.append(f"・エントリー想定: ¥{entry:,.0f}")
-        if tp_val is not None:
-            lines.append(f"・利確(TP): ¥{tp_val:,.0f}")
-        if sl_val is not None:
-            lines.append(f"・損切り(SL): ¥{sl_val:,.0f}")
         rationale = r.get("rationale") or "—"
-        lines.append(f"・根拠: {rationale}")
+        score = r.get("conviction_score")
+        score_str = f"{float(score):.2f}" if score is not None and isinstance(score, (int, float)) and score == score else "—"
+        entry_s = _fmt_price(r.get("entry"))
+        tp_s = _fmt_price(r.get("tp"))
+        sl_s = _fmt_price(r.get("sl"))
+        lines.append(f"・根拠: {rationale} | Score: {score_str} | 現在値: {entry_s} | TP: {tp_s} | SL: {sl_s}")
         lines.append("")
     lines.append("※機械的スクリーニング結果。投資判断は自己責任で。")
     lines.append("#日本株 #プライスアクション")
     text = "\n".join(lines)
-    if watch_names and len(text) + 2 + len("【監視】 " + " / ".join(watch_names[:5])) <= MAX_TWEET_LEN:
-        text = text + "\n\n【監視】 " + " / ".join(watch_names[:5])
+    # 監視: watch_items の formatted_line を1行ずつ追加（入る範囲）。未設定なら format_watchlist_line で生成。入らなければ短い「名前」のみ
+    if watch_items:
+        watch_lines = [(w.get("formatted_line") or format_watchlist_line(w)).strip() for w in watch_items[:3]]
+        watch_lines = [ln for ln in watch_lines if ln]
+        if watch_lines:
+            suffix = "\n\n【監視】\n" + "\n".join(watch_lines)
+            if len(text) + len(suffix) <= MAX_TWEET_LEN:
+                text = text + suffix
+        if "【監視】" not in text:
+            short = " / ".join(_display_name(w.get("ticker", ""), w.get("name", "")) for w in watch_items[:5])
+            if short and len(text) + 2 + len("【監視】 " + short) <= MAX_TWEET_LEN:
+                text = text + "\n\n【監視】 " + short
+    elif watch_names:
+        short = " / ".join(watch_names[:5])
+        if len(text) + 2 + len("【監視】 " + short) <= MAX_TWEET_LEN:
+            text = text + "\n\n【監視】 " + short
     if len(text) <= MAX_TWEET_LEN:
         return text
     if len(picked) > 1:
-        return build_tweet(picked[:1], watch_names)
+        return build_tweet(picked[:1], watch_names, watch_items)
     single = {**picked[0], "buy_signals": (picked[0].get("buy_signals") or "")[:47] + "…"}
-    return build_tweet([single], watch_names)
+    return build_tweet([single], watch_names, watch_items)
 
 
 def post_to_x(text: str) -> tuple[bool, str | None]:
@@ -297,11 +348,9 @@ def main() -> int:
     combined = active + high_potential
     combined.sort(key=lambda x: float(x.get("conviction_score", 0)), reverse=True)
     picked = combined[:PICK_MAX]
-    watch_names = [w["name"] for w in watch] if watch else None
-
     tweet_text = "本日は買いシグナル点灯銘柄はありませんでした。"
     if picked:
-        tweet_text = build_tweet(picked, watch_names)
+        tweet_text = build_tweet(picked, watch_items=watch if watch else None)
         print(tweet_text)
         print("---")
 
