@@ -19,8 +19,9 @@ if _cwd and _cwd not in sys.path:
 import json
 import logging
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Any, List, Optional, Tuple
 
 # yfinance の delisted/404 などの ERROR ログを抑制（銘柄スキャン時に大量に出るため）
 logging.getLogger("yfinance").setLevel(logging.WARNING)
@@ -40,6 +41,7 @@ from logic import (
     get_volume_ratio,
     get_ma_deviation,
     is_provisional_market_session,
+    prefilter_ticker,
 )
 from screener import TARGET_TICKERS, get_ticker_name
 
@@ -47,6 +49,9 @@ MAX_TWEET_LEN = 280
 PICK_MAX = 3
 WATCHLIST_TOP_N = 5
 SLEEP_SEC = 0.5
+# 並列処理: プレフィルターと本スキャンのワーカー数（API制限を考慮）
+PREFILTER_MAX_WORKERS = 10
+SCAN_MAX_WORKERS = 4
 
 
 def _safe_float_for_sort(val: Any) -> float:
@@ -62,16 +67,113 @@ def _safe_float_for_sort(val: Any) -> float:
         return 0.0
 
 
+def _process_one_ticker(
+    ticker: str, provisional: bool
+) -> Tuple[List[dict], List[dict], List[dict]]:
+    """
+    1銘柄分のスキャン。本命・注目・監視候補を返す。並列実行用。
+    Returns: (active_list, high_potential_list, watch_candidates)
+    """
+    active: List[dict] = []
+    high_potential: List[dict] = []
+    watch_candidates: List[dict] = []
+    try:
+        df = fetch_ohlcv(ticker, period="3mo", interval="1d")
+    except Exception:
+        return active, high_potential, watch_candidates
+    if df is None:
+        return active, high_potential, watch_candidates
+    n = len(df)
+    bar = n - 1
+    name = get_ticker_name(ticker)
+
+    patterns: list = []
+    if n >= 25:
+        try:
+            patterns = detect_all_patterns(df)
+        except Exception:
+            pass
+    buy_on_last_day = [(i, nm, side) for i, nm, side in patterns if side == "buy" and i == bar]
+
+    if n >= 25:
+        vol_ratio = get_volume_ratio(df, bar)
+        ma_dev = get_ma_deviation(df, bar)
+        pattern_found = len(buy_on_last_day) > 0
+        pattern_names = ", ".join(nm for _, nm, _ in buy_on_last_day) if buy_on_last_day else ""
+        eligible, condition_ab = watchlist_eligible(pattern_found, vol_ratio, ma_dev)
+        if eligible and condition_ab:
+            score = watchlist_score(df, bar, pattern_found)
+            reason_short = build_watchlist_reason_short(
+                pattern_found, pattern_names, vol_ratio, ma_dev, condition_ab
+            )
+            tp_sl = compute_tp_sl(df, bar_index=bar)
+            watch_candidates.append({
+                "ticker": ticker,
+                "name": name,
+                "watchlist_score": score,
+                "reason_short": reason_short,
+                "entry": tp_sl.get("entry"),
+                "tp": tp_sl.get("tp"),
+                "sl": tp_sl.get("sl"),
+                "conviction_score": score,
+            })
+
+    if n < 76:
+        return active, high_potential, watch_candidates
+    if not buy_on_last_day:
+        return active, high_potential, watch_candidates
+    classification = hybrid_classify_signal(df, bar, has_buy_pattern=True, provisional=provisional)
+    if classification is None:
+        return active, high_potential, watch_candidates
+    status, reason_short_h = classification
+    buy_names = [nm for _, nm, _ in buy_on_last_day]
+    tp_sl = compute_tp_sl(df, bar_index=bar)
+    rationale = build_signal_rationale(
+        df, bar,
+        multiple=1.4 if provisional else 1.5,
+        ma_pct_display=7 if provisional else None,
+    )
+    conviction = compute_conviction_score(df, bar)
+    item = {
+        "ticker": ticker,
+        "name": name,
+        "buy_signals": ", ".join(buy_names),
+        "signal_count": len(buy_names),
+        "entry": tp_sl.get("entry"),
+        "tp": tp_sl.get("tp"),
+        "sl": tp_sl.get("sl"),
+        "rationale": rationale,
+        "provisional": provisional,
+        "status": status,
+        "reason_short": reason_short_h,
+        "conviction_score": conviction,
+    }
+    if status == "active":
+        active.append(item)
+    else:
+        high_potential.append(item)
+    return active, high_potential, watch_candidates
+
+
 def scan_hybrid() -> dict[str, Any]:
     """
     ハイブリッド判定で 本命(active)・注目(high_potential)・監視(watch) を返す。
-    - 本命: Type-A/Type-B で全条件合致（確信度高）。
-    - 注目: 条件の8割以上充足（確信度中）。
-    - 監視: 条件A（パターン点灯+出来高1.2倍+MA5%以内）または条件B（パターン未点灯+出来高2倍+MA3%以内）を満たす銘柄のみスコア順で上位5件。
+    プレフィルター（流動性・株価）で足切りし、通過銘柄のみ並列で本スキャンする。
     """
     tickers = list(TARGET_TICKERS)
     print(f"DEBUG: 読み込まれた銘柄数 = {len(tickers)}")
     if len(tickers) == 0:
+        return {"active": [], "high_potential": [], "watch": []}
+
+    # プレフィルター: 流動性100千株以上・株価100円以上を並列で判定
+    passed: List[str] = []
+    with ThreadPoolExecutor(max_workers=PREFILTER_MAX_WORKERS) as ex:
+        futs = {ex.submit(prefilter_ticker, t): t for t in tickers}
+        for fut in as_completed(futs):
+            if fut.result():
+                passed.append(futs[fut])
+    print(f"DEBUG: プレフィルター通過銘柄数 = {len(passed)}")
+    if len(passed) == 0:
         return {"active": [], "high_potential": [], "watch": []}
 
     provisional = is_provisional_market_session()
@@ -79,92 +181,20 @@ def scan_hybrid() -> dict[str, Any]:
     high_potential: list[dict[str, Any]] = []
     watch_candidates: list[dict[str, Any]] = []
 
-    for ticker in tickers:
-        print(f"DEBUG: スキャン開始 -> {ticker}")
-        time.sleep(SLEEP_SEC)
-        try:
-            df = fetch_ohlcv(ticker, period="3mo", interval="1d")
-        except Exception:
-            continue
-        if df is None:
-            continue
-        n = len(df)
-        bar = n - 1
-        name = get_ticker_name(ticker)
-
-        # 25本以上でパターン検出を1回だけ実行（監視・本命の両方で利用）
-        patterns: list = []
-        if n >= 25:
+    # 本スキャン: 並列で fetch + 判定（ワーカー数制限でAPI制限を緩和）
+    with ThreadPoolExecutor(max_workers=SCAN_MAX_WORKERS) as ex:
+        futs = {ex.submit(_process_one_ticker, t, provisional): t for t in passed}
+        for fut in as_completed(futs):
             try:
-                patterns = detect_all_patterns(df)
+                a, h, w = fut.result()
+                active.extend(a)
+                high_potential.extend(h)
+                watch_candidates.extend(w)
             except Exception:
                 pass
-        buy_on_last_day = [(i, nm, side) for i, nm, side in patterns if side == "buy" and i == bar]
 
-        # 監視リスト: 条件AまたはBを満たす銘柄のみ候補に追加（買いパターンを評価の主軸にしたニアミス）
-        if n >= 25:
-            vol_ratio = get_volume_ratio(df, bar)
-            ma_dev = get_ma_deviation(df, bar)
-            pattern_found = len(buy_on_last_day) > 0
-            pattern_names = ", ".join(nm for _, nm, _ in buy_on_last_day) if buy_on_last_day else ""
-            eligible, condition_ab = watchlist_eligible(pattern_found, vol_ratio, ma_dev)
-            if eligible and condition_ab:
-                score = watchlist_score(df, bar, pattern_found)
-                reason_short = build_watchlist_reason_short(
-                    pattern_found, pattern_names, vol_ratio, ma_dev, condition_ab
-                )
-                tp_sl = compute_tp_sl(df, bar_index=bar)
-                watch_candidates.append({
-                    "ticker": ticker,
-                    "name": name,
-                    "watchlist_score": score,
-                    "reason_short": reason_short,
-                    "entry": tp_sl.get("entry"),
-                    "tp": tp_sl.get("tp"),
-                    "sl": tp_sl.get("sl"),
-                    "conviction_score": score,
-                })
-
-        # 本命・注目: 76本以上かつ買いパターン当日点灯の銘柄のみ
-        if n < 76:
-            continue
-        if not buy_on_last_day:
-            continue
-        classification = hybrid_classify_signal(df, bar, has_buy_pattern=True, provisional=provisional)
-        if classification is None:
-            continue
-        status, reason_short_h = classification
-        buy_names = [nm for _, nm, _ in buy_on_last_day]
-        tp_sl = compute_tp_sl(df, bar_index=bar)
-        rationale = build_signal_rationale(
-            df, bar,
-            multiple=1.4 if provisional else 1.5,
-            ma_pct_display=7 if provisional else None,
-        )
-        conviction = compute_conviction_score(df, bar)
-        item = {
-            "ticker": ticker,
-            "name": name,
-            "buy_signals": ", ".join(buy_names),
-            "signal_count": len(buy_names),
-            "entry": tp_sl.get("entry"),
-            "tp": tp_sl.get("tp"),
-            "sl": tp_sl.get("sl"),
-            "rationale": rationale,
-            "provisional": provisional,
-            "status": status,
-            "reason_short": reason_short_h,
-            "conviction_score": conviction,
-        }
-        if status == "active":
-            active.append(item)
-        else:
-            high_potential.append(item)
-
-    # 監視 = スコア順ソートの上位5件を必ず返す（早期returnなし）
     watch_candidates.sort(key=lambda x: _safe_float_for_sort(x.get("watchlist_score")), reverse=True)
     watch = watch_candidates[:WATCHLIST_TOP_N]
-
     return {"active": active, "high_potential": high_potential, "watch": watch}
 
 

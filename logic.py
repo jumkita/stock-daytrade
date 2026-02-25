@@ -370,6 +370,40 @@ def fetch_ohlcv(ticker_symbol: str, period: str = "6mo", interval: str = "1d") -
         return None
 
 
+# プレフィルター（API制限・ノイズ排除）のしきい値
+PREFILTER_MIN_VOLUME = 100_000   # 直近平均出来高 100,000株未満は除外
+PREFILTER_MIN_PRICE = 100.0      # 現在値 100円未満（ペニーストック）は除外
+
+
+def prefilter_ticker(
+    ticker_symbol: str,
+    period: str = "5d",
+    min_volume: float = PREFILTER_MIN_VOLUME,
+    min_price: float = PREFILTER_MIN_PRICE,
+) -> bool:
+    """
+    軽量データ（短期足）で流動性・株価の足切りを行う。True のときのみ本スキャン対象とする。
+    - 流動性: 直近の平均出来高が min_volume 未満なら False
+    - 株価: 現在値が min_price 未満なら False
+    """
+    df = fetch_ohlcv(ticker_symbol, period=period, interval="1d")
+    if df is None or len(df) < 1:
+        return False
+    try:
+        if "Volume" in df.columns:
+            vol = df["Volume"]
+            avg_vol = vol.mean()
+            if pd.isna(avg_vol) or float(avg_vol) < min_volume:
+                return False
+        if "Close" in df.columns:
+            close = float(df["Close"].iloc[-1])
+            if pd.isna(close) or close < min_price:
+                return False
+        return True
+    except Exception:
+        return False
+
+
 def get_downtrend_mask(df: pd.DataFrame, window: int = 25) -> pd.Series:
     """終値が SMA(window) より下の行を True とするマスク。"""
     if df is None or getattr(df, "empty", True) or "Close" not in df.columns:

@@ -417,7 +417,7 @@ def main():
     col_refresh, col_fetch, _ = st.columns([1, 1, 2])
     with col_refresh:
         if st.button("表示を更新", key="daily_signal_refresh"):
-            with st.spinner("日経225をスキャン中…（約2〜3分）"):
+            with st.spinner("対象銘柄をスキャン中…（プレフィルター＋並列処理で10〜15分程度）"):
                 try:
                     scan_result = scan_hybrid()
                     active_list = scan_result.get("active", [])
@@ -574,7 +574,7 @@ def main():
     # ----- 市場スキャン -----
     st.subheader("市場スキャン（厳選銘柄）")
     st.caption(
-        f"対象: {len(TARGET_TICKERS)} 銘柄（日経225）— "
+        f"対象: {len(TARGET_TICKERS)} 銘柄（CSV/東証リストまたは日経225）— "
         "直近3日以内に「勝率・収益性の高いサイン」が1つ以上出た銘柄を抽出（バックテスト: 勝率50%以上・PF≥1.0・約定5回以上）。"
         " 乖離率20%以上でさらに絞り込み。"
     )
