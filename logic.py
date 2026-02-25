@@ -826,6 +826,7 @@ def classify_signal_status(
 ) -> Optional[tuple[str, str]]:
     """
     本命 / 出来高待ち / 押し目待ち のいずれかに分類する。
+    15:15 実行時は大引け出来高未反映のため、本命の出来高条件は 1.2 倍に統一。
     Returns:
         ("active", "—") 本命
         ("volume_watch", "出来高不足") 出来高待ち
@@ -836,7 +837,7 @@ def classify_signal_status(
     ma_dev = get_ma_deviation(df, bar_index)
     if vol_ratio is None or ma_dev is None:
         return None
-    # 15:15 時点は大引け出来高未反映のため、本命条件を 1.2 倍に統一（時間補正）
+    # 本命の出来高条件: 1.5倍→1.2倍（15:15 時間補正）
     vol_active = 1.2
     ma_active = 0.07 if provisional else 0.02
     if vol_ratio >= vol_active and ma_dev <= ma_active:
@@ -937,8 +938,8 @@ def _safe_num(val: Optional[float], default: float = 0.0) -> float:
         return default
 
 
-# 監視銘柄（Watchlist）用しきい値（15:15 は大引け未反映のため緩和）
-WATCH_VOL_RATIO_A = 1.0   # 条件A: 前日と同等以上で資金流入とみなす
+# 監視銘柄（Watchlist）用しきい値
+WATCH_VOL_RATIO_A = 1.0   # 条件A: 1.0倍＝前日と同等で資金流入とみなす（1.2→1.0に緩和）
 WATCH_VOL_RATIO_B = 2.0   # 条件B: 出来高2.0倍以上
 WATCH_MA_PCT_A = 0.05     # 条件A: MA乖離5%以内
 WATCH_MA_PCT_B = 0.03     # 条件B: MA乖離3%以内
@@ -1022,11 +1023,11 @@ def filter_signals_by_pro_filters(
 ) -> list[tuple[int, str, str]]:
     """
     出来高スパイク・MA近接の両方を満たすシグナルのみに絞る（本命のみ）。
-    provisional=True のときは 15:15 暫定用（出来高1.2倍以上・MA±7%。大引け未反映を考慮した時間補正）。
+    本命の出来高条件は 1.2 倍に統一（15:15 大引け未反映を考慮）。
     """
     if df is None or not patterns:
         return []
-    vol_multiple = 1.2
+    vol_multiple = 1.2  # 本命: 1.5→1.2（時間補正）
     ma_pct = 0.07 if provisional else 0.02
     out = []
     for i, name, s in patterns:
@@ -1094,10 +1095,10 @@ def build_signal_rationale(
     df: pd.DataFrame,
     bar_index: int,
     avg_days: int = 5,
-    multiple: float = 1.5,
+    multiple: float = 1.2,
     ma_pct_display: Optional[float] = None,
 ) -> str:
-    """出来高・MA近接の根拠テキストを生成。provisional 時は ma_pct_display=7 で ±7% 表示。"""
+    """出来高・MA近接の根拠テキストを生成。本命は multiple=1.2（15:15 時間補正）。provisional 時は ma_pct_display=7 で ±7% 表示。"""
     parts = []
     if df is None or "Volume" not in df.columns:
         return "—"

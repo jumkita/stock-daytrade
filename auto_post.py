@@ -211,15 +211,18 @@ def scan_buy_signal_only() -> dict[str, list[dict[str, Any]]]:
 
 
 def build_tweet(picked: list[dict[str, Any]], watch_names: Optional[list[str]] = None) -> str:
-    """投稿文を組み立てる（本命・注目から確信度上位最大3銘柄。監視は1行で言及）。280文字を超えないよう調整する。"""
+    """
+    投稿文を組み立てる（本命・注目から確信度上位最大3銘柄。監視は1行で言及）。
+    銘柄名はローカルマッピングのみ。未登録は【コード】とし (ticker) を重ねない。各銘柄ブロックの区切りに改行。
+    280文字を超えないよう調整する。
+    """
     provisional = any(r.get("provisional") for r in picked)
     lines = ["【本日の厳選3銘柄】"]
     if provisional:
         lines.append("※15:15暫定（大引け前の暫定値・TP/SLは暫定終値ベース）")
     for r in picked:
         label = "本命" if r.get("status") == "active" else "注目"
-        name = r.get("name") or r.get("ticker", "")
-        # コードのみフォールバック（【】で囲まれている）なら重複表示しない
+        name = (r.get("name") or r.get("ticker") or "").strip()
         if name.startswith("【") and name.endswith("】"):
             lines.append(f"■ [{label}] {name}")
         else:
@@ -237,7 +240,6 @@ def build_tweet(picked: list[dict[str, Any]], watch_names: Optional[list[str]] =
         rationale = r.get("rationale") or "—"
         lines.append(f"・根拠: {rationale}")
         lines.append("")
-    lines.append("")
     lines.append("※機械的スクリーニング結果。投資判断は自己責任で。")
     lines.append("#日本株 #プライスアクション")
     text = "\n".join(lines)
