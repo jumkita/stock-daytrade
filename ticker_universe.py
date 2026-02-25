@@ -230,24 +230,25 @@ def load_ticker_name_mapping() -> Dict[str, str]:
             except Exception:
                 df = None
         if df is not None and not df.empty:
-            code_col = None
-            name_col = None
-            for c in df.columns:
-                cstr = str(c).strip()
-                if cstr.lower() in ("code", "symbol", "ticker") or "コード" in cstr:
-                    code_col = c
-                if cstr.lower() in ("name", "銘柄名", "名称", "会社名"):
-                    name_col = c
-            if code_col is None:
-                code_col = df.columns[0]
-            if name_col and name_col in df.columns:
-                for _, row in df.iterrows():
-                    t = _normalize_code(str(row.get(code_col, "")))
-                    name = str(row.get(name_col, "")).strip()
-                    if t and name and name not in ("nan", "-", ""):
-                        out[t] = name
-        except Exception:
-            pass
+            try:
+                code_col = None
+                name_col = None
+                for c in df.columns:
+                    cstr = str(c).strip()
+                    if cstr.lower() in ("code", "symbol", "ticker") or "コード" in cstr:
+                        code_col = c
+                    if cstr.lower() in ("name", "銘柄名", "名称", "会社名"):
+                        name_col = c
+                if code_col is None:
+                    code_col = df.columns[0]
+                if name_col and name_col in df.columns:
+                    for _, row in df.iterrows():
+                        t = _normalize_code(str(row.get(code_col, "")))
+                        name = str(row.get(name_col, "")).strip()
+                        if t and name and name not in ("nan", "-", ""):
+                            out[t] = name
+            except Exception:
+                pass
     _name_mapping_cache = out
     return out
 
