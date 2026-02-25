@@ -406,6 +406,8 @@ def main():
         st.session_state.daily_buy_signals_watch = None
     if "daily_buy_signals_high_potential" not in st.session_state:
         st.session_state.daily_buy_signals_high_potential = None
+    if "daily_buy_signals_backtest_format" not in st.session_state:
+        st.session_state.daily_buy_signals_backtest_format = False
 
     daily_json_url = os.environ.get("DAILY_SIGNALS_JSON_URL", "").strip()
     if not daily_json_url:
@@ -446,14 +448,29 @@ def main():
             try:
                 with urllib.request.urlopen(daily_json_url, timeout=10) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
-                active_list = data.get("active", data.get("all", []))
-                high_potential_list = data.get("high_potential", [])
-                watch_list = data.get("watch", [])
-                tweet_text = data.get("tweet_text", "")
-                st.session_state.daily_buy_signals = active_list if isinstance(active_list, list) else []
-                st.session_state.daily_buy_signals_high_potential = high_potential_list if isinstance(high_potential_list, list) else []
-                st.session_state.daily_buy_signals_text = tweet_text or "本日は買いシグナル点灯銘柄はありませんでした。"
-                st.session_state.daily_buy_signals_watch = watch_list if isinstance(watch_list, list) else []
+                # バックテスト駆動の新形式（backtest_driven + items）
+                if data.get("backtest_driven") and data.get("items"):
+                    items = data.get("items") or []
+                    n_tickers = data.get("unique_tickers", len({x.get("ticker") for x in items if x.get("ticker")}))
+                    n_signals = data.get("signal_count", len(items))
+                    summary = f"該当 {n_tickers} 銘柄（{n_signals} 件のシグナル）\n\n" + "\n".join(
+                        x.get("formatted_line", "") for x in items
+                    )
+                    st.session_state.daily_buy_signals = items
+                    st.session_state.daily_buy_signals_high_potential = []
+                    st.session_state.daily_buy_signals_watch = []
+                    st.session_state.daily_buy_signals_text = summary if items else "本日は該当銘柄はありませんでした。"
+                    st.session_state.daily_buy_signals_backtest_format = True
+                else:
+                    active_list = data.get("active", data.get("all", []))
+                    high_potential_list = data.get("high_potential", [])
+                    watch_list = data.get("watch", [])
+                    tweet_text = data.get("tweet_text", "")
+                    st.session_state.daily_buy_signals = active_list if isinstance(active_list, list) else []
+                    st.session_state.daily_buy_signals_high_potential = high_potential_list if isinstance(high_potential_list, list) else []
+                    st.session_state.daily_buy_signals_text = tweet_text or "本日は買いシグナル点灯銘柄はありませんでした。"
+                    st.session_state.daily_buy_signals_watch = watch_list if isinstance(watch_list, list) else []
+                    st.session_state.daily_buy_signals_backtest_format = False
                 st.success("読み込みました。")
             except Exception as e:
                 st.error(f"読み込みエラー: {e}")
@@ -471,12 +488,16 @@ def main():
         except (TypeError, ValueError):
             return "—"
 
-    # ----- 本命（Active Signal） -----
-    st.subheader("本命（Active Signal）")
-    st.caption("全条件合致（確信度高）。Type-A トレンド追随 または Type-B リバウンドで 3/3 充足。X 投稿は本命・注目から確信度上位最大3銘柄。")
+    # ----- 本命（Active Signal）／バックテスト該当銘柄 -----
+    st.subheader("本命（Active Signal）／バックテスト該当銘柄")
+    backtest_format = st.session_state.get("daily_buy_signals_backtest_format", False)
+    if backtest_format:
+        st.caption("3営業日バックテスト統計ベース。サンプル3回以上・勝率60%以上・平均リターン+1.5%以上の銘柄のみ。")
+    else:
+        st.caption("全条件合致（確信度高）。Type-A トレンド追随 または Type-B リバウンドで 3/3 充足。X 投稿は本命・注目から確信度上位最大3銘柄。")
     if st.session_state.daily_buy_signals_text is not None:
         st.text_area(
-            "X 投稿と同じフォーマット",
+            "結果サマリ",
             value=st.session_state.daily_buy_signals_text,
             height=220,
             disabled=True,
@@ -484,41 +505,64 @@ def main():
         )
         if st.session_state.daily_buy_signals:
             full_list = list(st.session_state.daily_buy_signals)
-            high_for_top = st.session_state.get("daily_buy_signals_high_potential") or []
-            merged_all = full_list + high_for_top
-            merged_all.sort(key=lambda x: float(x.get("conviction_score", 0)), reverse=True)
-            top3_tickers = {x["ticker"] for x in merged_all[:3]}
-            full_list.sort(key=lambda x: float(x.get("conviction_score", 0)), reverse=True)
-            n = len(full_list)
-            provisional_note = any(x.get("provisional") for x in full_list if isinstance(x, dict))
-            cap = f"**全 {n} 銘柄**　※機械的スクリーニング結果。投資判断は自己責任で。"
-            if provisional_note:
-                cap += "　※15:15暫定（大引け前の暫定値・TP/SLは暫定終値ベース）"
-            st.caption(cap)
-            if n == 3:
-                st.info("3銘柄だけの場合は、GitHub の JSON が古い可能性があります。Actions でワークフローを1回実行すると「all」が入り全銘柄表示になります。「表示を更新」でも全銘柄取得できます。")
-            df_16 = pd.DataFrame(full_list)
-            rename_map = {
-                "ticker": "銘柄コード", "name": "銘柄名", "buy_signals": "検出シグナル", "signal_count": "シグナル数",
-                "entry": "エントリー想定", "tp": "利確(TP)", "sl": "損切り(SL)", "rationale": "根拠",
-                "conviction_score": "確信度スコア",
-            }
-            df_16 = df_16.rename(columns={k: v for k, v in rename_map.items() if k in df_16.columns})
-            df_16["★高確信度"] = df_16["銘柄コード"].apply(lambda t: "★高確信度" if t in top3_tickers else "")
-            base_cols = ["銘柄コード", "銘柄名", "★高確信度", "確信度スコア", "検出シグナル", "シグナル数"]
-            opt_cols = ["エントリー想定", "利確(TP)", "損切り(SL)", "根拠"]
-            display_cols = [c for c in base_cols + opt_cols if c in df_16.columns]
-            if "エントリー想定" in df_16.columns:
-                df_16["エントリー想定"] = df_16["エントリー想定"].apply(_fmt_price)
-            if "利確(TP)" in df_16.columns:
-                df_16["利確(TP)"] = df_16["利確(TP)"].apply(_fmt_price)
-            if "損切り(SL)" in df_16.columns:
-                df_16["損切り(SL)"] = df_16["損切り(SL)"].apply(_fmt_price)
-            st.dataframe(df_16[display_cols], hide_index=True, use_container_width=True)
+            if backtest_format and full_list and full_list[0].get("pattern_name") is not None:
+                # バックテスト駆動の items 形式
+                n = len(full_list)
+                st.caption(f"**全 {n} 件のシグナル**　※機械的スクリーニング結果。投資判断は自己責任で。")
+                df_16 = pd.DataFrame(full_list)
+                rename_bt = {
+                    "ticker": "銘柄コード", "name": "銘柄名", "pattern_name": "パターン名",
+                    "win_rate": "勝率", "sample_count": "サンプル数", "avg_return_pct": "平均リターン%",
+                    "entry": "エントリー想定", "tp": "利確(TP)", "sl": "損切り(SL)",
+                }
+                df_16 = df_16.rename(columns={k: v for k, v in rename_bt.items() if k in df_16.columns})
+                cols_bt = ["銘柄コード", "銘柄名", "パターン名", "勝率", "サンプル数", "平均リターン%", "エントリー想定", "利確(TP)", "損切り(SL)"]
+                display_cols_bt = [c for c in cols_bt if c in df_16.columns]
+                if "勝率" in df_16.columns:
+                    df_16["勝率"] = df_16["勝率"].apply(lambda x: f"{float(x)*100:.0f}%" if x is not None and x == x else "—")
+                if "平均リターン%" in df_16.columns:
+                    df_16["平均リターン%"] = df_16["平均リターン%"].apply(lambda x: f"+{float(x):.2f}%" if x is not None and x == x else "—")
+                for col in ("エントリー想定", "利確(TP)", "損切り(SL)"):
+                    if col in df_16.columns:
+                        df_16[col] = df_16[col].apply(_fmt_price)
+                st.dataframe(df_16[display_cols_bt], hide_index=True, use_container_width=True)
+            else:
+                # 旧形式（本命・注目）
+                high_for_top = st.session_state.get("daily_buy_signals_high_potential") or []
+                merged_all = full_list + high_for_top
+                merged_all.sort(key=lambda x: float(x.get("conviction_score", 0)), reverse=True)
+                top3_tickers = {x["ticker"] for x in merged_all[:3]}
+                full_list.sort(key=lambda x: float(x.get("conviction_score", 0)), reverse=True)
+                n = len(full_list)
+                provisional_note = any(x.get("provisional") for x in full_list if isinstance(x, dict))
+                cap = f"**全 {n} 銘柄**　※機械的スクリーニング結果。投資判断は自己責任で。"
+                if provisional_note:
+                    cap += "　※15:15暫定（大引け前の暫定値・TP/SLは暫定終値ベース）"
+                st.caption(cap)
+                if n == 3:
+                    st.info("3銘柄だけの場合は、GitHub の JSON が古い可能性があります。Actions でワークフローを1回実行すると「all」が入り全銘柄表示になります。「表示を更新」でも全銘柄取得できます。")
+                df_16 = pd.DataFrame(full_list)
+                rename_map = {
+                    "ticker": "銘柄コード", "name": "銘柄名", "buy_signals": "検出シグナル", "signal_count": "シグナル数",
+                    "entry": "エントリー想定", "tp": "利確(TP)", "sl": "損切り(SL)", "rationale": "根拠",
+                    "conviction_score": "確信度スコア",
+                }
+                df_16 = df_16.rename(columns={k: v for k, v in rename_map.items() if k in df_16.columns})
+                df_16["★高確信度"] = df_16["銘柄コード"].apply(lambda t: "★高確信度" if t in top3_tickers else "")
+                base_cols = ["銘柄コード", "銘柄名", "★高確信度", "確信度スコア", "検出シグナル", "シグナル数"]
+                opt_cols = ["エントリー想定", "利確(TP)", "損切り(SL)", "根拠"]
+                display_cols = [c for c in base_cols + opt_cols if c in df_16.columns]
+                if "エントリー想定" in df_16.columns:
+                    df_16["エントリー想定"] = df_16["エントリー想定"].apply(_fmt_price)
+                if "利確(TP)" in df_16.columns:
+                    df_16["利確(TP)"] = df_16["利確(TP)"].apply(_fmt_price)
+                if "損切り(SL)" in df_16.columns:
+                    df_16["損切り(SL)"] = df_16["損切り(SL)"].apply(_fmt_price)
+                st.dataframe(df_16[display_cols], hide_index=True, use_container_width=True)
         else:
-            st.info("本日は本命はありませんでした。")
+            st.info("本日は該当銘柄はありませんでした。")
     else:
-        st.caption("「表示を更新」を押すと、本命・注目・監視を取得します。")
+        st.caption("「GitHub の結果を読み込み」で daily_buy_signals.json を表示します。「表示を更新」で従来スキャンも実行できます。")
 
     # ----- 注目（High Potential） -----
     st.subheader("注目（High Potential）")
