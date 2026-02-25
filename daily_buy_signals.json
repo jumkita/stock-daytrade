@@ -1,5 +1,5 @@
 {
-  "updated": "2026-02-25T11:44:16.816043+00:00",
+  "updated": "2026-02-25T12:41:50.816137+00:00",
   "active": [],
   "high_potential": [],
   "watch": [
@@ -12,16 +12,6 @@
       "tp": 193.0,
       "sl": 97.0,
       "conviction_score": 77.7051
-    },
-    {
-      "ticker": "6217.T",
-      "name": "6217.T",
-      "watchlist_score": 23.4661,
-      "reason_short": "陰線後の陽線点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
-      "entry": 561.0,
-      "tp": 709.0,
-      "sl": 487.0,
-      "conviction_score": 23.4661
     },
     {
       "ticker": "3845.T",
@@ -44,14 +34,24 @@
       "conviction_score": 11.0481
     },
     {
-      "ticker": "9946.T",
-      "name": "9946.T",
-      "watchlist_score": 10.8026,
-      "reason_short": "インサイドバー点灯。出来高の本格的な増加（1.5倍超え）待ち",
-      "entry": 2020.0,
-      "tp": 2038.0,
-      "sl": 2011.0,
-      "conviction_score": 10.8026
+      "ticker": "7611.T",
+      "name": "7611.T",
+      "watchlist_score": 10.0106,
+      "reason_short": "リバーサルロー, 包み線点灯。出来高の本格的な増加（1.5倍超え）待ち",
+      "entry": 3230.0,
+      "tp": 3310.0,
+      "sl": 3190.0,
+      "conviction_score": 10.0106
+    },
+    {
+      "ticker": "4530.T",
+      "name": "4530.T",
+      "watchlist_score": 9.0726,
+      "reason_short": "二本たくり線, 二本たくり線点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
+      "entry": 6030.0,
+      "tp": 6206.0,
+      "sl": 5942.0,
+      "conviction_score": 9.0726
     }
   ],
   "all": [],
