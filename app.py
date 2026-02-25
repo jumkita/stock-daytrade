@@ -550,7 +550,7 @@ def main():
 
     # ----- 監視（Watchlist） -----
     st.subheader("監視（Watchlist）")
-    st.caption("資金流入（出来高）はあるが形が未完成、または押し目待ち。出来高比×MA乖離スコアの上位5銘柄。パターン合致は不要。各銘柄に「何が足りないか」を表示。")
+    st.caption("24種の買いパターンを主軸にしたニアミス。条件A（パターン点灯+出来高1.2倍+MA5%以内）または条件B（パターン未点灯+出来高2倍+MA3%以内）を満たす銘柄からスコア上位5件。各銘柄に「何が足りないか」を表示。")
     watch_list = st.session_state.get("daily_buy_signals_watch") or []
     if watch_list:
         df_w = pd.DataFrame(watch_list)

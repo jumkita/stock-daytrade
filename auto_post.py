@@ -35,6 +35,7 @@ from logic import (
     compute_conviction_score,
     hybrid_classify_signal,
     watchlist_score,
+    watchlist_eligible,
     build_watchlist_reason_short,
     get_volume_ratio,
     get_ma_deviation,
@@ -66,7 +67,7 @@ def scan_hybrid() -> dict[str, Any]:
     ハイブリッド判定で 本命(active)・注目(high_potential)・監視(watch) を返す。
     - 本命: Type-A/Type-B で全条件合致（確信度高）。
     - 注目: 条件の8割以上充足（確信度中）。
-    - 監視: データ取得に成功した全銘柄をスコア順でソートし上位5件を必ず返す（フィルターなし）。
+    - 監視: 条件A（パターン点灯+出来高1.2倍+MA5%以内）または条件B（パターン未点灯+出来高2倍+MA3%以内）を満たす銘柄のみスコア順で上位5件。
     """
     tickers = list(TARGET_TICKERS)
     print(f"DEBUG: 読み込まれた銘柄数 = {len(tickers)}")
@@ -91,32 +92,42 @@ def scan_hybrid() -> dict[str, Any]:
         bar = n - 1
         name = get_ticker_name(ticker)
 
-        # 監視リスト: データ取得に成功した全銘柄を必ず追加（フィルターなし）。スコアはNaN時0で防御済み。
+        # 25本以上でパターン検出を1回だけ実行（監視・本命の両方で利用）
+        patterns: list = []
         if n >= 25:
-            score = watchlist_score(df, bar)
+            try:
+                patterns = detect_all_patterns(df)
+            except Exception:
+                pass
+        buy_on_last_day = [(i, nm, side) for i, nm, side in patterns if side == "buy" and i == bar]
+
+        # 監視リスト: 条件AまたはBを満たす銘柄のみ候補に追加（買いパターンを評価の主軸にしたニアミス）
+        if n >= 25:
             vol_ratio = get_volume_ratio(df, bar)
             ma_dev = get_ma_deviation(df, bar)
-            reason_short = build_watchlist_reason_short(df, bar, vol_ratio, ma_dev)
-            tp_sl = compute_tp_sl(df, bar_index=bar)
-            watch_candidates.append({
-                "ticker": ticker,
-                "name": name,
-                "watchlist_score": score,
-                "reason_short": reason_short,
-                "entry": tp_sl.get("entry"),
-                "tp": tp_sl.get("tp"),
-                "sl": tp_sl.get("sl"),
-                "conviction_score": score,
-            })
+            pattern_found = len(buy_on_last_day) > 0
+            pattern_names = ", ".join(nm for _, nm, _ in buy_on_last_day) if buy_on_last_day else ""
+            eligible, condition_ab = watchlist_eligible(pattern_found, vol_ratio, ma_dev)
+            if eligible and condition_ab:
+                score = watchlist_score(df, bar, pattern_found)
+                reason_short = build_watchlist_reason_short(
+                    pattern_found, pattern_names, vol_ratio, ma_dev, condition_ab
+                )
+                tp_sl = compute_tp_sl(df, bar_index=bar)
+                watch_candidates.append({
+                    "ticker": ticker,
+                    "name": name,
+                    "watchlist_score": score,
+                    "reason_short": reason_short,
+                    "entry": tp_sl.get("entry"),
+                    "tp": tp_sl.get("tp"),
+                    "sl": tp_sl.get("sl"),
+                    "conviction_score": score,
+                })
 
         # 本命・注目: 76本以上かつ買いパターン当日点灯の銘柄のみ
         if n < 76:
             continue
-        try:
-            patterns = detect_all_patterns(df)
-        except Exception:
-            patterns = []
-        buy_on_last_day = [(i, nm, side) for i, nm, side in patterns if side == "buy" and i == bar]
         if not buy_on_last_day:
             continue
         classification = hybrid_classify_signal(df, bar, has_buy_pattern=True, provisional=provisional)

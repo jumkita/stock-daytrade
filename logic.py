@@ -901,31 +901,81 @@ def _safe_num(val: Optional[float], default: float = 0.0) -> float:
         return default
 
 
-def watchlist_score(df: pd.DataFrame, bar_index: int) -> float:
-    """ウォッチリスト用スコア = 出来高比 × MA乖離スコア。NaN 時は 0 を返しソート崩壊を防ぐ。"""
+# 監視銘柄（Watchlist）用しきい値
+WATCH_VOL_RATIO_A = 1.2   # 条件A: 出来高1.2倍以上
+WATCH_VOL_RATIO_B = 2.0   # 条件B: 出来高2.0倍以上
+WATCH_MA_PCT_A = 0.05     # 条件A: MA乖離5%以内
+WATCH_MA_PCT_B = 0.03     # 条件B: MA乖離3%以内
+WATCH_PATTERN_MULTIPLIER = 3  # パターン点灯時の基礎スコア倍率
+
+
+def watchlist_score(
+    df: pd.DataFrame, bar_index: int, pattern_found: bool = False
+) -> float:
+    """
+    監視リスト用スコア。買いパターン点灯を絶対優遇する。
+    - 基礎スコア = 出来高比。パターン点灯時は3倍。
+    - MA乖離減点: 乖離するほど下げるが、パターン点灯時は減点幅を緩和。
+    NaN 時は 0 を返しソート崩壊を防ぐ。
+    """
     vol_ratio = get_volume_ratio(df, bar_index)
     ma_dev = get_ma_deviation(df, bar_index)
+    base = _safe_num(vol_ratio, 0.0)
+    if pattern_found:
+        base *= WATCH_PATTERN_MULTIPLIER
+    ma_gap = _safe_num(ma_dev, 0.0)
+    # MA乖離減点: パターン点灯時は係数0.4、未点灯時は1.2で緩和差をつける
+    penalty_coef = 0.4 if pattern_found else 1.2
+    penalty = min(0.9, ma_gap * penalty_coef)
+    score = base * max(0.1, 1.0 - penalty)
+    return round(score, 4)
+
+
+def watchlist_eligible(
+    pattern_found: bool,
+    vol_ratio: Optional[float],
+    ma_dev: Optional[float],
+) -> tuple[bool, Optional[str]]:
+    """
+    監視銘柄の足切り。意味のあるニアミスのみ。
+    Returns: (合格するか, "A"|"B"|None)
+    - 条件A（形完成・エネルギー待ち）: パターン点灯 かつ 出来高1.2倍以上 かつ MA乖離5%以内
+    - 条件B（エネルギー爆発・形未完成）: パターン未点灯 かつ 出来高2.0倍以上 かつ MA乖離3%以内
+    """
     v = _safe_num(vol_ratio, 0.0)
-    ma_gap = _safe_num(ma_dev, 1.0)
-    ma_term = 1.0 / (1.0 + ma_gap)
-    return round(v * ma_term, 4)
+    ma = _safe_num(ma_dev, 1.0)
+    if pattern_found and v >= WATCH_VOL_RATIO_A and ma <= WATCH_MA_PCT_A:
+        return (True, "A")
+    if not pattern_found and v >= WATCH_VOL_RATIO_B and ma <= WATCH_MA_PCT_B:
+        return (True, "B")
+    return (False, None)
 
 
 def build_watchlist_reason_short(
-    df: pd.DataFrame, bar_index: int, vol_ratio: Optional[float], ma_dev: Optional[float]
+    pattern_found: bool,
+    pattern_names: str,
+    vol_ratio: Optional[float],
+    ma_dev: Optional[float],
+    condition_ab: Optional[str],
 ) -> str:
-    """ウォッチ銘柄に対する「何が足りないか」を1行で返す。"""
-    if df is None:
-        return "データ不足"
-    vol_ok = vol_ratio is not None and vol_ratio >= VOL_BONUS_THRESH
-    ma_ok = ma_dev is not None and ma_dev <= 0.02
-    if vol_ok and ma_ok:
-        return "形・出来高は良いが買いパターン未点灯"
-    if vol_ok and not ma_ok:
-        return "出来高はあるがMA乖離大（押し目待ち）"
-    if not vol_ok and ma_ok:
-        return "形は良いが出来高不足"
-    return "出来高・MAともに要観察"
+    """
+    監視銘柄の「何が足りないか」を条件に沿って出し分け。
+    - 条件A: 「〇〇（パターン名）点灯。出来高の本格的な増加（1.5倍超え）待ち」
+    - 条件B: 「強烈な資金流入（出来高〇倍）あり。買いパターンの形成待ち」
+    - MA乖離が3%〜5%: 「押し目形成中。MAタッチでの反発を確認せよ」を追記
+    """
+    ma = _safe_num(ma_dev, 0.0)
+    ma_in_3_5 = 0.03 < ma <= 0.05
+    suffix = " 押し目形成中。MAタッチでの反発を確認せよ" if ma_in_3_5 else ""
+
+    if condition_ab == "A":
+        name = pattern_names.strip() or "買いパターン"
+        return f"{name}点灯。出来高の本格的な増加（1.5倍超え）待ち{suffix}".strip()
+    if condition_ab == "B":
+        v = _safe_num(vol_ratio, 0.0)
+        vol_str = f"{v:.1f}" if v == v else "—"
+        return f"強烈な資金流入（出来高{vol_str}倍）あり。買いパターンの形成待ち{suffix}".strip()
+    return "条件未達（要観察）"
 
 
 def filter_signals_by_pro_filters(
