@@ -700,6 +700,77 @@ def get_ma_deviation(df: pd.DataFrame, bar_index: int, windows: tuple[int, int] 
         return None
 
 
+def get_ma_25_deviation_signed(df: pd.DataFrame, bar_index: int) -> Optional[float]:
+    """25日線からの符号付き乖離率。(close - MA25)/MA25。例: -0.05 = -5%。取得不可時は None。"""
+    if df is None or "Close" not in df.columns or bar_index + 1 < 25:
+        return None
+    try:
+        close = float(df["Close"].iloc[bar_index])
+        ma25 = df["Close"].iloc[bar_index - 24 : bar_index + 1].mean()
+        if pd.isna(close) or pd.isna(ma25) or ma25 <= 0:
+            return None
+        return float((close - ma25) / ma25)
+    except Exception:
+        return None
+
+
+def get_rsi(df: pd.DataFrame, bar_index: int, period: int = 14) -> Optional[float]:
+    """RSI(period)。0〜100。取得不可時は None。"""
+    if df is None or "Close" not in df.columns or bar_index < period:
+        return None
+    try:
+        if _TALIB_AVAILABLE:
+            c = np.asarray(df["Close"], dtype=np.float64)
+            rsi = talib.RSI(c, timeperiod=period)
+            v = rsi[bar_index]
+            if np.isnan(v):
+                return None
+            return float(v)
+        close = df["Close"]
+        delta = close.diff()
+        gain = delta.where(delta > 0, 0.0)
+        loss = (-delta).where(delta < 0, 0.0)
+        start = bar_index - period + 1
+        avg_gain = gain.iloc[start : bar_index + 1].mean()
+        avg_loss = loss.iloc[start : bar_index + 1].mean()
+        if pd.isna(avg_gain):
+            avg_gain = 0.0
+        if pd.isna(avg_loss) or avg_loss == 0:
+            return 100.0
+        rs = float(avg_gain) / float(avg_loss)
+        return round(100.0 - (100.0 / (1.0 + rs)), 2)
+    except Exception:
+        return None
+
+
+def is_perfect_order(df: pd.DataFrame, bar_index: int) -> bool:
+    """5日線 > 25日線 > 75日線（パーフェクトオーダー）か。"""
+    if df is None or "Close" not in df.columns or bar_index + 1 < 75:
+        return False
+    try:
+        c = df["Close"]
+        ma5 = c.iloc[bar_index - 4 : bar_index + 1].mean()
+        ma25 = c.iloc[bar_index - 24 : bar_index + 1].mean()
+        ma75 = c.iloc[bar_index - 74 : bar_index + 1].mean()
+        if pd.isna(ma5) or pd.isna(ma25) or pd.isna(ma75):
+            return False
+        return float(ma5) > float(ma25) > float(ma75)
+    except Exception:
+        return False
+
+
+def is_20d_high_update(df: pd.DataFrame, bar_index: int) -> bool:
+    """直近20日で高値更新しているか（当日高値 >= 20日高値）。"""
+    if df is None or "High" not in df.columns or bar_index < 20:
+        return False
+    try:
+        high_today = float(df["High"].iloc[bar_index])
+        high_20d = float(df["High"].iloc[bar_index - 19 : bar_index + 1].max())
+        return not pd.isna(high_today) and not pd.isna(high_20d) and high_today >= high_20d
+    except Exception:
+        return False
+
+
 def compute_conviction_score(df: pd.DataFrame, bar_index: int) -> float:
     """
     確信度スコア（Conviction Score）を算出する。
@@ -739,6 +810,108 @@ def classify_signal_status(
     if vol_ratio >= vol_active and 0.02 < ma_dev <= 0.05:
         return ("price_watch", "MA乖離（押し目待ち）")
     return None
+
+
+# ---------- ハイブリッド判定（Type-A トレンド追随 / Type-B リバウンド） ----------
+VOL_BONUS_THRESH = 1.2  # 出来高1.2倍以上で加点
+MA25_REBOUND_THRESH = -0.05  # 25日線乖離 -5% 以下で Type-B 条件
+RSI_REBOUND_THRESH = 40  # RSI(14) 40以下で Type-B 条件
+
+
+def _type_a_score(
+    df: pd.DataFrame, bar_index: int, provisional: bool = False
+) -> tuple[bool, int, int]:
+    """
+    Type-A（トレンド追随型）。
+    Returns: (条件成立, 条件1, 加点数). 条件=5日>25日>75日。加点=20日高値更新(1)+出来高1.2倍(1)。最大3。
+    """
+    cond = is_perfect_order(df, bar_index)
+    bonus = 0
+    if is_20d_high_update(df, bar_index):
+        bonus += 1
+    vol_ratio = get_volume_ratio(df, bar_index)
+    if vol_ratio is not None and vol_ratio >= VOL_BONUS_THRESH:
+        bonus += 1
+    return (cond, 1 if cond else 0, bonus)
+
+
+def _type_b_score(
+    df: pd.DataFrame, bar_index: int, has_buy_pattern: bool, provisional: bool = False
+) -> tuple[bool, int, int]:
+    """
+    Type-B（リバウンド型）。
+    条件: 25日線乖離≤-5% または RSI(14)≤40。加点=買いパターン点灯(1)+出来高1.2倍(1)。最大3。
+    """
+    ma25_dev = get_ma_25_deviation_signed(df, bar_index)
+    rsi = get_rsi(df, bar_index, 14)
+    cond = False
+    if ma25_dev is not None and ma25_dev <= MA25_REBOUND_THRESH:
+        cond = True
+    if rsi is not None and rsi <= RSI_REBOUND_THRESH:
+        cond = True
+    bonus = 0
+    if has_buy_pattern:
+        bonus += 1
+    vol_ratio = get_volume_ratio(df, bar_index)
+    if vol_ratio is not None and vol_ratio >= VOL_BONUS_THRESH:
+        bonus += 1
+    return (cond, 1 if cond else 0, bonus)
+
+
+def hybrid_classify_signal(
+    df: pd.DataFrame,
+    bar_index: int,
+    has_buy_pattern: bool,
+    provisional: bool = False,
+) -> Optional[tuple[str, str]]:
+    """
+    ハイブリッド判定: Type-A / Type-B のスコアで 本命(active) / 注目(high_potential) を返す。
+    Returns:
+        ("active", "—") 全条件合致（確信度高）
+        ("high_potential", "…") 条件の8割以上充足（確信度中）
+        該当なしなら None
+    """
+    a_cond, a_cond_n, a_bonus = _type_a_score(df, bar_index, provisional)
+    b_cond, b_cond_n, b_bonus = _type_b_score(df, bar_index, has_buy_pattern, provisional)
+    a_total = a_cond_n + a_bonus  # max 3
+    b_total = b_cond_n + b_bonus  # max 3
+    # 本命: いずれかで 3/3
+    if a_total >= 3:
+        return ("active", "Type-A トレンド追随（パーフェクトオーダー+高値更新+出来高）")
+    if b_total >= 3:
+        return ("active", "Type-B リバウンド（押し安+買いパターン+出来高）")
+    # 注目: 8割以上 = 2以上/3 または 2.4 以上 → 2以上で注目
+    if a_total >= 2:
+        return ("high_potential", "Type-A 一部充足（トレンド形は良いが条件未達）")
+    if b_total >= 2:
+        return ("high_potential", "Type-B 一部充足（リバウンド形は良いが条件未達）")
+    return None
+
+
+def watchlist_score(df: pd.DataFrame, bar_index: int) -> float:
+    """ウォッチリスト用スコア = 出来高比 × MA乖離スコア。高いほど資金流入かつMAに近い。"""
+    vol_ratio = get_volume_ratio(df, bar_index)
+    ma_dev = get_ma_deviation(df, bar_index)
+    v = float(vol_ratio) if vol_ratio is not None else 0.0
+    ma_term = 1.0 / (1.0 + (float(ma_dev) if ma_dev is not None else 1.0))
+    return round(v * ma_term, 4)
+
+
+def build_watchlist_reason_short(
+    df: pd.DataFrame, bar_index: int, vol_ratio: Optional[float], ma_dev: Optional[float]
+) -> str:
+    """ウォッチ銘柄に対する「何が足りないか」を1行で返す。"""
+    if df is None:
+        return "データ不足"
+    vol_ok = vol_ratio is not None and vol_ratio >= VOL_BONUS_THRESH
+    ma_ok = ma_dev is not None and ma_dev <= 0.02
+    if vol_ok and ma_ok:
+        return "形・出来高は良いが買いパターン未点灯"
+    if vol_ok and not ma_ok:
+        return "出来高はあるがMA乖離大（押し目待ち）"
+    if not vol_ok and ma_ok:
+        return "形は良いが出来高不足"
+    return "出来高・MAともに要観察"
 
 
 def filter_signals_by_pro_filters(
