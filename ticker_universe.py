@@ -64,6 +64,25 @@ def _normalize_code(raw: str) -> Optional[str]:
     return f"{code}.T"
 
 
+def _parse_ticker_dataframe(df) -> List[str]:
+    """DataFrame から銘柄コード列を抽出してリストで返す。CSV/Excel 共通。"""
+    if df is None or df.empty:
+        return []
+    code_col = None
+    for c in ("code", "symbol", "ticker", "銘柄コード", "コード", "銘柄コード（数字4桁）"):
+        if c in df.columns:
+            code_col = c
+            break
+    if code_col is None:
+        code_col = df.columns[0]
+    codes: List[str] = []
+    for v in df[code_col].dropna().astype(str):
+        t = _normalize_code(str(v))
+        if t and t not in codes:
+            codes.append(t)
+    return codes
+
+
 def load_tickers_from_csv(path: str) -> List[str]:
     """
     CSV から銘柄コードを読み込む。列名は code / 銘柄コード / コード / symbol / ticker または先頭列。
@@ -82,22 +101,37 @@ def load_tickers_from_csv(path: str) -> List[str]:
             df = pd.read_csv(path, encoding="cp932", dtype=str)
         except Exception:
             return []
-    if df is None or df.empty:
+    return _parse_ticker_dataframe(df)
+
+
+def load_tickers_from_excel(path: str) -> List[str]:
+    """
+    Excel（.xlsx / .xls）から銘柄コードを読み込む。列名は CSV と同じ。
+    .xls は xlrd、.xlsx は openpyxl を使用。
+    """
+    try:
+        import pandas as pd
+    except ImportError:
         return []
-    # 銘柄コード列を探す
-    code_col = None
-    for c in ("code", "symbol", "ticker", "銘柄コード", "コード", "銘柄コード（数字4桁）"):
-        if c in df.columns:
-            code_col = c
-            break
-    if code_col is None:
-        code_col = df.columns[0]
-    codes: List[str] = []
-    for v in df[code_col].dropna().astype(str):
-        t = _normalize_code(str(v))
-        if t and t not in codes:
-            codes.append(t)
-    return codes
+    if not path or not os.path.isfile(path):
+        return []
+    engine = None
+    if path.lower().endswith(".xls") and not path.lower().endswith(".xlsx"):
+        try:
+            import xlrd  # noqa: F401
+            engine = "xlrd"
+        except ImportError:
+            pass
+    elif path.lower().endswith(".xlsx"):
+        engine = "openpyxl"
+    try:
+        df = pd.read_excel(path, dtype=str, engine=engine)
+    except Exception:
+        try:
+            df = pd.read_excel(path, dtype=str)
+        except Exception:
+            return []
+    return _parse_ticker_dataframe(df)
 
 
 def fetch_jpx_tickers() -> Optional[List[str]]:
@@ -169,10 +203,20 @@ def fetch_jpx_tickers() -> Optional[List[str]]:
 
 def get_ticker_universe(csv_path: Optional[str] = None) -> List[str]:
     """
-    対象銘柄リストを返す。
+    対象銘柄リストを返す。全銘柄（東証全体）を対象とする。
     1) 指定または環境変数 JPX_TICKERS_CSV / デフォルト jpx_all_tickers.csv から読み込み
-    2) 無い場合・空の場合は fetch_jpx_tickers() で東証リストを取得
-    3) それも失敗した場合は日経225でフォールバック
+    2) 無い場合・空の場合は fetch_jpx_tickers() で東証リストを動的取得（全銘柄）
+    3) それも失敗した場合のみ日経225（約225銘柄）でフォールバック
+    """
+    tickers, _ = get_ticker_universe_with_source(csv_path)
+    return tickers
+
+
+def get_ticker_universe_with_source(csv_path: Optional[str] = None) -> tuple[List[str], str]:
+    """
+    対象銘柄リストと取得元ラベルを返す。
+    Returns: (tickers, source)  source は "csv" | "excel" | "jpx" | "nikkei225"
+    jpx_all_tickers.csv が無い場合は jpx_all_tickers.xlsx / .xls も参照する。
     """
     path = csv_path or os.environ.get("JPX_TICKERS_CSV", "").strip() or DEFAULT_CSV_PATH
     root = os.path.dirname(os.path.abspath(__file__))
@@ -180,11 +224,19 @@ def get_ticker_universe(csv_path: Optional[str] = None) -> List[str]:
         path = os.path.join(root, path)
     tickers = load_tickers_from_csv(path)
     if tickers:
-        return tickers
+        return tickers, "csv"
+    # 同じベース名の Excel を試す（jpx_all_tickers.xlsx / .xls）
+    base, _ = os.path.splitext(path)
+    for ext in (".xlsx", ".xls"):
+        excel_path = base + ext
+        if os.path.isfile(excel_path):
+            tickers = load_tickers_from_excel(excel_path)
+            if tickers:
+                return tickers, "excel"
     tickers = fetch_jpx_tickers()
     if tickers:
-        return tickers
-    return [f"{c}.T" for c in NIKKEI_225_CODES]
+        return tickers, "jpx"
+    return [f"{c}.T" for c in NIKKEI_225_CODES], "nikkei225"
 
 
 def load_ticker_name_mapping() -> Dict[str, str]:

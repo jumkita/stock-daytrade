@@ -30,7 +30,9 @@ import pandas as pd
 
 from logic import (
     fetch_ohlcv,
+    fetch_ohlcv_bulk,
     detect_all_patterns,
+    detect_buy_patterns_vectorized,
     compute_tp_sl,
     build_signal_rationale,
     compute_conviction_score,
@@ -48,6 +50,7 @@ from logic import (
     tp_sl_from_avg_return,
 )
 from screener import TARGET_TICKERS, get_ticker_name
+from ticker_universe import get_ticker_universe_with_source
 
 MAX_TWEET_LEN = 280
 PICK_MAX = 3
@@ -140,22 +143,23 @@ def scan_backtest_driven(
         return [], {}
 
     if backtest_stats is None:
-        backtest_stats = run_full_backtest_universe(ticker_list, period="5y", liquidity_filter=True)
+        backtest_stats = run_full_backtest_universe(ticker_list, period="3y", liquidity_filter=True)
 
+    # 直近データもバルク一括取得（1銘柄ずつ取得しない）
+    bulk_recent = fetch_ohlcv_bulk(ticker_list, period=period_recent, chunk_size=150)
     results: List[dict] = []
     seen: set[tuple[str, str]] = set()
-    for ticker in ticker_list:
-        try:
-            df = fetch_ohlcv(ticker, period=period_recent, interval="1d")
-        except Exception:
-            continue
+    for ticker, df in bulk_recent.items():
         if df is None or len(df) < 25:
             continue
         if not backtest_liquidity_ok(df):
             continue
         bar = len(df) - 1
-        patterns = detect_all_patterns(df)
-        buy_on_last = [(i, name, side) for i, name, side in patterns if side == "buy" and i == bar]
+        by_pattern = detect_buy_patterns_vectorized(df)
+        buy_on_last = []
+        for pattern_name, indices in by_pattern.items():
+            if bar in indices:
+                buy_on_last.append((bar, pattern_name, "buy"))
         if not buy_on_last:
             continue
         close = float(df["Close"].iloc[bar])

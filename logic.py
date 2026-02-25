@@ -370,6 +370,111 @@ def fetch_ohlcv(ticker_symbol: str, period: str = "6mo", interval: str = "1d") -
         return None
 
 
+# バルク取得のチャンクサイズ（yfinance は一度に100〜200銘柄程度が安定）
+BULK_CHUNK_SIZE = 150
+PREFILTER_PERIOD = "2mo"  # 20営業日以上の出来高・株価を得るため
+
+
+def _single_df_from_bulk(raw: pd.DataFrame, ticker: str) -> Optional[pd.DataFrame]:
+    """バルク取得した MultiIndex DataFrame から1銘柄分の DataFrame を切り出し。"""
+    if raw is None or getattr(raw, "empty", True):
+        return None
+    try:
+        if isinstance(raw.columns, pd.MultiIndex):
+            if ticker not in raw.columns.get_level_values(0):
+                return None
+            sub = raw[ticker].copy()
+        else:
+            sub = raw.copy()
+        if sub is None or sub.empty:
+            return None
+        sub = flatten_ohlcv_columns(sub)
+        for c in ("Open", "High", "Low", "Close"):
+            if c not in sub.columns:
+                return None
+        cols = [c for c in ("Open", "High", "Low", "Close", "Volume") if c in sub.columns]
+        sub = sub[cols].dropna(how="all").reset_index()
+        return sub if len(sub) >= 5 else None
+    except Exception:
+        return None
+
+
+def fetch_ohlcv_bulk(
+    tickers: list[str],
+    period: str = "3y",
+    interval: str = "1d",
+    chunk_size: int = BULK_CHUNK_SIZE,
+) -> dict[str, pd.DataFrame]:
+    """
+    複数銘柄をチャンク単位で一括ダウンロード。for ループで1銘柄ずつ呼ばない。
+    Returns: ticker -> DataFrame (OHLCV, reset_index 済み)。取得失敗はスキップ。
+    """
+    result: dict[str, pd.DataFrame] = {}
+    chunk_size = max(1, min(chunk_size, 200))
+    for start in range(0, len(tickers), chunk_size):
+        chunk = tickers[start : start + chunk_size]
+        if not chunk:
+            continue
+        try:
+            raw = yf.download(
+                " ".join(chunk),
+                period=period,
+                interval=interval,
+                auto_adjust=True,
+                progress=False,
+                threads=True,
+                group_by="ticker",
+            )
+        except Exception:
+            continue
+        if raw is None or raw.empty:
+            continue
+        if len(chunk) == 1 and not isinstance(raw.columns, pd.MultiIndex):
+            raw = raw.copy()
+            raw.columns = pd.MultiIndex.from_product([[chunk[0]], raw.columns])
+        for t in chunk:
+            df = _single_df_from_bulk(raw, t)
+            if df is not None:
+                result[t] = df
+    return result
+
+
+def prefilter_tickers_bulk(
+    tickers: list[str],
+    min_volume_20d: float = 100_000,
+    min_price: float = 200.0,
+    period: str = PREFILTER_PERIOD,
+    chunk_size: int = BULK_CHUNK_SIZE,
+) -> list[str]:
+    """
+    全銘柄の重いバックテストの前に、軽量な一括取得で「直近20日平均出来高10万株未満」「株価200円未満」を除外する。
+    バルクで period=2mo を取得し、足切りした銘柄リストを返す。
+    """
+    if not tickers:
+        return []
+    vol_min = min_volume_20d
+    price_min = min_price
+    passed: list[str] = []
+    bulk = fetch_ohlcv_bulk(tickers, period=period, chunk_size=chunk_size)
+    for t, df in bulk.items():
+        if df is None or len(df) < 20:
+            continue
+        try:
+            if "Volume" not in df.columns:
+                continue
+            vol = df["Volume"].iloc[-20:]
+            avg_vol = vol.mean()
+            if pd.isna(avg_vol) or float(avg_vol) < vol_min:
+                continue
+            close = float(df["Close"].iloc[-1])
+            if pd.isna(close) or close < price_min:
+                continue
+            passed.append(t)
+        except Exception:
+            continue
+    return passed
+
+
 # プレフィルター（API制限・ノイズ排除）のしきい値
 PREFILTER_MIN_VOLUME = 100_000   # 直近平均出来高 100,000株未満は除外
 PREFILTER_MIN_PRICE = 100.0      # 現在値 100円未満（ペニーストック）は除外
@@ -657,6 +762,7 @@ def run_backtest_3day(df: pd.DataFrame, ticker: str = "") -> list[tuple[str, flo
     """
     日足で買いパターン点灯日の「翌日寄り付き」でエントリー、「3営業日後の大引け」で決済した場合の
     リターン(%)を1トレードずつ算出する。戻り値: [(pattern_name, return_pct), ...]
+    （バックテスト一括実行時は run_backtest_3day_vectorized を使用すること）
     """
     if df is None or getattr(df, "empty", True) or len(df) < 5:
         return []
@@ -669,7 +775,7 @@ def run_backtest_3day(df: pd.DataFrame, ticker: str = "") -> list[tuple[str, flo
         buy_only = [(i, name, side) for i, name, side in patterns if side == "buy"]
         for bar_i, pattern_name, _ in buy_only:
             next_i = bar_i + 1
-            exit_i = bar_i + 4  # 翌日→+1, 2営業日後→+2, 3営業日後→+3 → 終値は index bar_i+4
+            exit_i = bar_i + 4
             if exit_i >= len(df):
                 continue
             entry_price = float(df["Open"].iloc[next_i])
@@ -678,6 +784,153 @@ def run_backtest_3day(df: pd.DataFrame, ticker: str = "") -> list[tuple[str, flo
                 continue
             ret_pct = (exit_price - entry_price) / entry_price * 100.0
             out.append((pattern_name, ret_pct))
+    except Exception:
+        pass
+    return out
+
+
+def detect_buy_patterns_vectorized(df: pd.DataFrame) -> dict[str, np.ndarray]:
+    """
+    買いパターン点灯バーをベクトル化演算で検出。iterrows/for 行ループは使わない。
+    Returns: pattern_name -> array of bar indices (int)
+    """
+    if df is None or getattr(df, "empty", True) or len(df) < 2:
+        return {}
+    for c in ("Open", "High", "Low", "Close"):
+        if c not in df.columns:
+            return {}
+    out: dict[str, list[int]] = {}
+    o = np.asarray(df["Open"], dtype=np.float64)
+    h = np.asarray(df["High"], dtype=np.float64)
+    l_ = np.asarray(df["Low"], dtype=np.float64)
+    c = np.asarray(df["Close"], dtype=np.float64)
+    n = len(df)
+
+    # TA-Lib: 配列一括でシグナル取得し np.where でインデックス化
+    for name_ja, func in BUY_PATTERNS_TALIB:
+        if not _TALIB_AVAILABLE or func is None:
+            continue
+        try:
+            res = func(o, h, l_, c)
+            if res is None:
+                continue
+            idx = np.where(res > 0)[0]
+            if len(idx) > 0:
+                out.setdefault(name_ja, []).extend(idx.tolist())
+        except Exception:
+            continue
+
+    # カスタム買いパターン: shift/rolling 等のベクトル演算のみ
+    body = (df["Close"] - df["Open"]).abs()
+    range_hl = df["High"] - df["Low"]
+    low_min = df[["Open", "Close"]].min(axis=1)
+    high_max = df[["Open", "Close"]].max(axis=1)
+    lower = low_min - df["Low"]
+    upper = df["High"] - high_max
+    bull = df["Close"] > df["Open"]
+    bear = df["Open"] > df["Close"]
+    body1 = body.shift(1)
+    range1 = range_hl.shift(1)
+    lower1 = lower.shift(1)
+    close1 = df["Close"].shift(1)
+    open1 = df["Open"].shift(1)
+    high1 = df["High"].shift(1)
+    low1 = df["Low"].shift(1)
+
+    # 二本たくり線
+    cond = (range_hl > 0) & (range1 > 0) & (lower >= body * 2) & (lower1 >= body1 * 2)
+    idx = np.where(cond.fillna(False).values)[0]
+    if len(idx):
+        idx = idx[idx >= 1]
+        if len(idx):
+            out.setdefault("二本たくり線", []).extend(idx.tolist())
+    # 陰線後の陽線
+    cond = bear.shift(1) & bull & (df["Close"] > close1)
+    idx = np.where(cond.fillna(False).values)[0]
+    if len(idx):
+        idx = idx[idx >= 1]
+        if len(idx):
+            out.setdefault("陰線後の陽線", []).extend(idx.tolist())
+    # ピンバー
+    cond = (range_hl > 0) & (body < range_hl * 0.1) & (lower > body * 2) & (upper < lower)
+    idx = np.where(cond.fillna(False).values)[0]
+    if len(idx):
+        out.setdefault("ピンバー", []).extend(idx.tolist())
+    # スパイクロー
+    cond = bull & (range_hl > 0) & (lower >= range_hl * 0.6)
+    idx = np.where(cond.fillna(False).values)[0]
+    if len(idx):
+        out.setdefault("スパイクロー", []).extend(idx.tolist())
+    # リバーサルロー
+    prev_low_5 = df["Low"].rolling(5, min_periods=5).min().shift(1)
+    cond = bull & (df["Low"] <= prev_low_5) & (df["Close"] > close1)
+    idx = np.where(cond.fillna(False).values)[0]
+    if len(idx):
+        idx = idx[idx >= 5]
+        if len(idx):
+            out.setdefault("リバーサルロー", []).extend(idx.tolist())
+    # インサイドバー
+    cond = (range1 > 0) & (df["High"] < high1) & (df["Low"] > low1)
+    idx = np.where(cond.fillna(False).values)[0]
+    if len(idx):
+        idx = idx[idx >= 1]
+        if len(idx):
+            out.setdefault("インサイドバー", []).extend(idx.tolist())
+    # 包み線
+    cond = (body1 > 0) & bull & (df["Open"] < close1) & (df["Close"] > open1)
+    idx = np.where(cond.fillna(False).values)[0]
+    if len(idx):
+        idx = idx[idx >= 1]
+        if len(idx):
+            out.setdefault("包み線", []).extend(idx.tolist())
+    # 三空叩き込み
+    gap = df["Low"].shift(1) > df["High"]
+    cond = gap & gap.shift(1) & gap.shift(2)
+    idx = np.where(cond.fillna(False).values)[0]
+    if len(idx):
+        idx = idx[idx >= 3]
+        if len(idx):
+            out.setdefault("三空叩き込み", []).extend(idx.tolist())
+
+    return {k: np.unique(np.array(v, dtype=np.int64)) for k, v in out.items() if v}
+
+
+def run_backtest_3day_vectorized(df: pd.DataFrame, ticker: str = "") -> list[tuple[str, float]]:
+    """
+    3営業日ホールドのリターンをベクトル化で算出。iterrows/行ループは使わない。
+    翌日寄りエントリー・3営業日後終値決済。pattern_name ごとに shift で entry/exit を一括取得。
+    """
+    if df is None or getattr(df, "empty", True) or len(df) < 5:
+        return []
+    for col in ("Open", "High", "Low", "Close"):
+        if col not in df.columns:
+            return []
+    open_arr = np.asarray(df["Open"], dtype=np.float64)
+    close_arr = np.asarray(df["Close"], dtype=np.float64)
+    n = len(df)
+    out: list[tuple[str, float]] = []
+    try:
+        by_pattern = detect_buy_patterns_vectorized(df)
+        for pattern_name, bar_inds in by_pattern.items():
+            bar_inds = np.asarray(bar_inds, dtype=np.int64)
+            next_i = bar_inds + 1
+            exit_i = bar_inds + 4
+            valid = (exit_i < n) & (next_i < n)
+            bar_inds = bar_inds[valid]
+            next_i = next_i[valid]
+            exit_i = exit_i[valid]
+            if len(bar_inds) == 0:
+                continue
+            entry_prices = open_arr[next_i]
+            exit_prices = close_arr[exit_i]
+            valid2 = entry_prices > 0
+            if not np.any(valid2):
+                continue
+            entry_prices = entry_prices[valid2]
+            exit_prices = exit_prices[valid2]
+            ret_pct = (exit_prices - entry_prices) / entry_prices * 100.0
+            for r in ret_pct:
+                out.append((pattern_name, float(r)))
     except Exception:
         pass
     return out
@@ -735,22 +988,27 @@ def backtest_liquidity_ok(
 
 def run_full_backtest_universe(
     tickers: list[str],
-    period: str = "5y",
+    period: str = "3y",
     liquidity_filter: bool = True,
+    chunk_size: int = BULK_CHUNK_SIZE,
 ) -> dict[tuple[str, str], dict[str, Any]]:
     """
-    全銘柄で3営業日バックテストを実行し、(ticker, pattern_name) ごとの
-    win_rate, avg_return_pct, sample_count を返す。
-    liquidity_filter=True のときは 20日平均出来高10万株以上・200円以上 の銘柄のみ対象。
+    全銘柄で3営業日バックテストを実行。(ticker, pattern_name) ごとに win_rate, avg_return_pct, sample_count を返す。
+    - 事前足切り: 軽量バルクで直近2ヶ月取得し、出来高10万株未満・200円未満を除外してから本取得。
+    - 本取得: 通過銘柄のみ 3年分をチャンク一括ダウンロード（for で1銘柄ずつ取得しない）。
+    - 計算: ベクトル化パターン検知・リターン算出（iterrows/行ループなし）。
     """
+    if not tickers:
+        return {}
+    passed_tickers = prefilter_tickers_bulk(tickers, chunk_size=chunk_size) if liquidity_filter else list(tickers)
+    if not passed_tickers:
+        return {}
+    bulk = fetch_ohlcv_bulk(passed_tickers, period=period, chunk_size=chunk_size)
     all_trades: list[tuple[str, str, float]] = []
-    for ticker in tickers:
-        df = fetch_ohlcv(ticker, period=period, interval="1d")
+    for ticker, df in bulk.items():
         if df is None or len(df) < 5:
             continue
-        if liquidity_filter and not backtest_liquidity_ok(df):
-            continue
-        for pattern_name, ret_pct in run_backtest_3day(df, ticker):
+        for pattern_name, ret_pct in run_backtest_3day_vectorized(df, ticker):
             all_trades.append((ticker, pattern_name, ret_pct))
     return aggregate_backtest_stats(all_trades)
 
