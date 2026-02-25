@@ -590,7 +590,8 @@ def _custom_buy_patterns(df: pd.DataFrame) -> list[tuple[int, str, str]]:
             out.append((i, "二本たくり線", "buy"))
         if _bear(r1) and _bull(r0) and r0["Close"] > r1["Close"]:
             out.append((i, "陰線後の陽線", "buy"))
-        if range0 > 0 and _body_is_tiny(r0) and ls0 > body0 * 2:
+        # ピンバー: 実体が極小かつ下ヒゲが実体の2倍以上。上ヒゲが下ヒゲより短いことを要求しノイズ削減。
+        if range0 > 0 and _body_is_tiny(r0) and ls0 > body0 * 2 and us0 < ls0:
             out.append((i, "ピンバー", "buy"))
         if _bull(r0) and range0 > 0 and ls0 >= range0 * 0.6:
             out.append((i, "スパイクロー", "buy"))
@@ -835,7 +836,8 @@ def classify_signal_status(
     ma_dev = get_ma_deviation(df, bar_index)
     if vol_ratio is None or ma_dev is None:
         return None
-    vol_active = 1.4 if provisional else 1.5
+    # 15:15 時点では引けにかけての出来高増加を見越し、閾値を 1.3 倍に補正
+    vol_active = 1.3 if provisional else 1.5
     ma_active = 0.07 if provisional else 0.02
     if vol_ratio >= vol_active and ma_dev <= ma_active:
         return ("active", "—")
@@ -1020,11 +1022,11 @@ def filter_signals_by_pro_filters(
 ) -> list[tuple[int, str, str]]:
     """
     出来高スパイク・MA近接の両方を満たすシグナルのみに絞る（本命のみ）。
-    provisional=True のときは 15:15 暫定用にバッファを許容（出来高1.4倍以上・MA±7%）。
+    provisional=True のときは 15:15 暫定用（出来高1.3倍以上・MA±7%。引け増加分を見込んだ補正）。
     """
     if df is None or not patterns:
         return []
-    vol_multiple = 1.4 if provisional else 1.5
+    vol_multiple = 1.3 if provisional else 1.5
     ma_pct = 0.07 if provisional else 0.02
     out = []
     for i, name, s in patterns:
@@ -1157,7 +1159,10 @@ SELL_PATTERNS_TALIB = [
 
 
 def detect_all_patterns(df: pd.DataFrame) -> list[tuple[int, str, str]]:
-    """OHLC DataFrame に対して 24種買い + 26種売りパターンを検知。"""
+    """
+    OHLC DataFrame に対して買い・売りパターンを検知。
+    複数日複雑パターン（逆三尊・三尊）は誤検知が多いため除外。ピンバー・包み線・はらみ線・明けの明星など単一〜3日足の数学的に検証可能なパターンを優先。
+    """
     if df is None or getattr(df, "empty", True) or len(df) < 2:
         return []
     for col in ("Open", "High", "Low", "Close"):
@@ -1182,15 +1187,16 @@ def detect_all_patterns(df: pd.DataFrame) -> list[tuple[int, str, str]]:
     result.extend(_custom_buy_patterns(df))
     result.extend(_custom_sell_patterns(df))
 
+    # 逆三尊・三尊は複数日にまたがる複雑パターンのため誤検知が多く、一時的に除外。単一〜3日足のノイズの少ないパターンを優先。
     try:
         from signal_scanner import CandlePatterns
         cp = CandlePatterns(df)
         for i in range(len(df)):
             try:
-                if cp.is_gyakusanzun(i):
-                    result.append((i, "逆三尊", "buy"))
-                if cp.is_sanzun(i):
-                    result.append((i, "三尊", "sell"))
+                # if cp.is_gyakusanzun(i):
+                #     result.append((i, "逆三尊", "buy"))
+                # if cp.is_sanzun(i):
+                #     result.append((i, "三尊", "sell"))
                 if cp.is_akenomyojo(i):
                     result.append((i, "明けの明星", "buy"))
                 if cp.is_yoinomyojo(i):
