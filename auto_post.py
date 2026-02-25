@@ -48,48 +48,70 @@ WATCHLIST_TOP_N = 5
 SLEEP_SEC = 0.5
 
 
+def _safe_float_for_sort(val: Any) -> float:
+    """ソート用。NaN/None は 0 にし、比較エラーを防ぐ。"""
+    if val is None:
+        return 0.0
+    try:
+        f = float(val)
+        if f != f:
+            return 0.0
+        return f
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def scan_hybrid() -> dict[str, Any]:
     """
     ハイブリッド判定で 本命(active)・注目(high_potential)・監視(watch) を返す。
     - 本命: Type-A/Type-B で全条件合致（確信度高）。
     - 注目: 条件の8割以上充足（確信度中）。
-    - 監視: 出来高比×MA乖離スコアの上位5銘柄（パターン不要）。各銘柄に「何が足りないか」1行付与。
+    - 監視: データ取得に成功した全銘柄をスコア順でソートし上位5件を必ず返す（フィルターなし）。
     """
+    tickers = list(TARGET_TICKERS)
+    print(f"DEBUG: 読み込まれた銘柄数 = {len(tickers)}")
+    if len(tickers) == 0:
+        return {"active": [], "high_potential": [], "watch": []}
+
     provisional = is_provisional_market_session()
     active: list[dict[str, Any]] = []
     high_potential: list[dict[str, Any]] = []
     watch_candidates: list[dict[str, Any]] = []
 
-    for ticker in TARGET_TICKERS:
+    for ticker in tickers:
+        print(f"DEBUG: スキャン開始 -> {ticker}")
         time.sleep(SLEEP_SEC)
         try:
             df = fetch_ohlcv(ticker, period="3mo", interval="1d")
         except Exception:
             continue
-        if df is None or len(df) < 76:
+        if df is None:
             continue
         n = len(df)
         bar = n - 1
         name = get_ticker_name(ticker)
 
-        # 監視リスト候補: 全銘柄で「出来高比×MA乖離スコア」を算出（パターン不要）
-        vol_ratio = get_volume_ratio(df, bar)
-        ma_dev = get_ma_deviation(df, bar)
-        score = watchlist_score(df, bar)
-        reason_short = build_watchlist_reason_short(df, bar, vol_ratio, ma_dev)
-        tp_sl = compute_tp_sl(df, bar_index=bar)
-        watch_candidates.append({
-            "ticker": ticker,
-            "name": name,
-            "watchlist_score": score,
-            "reason_short": reason_short,
-            "entry": tp_sl.get("entry"),
-            "tp": tp_sl.get("tp"),
-            "sl": tp_sl.get("sl"),
-            "conviction_score": score,
-        })
+        # 監視リスト: データ取得に成功した全銘柄を必ず追加（フィルターなし）。スコアはNaN時0で防御済み。
+        if n >= 25:
+            score = watchlist_score(df, bar)
+            vol_ratio = get_volume_ratio(df, bar)
+            ma_dev = get_ma_deviation(df, bar)
+            reason_short = build_watchlist_reason_short(df, bar, vol_ratio, ma_dev)
+            tp_sl = compute_tp_sl(df, bar_index=bar)
+            watch_candidates.append({
+                "ticker": ticker,
+                "name": name,
+                "watchlist_score": score,
+                "reason_short": reason_short,
+                "entry": tp_sl.get("entry"),
+                "tp": tp_sl.get("tp"),
+                "sl": tp_sl.get("sl"),
+                "conviction_score": score,
+            })
 
-        # 本命・注目: 買いパターンが当日点灯している銘柄のみハイブリッド判定
+        # 本命・注目: 76本以上かつ買いパターン当日点灯の銘柄のみ
+        if n < 76:
+            continue
         try:
             patterns = detect_all_patterns(df)
         except Exception:
@@ -128,8 +150,8 @@ def scan_hybrid() -> dict[str, Any]:
         else:
             high_potential.append(item)
 
-    # 監視 = 出来高比×MA乖離スコアの上位5銘柄
-    watch_candidates.sort(key=lambda x: float(x.get("watchlist_score", 0)), reverse=True)
+    # 監視 = スコア順ソートの上位5件を必ず返す（早期returnなし）
+    watch_candidates.sort(key=lambda x: _safe_float_for_sort(x.get("watchlist_score")), reverse=True)
     watch = watch_candidates[:WATCHLIST_TOP_N]
 
     return {"active": active, "high_potential": high_potential, "watch": watch}

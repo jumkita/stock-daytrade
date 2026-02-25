@@ -349,7 +349,7 @@ def fetch_ohlcv(ticker_symbol: str, period: str = "6mo", interval: str = "1d") -
     yfinance で OHLCV を取得。直近数日分を含む period を指定し、最新行を当日バーとして扱う。
     15:10〜15:30 JST ではその最新行を「未確定の1日足」として暫定値に利用する想定。
     データ欠損・取得不可時はエラー出力せず None を返す。
-    取得直後に必ず flatten_ohlcv_columns で MultiIndex をフラット化する。
+    MultiIndex フラット化: 取得直後に flatten_ohlcv_columns を漏れなく1回だけ実行する。
     """
     try:
         df = yf.download(ticker_symbol, period=period, interval=interval, auto_adjust=True, progress=False, threads=False)
@@ -888,12 +888,26 @@ def hybrid_classify_signal(
     return None
 
 
+def _safe_num(val: Optional[float], default: float = 0.0) -> float:
+    """NaN/None を default にし、ソートエラーを防ぐ。"""
+    if val is None:
+        return default
+    try:
+        f = float(val)
+        if f != f:
+            return default
+        return f
+    except (TypeError, ValueError):
+        return default
+
+
 def watchlist_score(df: pd.DataFrame, bar_index: int) -> float:
-    """ウォッチリスト用スコア = 出来高比 × MA乖離スコア。高いほど資金流入かつMAに近い。"""
+    """ウォッチリスト用スコア = 出来高比 × MA乖離スコア。NaN 時は 0 を返しソート崩壊を防ぐ。"""
     vol_ratio = get_volume_ratio(df, bar_index)
     ma_dev = get_ma_deviation(df, bar_index)
-    v = float(vol_ratio) if vol_ratio is not None else 0.0
-    ma_term = 1.0 / (1.0 + (float(ma_dev) if ma_dev is not None else 1.0))
+    v = _safe_num(vol_ratio, 0.0)
+    ma_gap = _safe_num(ma_dev, 1.0)
+    ma_term = 1.0 / (1.0 + ma_gap)
     return round(v * ma_term, 4)
 
 
