@@ -42,6 +42,10 @@ from logic import (
     get_ma_deviation,
     is_provisional_market_session,
     prefilter_ticker,
+    run_full_backtest_universe,
+    backtest_liquidity_ok,
+    passes_backtest_filters,
+    tp_sl_from_avg_return,
 )
 from screener import TARGET_TICKERS, get_ticker_name
 
@@ -104,6 +108,82 @@ def format_watchlist_line(item: dict) -> str:
     tp = _fmt_price(item.get("tp"))
     sl = _fmt_price(item.get("sl"))
     return f"{code_display}{reason} | Score: {score_str} | 現在値: {entry} | TP: {tp} | SL: {sl}"
+
+
+def format_backtest_line(item: dict) -> str:
+    """3営業日バックテスト結果の1件をクリーンなフォーマットで出力。"""
+    ticker = item.get("ticker") or ""
+    code = f"【{ticker}】" if ticker else ""
+    pattern_name = item.get("pattern_name") or "—"
+    win_rate = item.get("win_rate")
+    wr_str = f"{int(round(win_rate * 100))}%" if win_rate is not None else "—"
+    sample = item.get("sample_count", 0)
+    avg_ret = item.get("avg_return_pct")
+    avg_str = f"+{avg_ret:.2f}%" if avg_ret is not None and avg_ret == avg_ret else "—"
+    entry_s = _fmt_price(item.get("entry"))
+    tp_s = _fmt_price(item.get("tp"))
+    sl_s = _fmt_price(item.get("sl"))
+    return f"{code} | {pattern_name} | 勝率: {wr_str} (サンプル{sample}回) | 平均リターン: {avg_str} | 現在値: {entry_s} | TP: {tp_s} | SL: {sl_s}"
+
+
+def scan_backtest_driven(
+    tickers: Optional[List[str]] = None,
+    backtest_stats: Optional[dict] = None,
+    period_recent: str = "3mo",
+) -> Tuple[List[dict], dict]:
+    """
+    3営業日バックテスト統計に基づき、足切り・優位性フィルターを通過した銘柄のみリストアップする。
+    Returns: (list of item dicts with formatted_line, backtest_stats for cache)
+    """
+    ticker_list = list(tickers or TARGET_TICKERS)
+    if not ticker_list:
+        return [], {}
+
+    if backtest_stats is None:
+        backtest_stats = run_full_backtest_universe(ticker_list, period="5y", liquidity_filter=True)
+
+    results: List[dict] = []
+    seen: set[tuple[str, str]] = set()
+    for ticker in ticker_list:
+        try:
+            df = fetch_ohlcv(ticker, period=period_recent, interval="1d")
+        except Exception:
+            continue
+        if df is None or len(df) < 25:
+            continue
+        if not backtest_liquidity_ok(df):
+            continue
+        bar = len(df) - 1
+        patterns = detect_all_patterns(df)
+        buy_on_last = [(i, name, side) for i, name, side in patterns if side == "buy" and i == bar]
+        if not buy_on_last:
+            continue
+        close = float(df["Close"].iloc[bar])
+        name = get_ticker_name(ticker)
+        for _idx, pattern_name, _side in buy_on_last:
+            if (ticker, pattern_name) in seen:
+                continue
+            key = (ticker, pattern_name)
+            stats = backtest_stats.get(key)
+            if not stats or not passes_backtest_filters(stats):
+                continue
+            seen.add((ticker, pattern_name))
+            avg_ret = stats.get("avg_return_pct", 0.0)
+            tp_sl = tp_sl_from_avg_return(close, avg_ret)
+            item = {
+                "ticker": ticker,
+                "name": name,
+                "pattern_name": pattern_name,
+                "win_rate": stats.get("win_rate"),
+                "sample_count": stats.get("sample_count", 0),
+                "avg_return_pct": avg_ret,
+                "entry": tp_sl.get("entry"),
+                "tp": tp_sl.get("tp"),
+                "sl": tp_sl.get("sl"),
+            }
+            item["formatted_line"] = format_backtest_line(item)
+            results.append(item)
+    return results, backtest_stats
 
 
 def _process_one_ticker(
@@ -341,50 +421,47 @@ def post_to_x(text: str) -> tuple[bool, str | None]:
 
 
 def main() -> int:
-    scan_result = scan_hybrid()
-    active = scan_result["active"]
-    high_potential = scan_result["high_potential"]
-    watch = scan_result["watch"]
-    combined = active + high_potential
-    combined.sort(key=lambda x: float(x.get("conviction_score", 0)), reverse=True)
-    picked = combined[:PICK_MAX]
-    tweet_text = "本日は買いシグナル点灯銘柄はありませんでした。"
-    if picked:
-        tweet_text = build_tweet(picked, watch_items=watch if watch else None)
-        print(tweet_text)
-        print("---")
+    # 3営業日バックテスト統計ベースのスキャン（足切り: 20日平均出来高10万株以上・200円以上、優位性: サンプル3回以上・勝率60%以上・平均リターン+1.5%以上）
+    print("バックテスト統計を算出しています（全銘柄・5年）…")
+    results, _ = scan_backtest_driven()
+    for item in results:
+        print(item.get("formatted_line", ""))
 
-    # ワークフロー用: 本命(active)・注目(high_potential)・監視(watch) を JSON で保存。X 投稿は本命・注目から確信度上位最大3銘柄。
+    unique_tickers = len({item["ticker"] for item in results})
+    n_signals = len(results)
+    print("---")
+    print(f"該当 {unique_tickers} 銘柄（{n_signals} 件のシグナル）")
+
     json_path = os.environ.get("DAILY_SIGNALS_JSON_PATH", "").strip()
     if json_path:
         try:
             data = {
                 "updated": datetime.now(timezone.utc).isoformat(),
-                "active": active,
-                "high_potential": high_potential,
-                "watch": watch,
-                "all": active + high_potential,
-                "picked": picked,
-                "tweet_text": tweet_text,
+                "backtest_driven": True,
+                "unique_tickers": unique_tickers,
+                "signal_count": n_signals,
+                "items": [
+                    {
+                        "ticker": x.get("ticker"),
+                        "name": x.get("name"),
+                        "pattern_name": x.get("pattern_name"),
+                        "win_rate": x.get("win_rate"),
+                        "sample_count": x.get("sample_count"),
+                        "avg_return_pct": x.get("avg_return_pct"),
+                        "entry": x.get("entry"),
+                        "tp": x.get("tp"),
+                        "sl": x.get("sl"),
+                        "formatted_line": x.get("formatted_line"),
+                    }
+                    for x in results
+                ],
             }
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             print(f"結果を保存しました: {json_path}")
         except Exception as e:
             print(f"JSON 保存エラー: {e}", file=sys.stderr)
-
-    if not picked:
-        return 0
-
-    ok, err = post_to_x(tweet_text)
-    if ok:
-        print("投稿しました。")
-        return 0
-    # 402 Payment Required = API のクレジット不足。スクリーニングは成功しているので exit 0 にする
-    if err and ("402" in err or "Payment Required" in err):
-        print("※X 投稿はスキップしました（API クレジット不足 402）。上記はスクリーニング結果です。", file=sys.stderr)
-        return 0
-    return 1
+    return 0
 
 
 if __name__ == "__main__":

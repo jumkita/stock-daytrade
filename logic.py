@@ -644,6 +644,140 @@ def _custom_sell_patterns(df: pd.DataFrame) -> list[tuple[int, str, str]]:
     return out
 
 
+# ========== 3営業日ホールド バックテスト（統計ベース） ==========
+HOLD_DAYS = 3
+BACKTEST_MIN_SAMPLES = 3
+BACKTEST_MIN_WIN_RATE = 0.60
+BACKTEST_MIN_AVG_RETURN_PCT = 1.5
+BACKTEST_LIQUIDITY_VOL_20D = 100_000
+BACKTEST_MIN_PRICE = 200.0
+
+
+def run_backtest_3day(df: pd.DataFrame, ticker: str = "") -> list[tuple[str, float]]:
+    """
+    日足で買いパターン点灯日の「翌日寄り付き」でエントリー、「3営業日後の大引け」で決済した場合の
+    リターン(%)を1トレードずつ算出する。戻り値: [(pattern_name, return_pct), ...]
+    """
+    if df is None or getattr(df, "empty", True) or len(df) < 5:
+        return []
+    for col in ("Open", "High", "Low", "Close"):
+        if col not in df.columns:
+            return []
+    out: list[tuple[str, float]] = []
+    try:
+        patterns = detect_all_patterns(df)
+        buy_only = [(i, name, side) for i, name, side in patterns if side == "buy"]
+        for bar_i, pattern_name, _ in buy_only:
+            next_i = bar_i + 1
+            exit_i = bar_i + 4  # 翌日→+1, 2営業日後→+2, 3営業日後→+3 → 終値は index bar_i+4
+            if exit_i >= len(df):
+                continue
+            entry_price = float(df["Open"].iloc[next_i])
+            exit_price = float(df["Close"].iloc[exit_i])
+            if entry_price <= 0:
+                continue
+            ret_pct = (exit_price - entry_price) / entry_price * 100.0
+            out.append((pattern_name, ret_pct))
+    except Exception:
+        pass
+    return out
+
+
+def aggregate_backtest_stats(
+    trades: list[tuple[str, str, float]],
+) -> dict[tuple[str, str], dict[str, Any]]:
+    """
+    (ticker, pattern_name, return_pct) のリストを集計し、
+    (ticker, pattern_name) -> {win_rate, avg_return_pct, sample_count} を返す。
+    """
+    from collections import defaultdict
+    key_to_returns: dict[tuple[str, str], list[float]] = defaultdict(list)
+    for ticker, pattern_name, ret_pct in trades:
+        key_to_returns[(ticker, pattern_name)].append(ret_pct)
+    result: dict[tuple[str, str], dict[str, Any]] = {}
+    for (ticker, pattern_name), returns in key_to_returns.items():
+        n = len(returns)
+        if n == 0:
+            continue
+        wins = sum(1 for r in returns if r > 0)
+        win_rate = wins / n
+        avg_ret = sum(returns) / n
+        result[(ticker, pattern_name)] = {
+            "win_rate": round(win_rate, 4),
+            "avg_return_pct": round(avg_ret, 4),
+            "sample_count": n,
+        }
+    return result
+
+
+def backtest_liquidity_ok(
+    df: pd.DataFrame,
+    min_volume_20d: float = BACKTEST_LIQUIDITY_VOL_20D,
+    min_price: float = BACKTEST_MIN_PRICE,
+) -> bool:
+    """流動性・株価の足切り。直近20日平均出来高 >= min_volume_20d、現在値 >= min_price。"""
+    if df is None or getattr(df, "empty", True) or len(df) < 20:
+        return False
+    try:
+        if "Volume" not in df.columns:
+            return False
+        vol = df["Volume"].iloc[-20:]
+        avg_vol = vol.mean()
+        if pd.isna(avg_vol) or float(avg_vol) < min_volume_20d:
+            return False
+        close = float(df["Close"].iloc[-1])
+        if pd.isna(close) or close < min_price:
+            return False
+        return True
+    except Exception:
+        return False
+
+
+def run_full_backtest_universe(
+    tickers: list[str],
+    period: str = "5y",
+    liquidity_filter: bool = True,
+) -> dict[tuple[str, str], dict[str, Any]]:
+    """
+    全銘柄で3営業日バックテストを実行し、(ticker, pattern_name) ごとの
+    win_rate, avg_return_pct, sample_count を返す。
+    liquidity_filter=True のときは 20日平均出来高10万株以上・200円以上 の銘柄のみ対象。
+    """
+    all_trades: list[tuple[str, str, float]] = []
+    for ticker in tickers:
+        df = fetch_ohlcv(ticker, period=period, interval="1d")
+        if df is None or len(df) < 5:
+            continue
+        if liquidity_filter and not backtest_liquidity_ok(df):
+            continue
+        for pattern_name, ret_pct in run_backtest_3day(df, ticker):
+            all_trades.append((ticker, pattern_name, ret_pct))
+    return aggregate_backtest_stats(all_trades)
+
+
+def passes_backtest_filters(stats: dict[str, Any]) -> bool:
+    """サンプル3回以上・勝率60%以上・平均リターン+1.5%以上。"""
+    if not stats:
+        return False
+    n = stats.get("sample_count", 0)
+    wr = stats.get("win_rate", 0.0)
+    avg = stats.get("avg_return_pct", 0.0)
+    return n >= BACKTEST_MIN_SAMPLES and wr >= BACKTEST_MIN_WIN_RATE and avg >= BACKTEST_MIN_AVG_RETURN_PCT
+
+
+def tp_sl_from_avg_return(current_price: float, avg_return_pct: float) -> dict[str, float]:
+    """
+    リスクリワードを考慮: TP = 現在値 + 平均リターン、SL = 現在値 - (平均リターン÷2)。
+    平均リターンは%なので current * (avg_return_pct/100) で価格差に変換。
+    """
+    if current_price <= 0:
+        return {"entry": current_price, "tp": current_price, "sl": current_price}
+    delta = current_price * (avg_return_pct / 100.0)
+    tp = current_price + delta
+    sl = current_price - (delta / 2.0)
+    return {"entry": round(current_price, 2), "tp": round(tp, 2), "sl": round(max(0, sl), 2)}
+
+
 # ========== プロフィルタ（出来高スパイク・MA近接）と TP/SL 算出 ==========
 
 
