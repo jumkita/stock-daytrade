@@ -1,57 +1,57 @@
 {
-  "updated": "2026-02-25T09:47:59.357644+00:00",
+  "updated": "2026-02-25T10:09:03.620052+00:00",
   "active": [],
   "high_potential": [],
   "watch": [
     {
-      "ticker": "5401.T",
-      "name": "NIPPON STEEL CORPORATION",
-      "watchlist_score": 4.598,
-      "reason_short": "出来高はあるがMA乖離大（押し目待ち）",
-      "entry": 627.3,
-      "tp": 633.9,
-      "sl": 624.0,
-      "conviction_score": 4.598
-    },
-    {
       "ticker": "5411.T",
       "name": "JFE HOLDINGS INC",
-      "watchlist_score": 2.5355,
-      "reason_short": "形・出来高は良いが買いパターン未点灯",
+      "watchlist_score": 7.6452,
+      "reason_short": "逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち",
       "entry": 2170.5,
       "tp": 2270.5,
       "sl": 2120.5,
-      "conviction_score": 2.5355
+      "conviction_score": 7.6452
     },
     {
       "ticker": "9064.T",
       "name": "YAMATO HOLDINGS CO LTD",
-      "watchlist_score": 2.3837,
-      "reason_short": "出来高はあるがMA乖離大（押し目待ち）",
+      "watchlist_score": 7.3047,
+      "reason_short": "陰線後の陽線点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
       "entry": 1881.0,
       "tp": 1953.0,
       "sl": 1845.0,
-      "conviction_score": 2.3837
+      "conviction_score": 7.3047
     },
     {
       "ticker": "6506.T",
       "name": "YASKAWA ELECTRIC CORP",
-      "watchlist_score": 2.1936,
-      "reason_short": "出来高はあるがMA乖離大（押し目待ち）",
+      "watchlist_score": 6.7523,
+      "reason_short": "陰線後の陽線, 逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
       "entry": 5403.0,
       "tp": 6119.0,
       "sl": 5045.0,
-      "conviction_score": 2.1936
+      "conviction_score": 6.7523
     },
     {
       "ticker": "6594.T",
       "name": "NIDEC CORPORATION",
-      "watchlist_score": 2.1013,
-      "reason_short": "出来高はあるがMA乖離大（押し目待ち）",
+      "watchlist_score": 6.4111,
+      "reason_short": "逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち",
       "entry": 2391.0,
       "tp": 2591.0,
       "sl": 2291.0,
-      "conviction_score": 2.1013
+      "conviction_score": 6.4111
+    },
+    {
+      "ticker": "9301.T",
+      "name": "MITSUBISHI LOGISTICS CORP",
+      "watchlist_score": 4.8151,
+      "reason_short": "逆三尊点灯。出来高の本格的な増加（1.5倍超え）待ち 押し目形成中。MAタッチでの反発を確認せよ",
+      "entry": 1396.5,
+      "tp": 1502.5,
+      "sl": 1343.5,
+      "conviction_score": 4.8151
     }
   ],
   "all": [],
