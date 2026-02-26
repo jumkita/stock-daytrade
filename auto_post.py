@@ -31,6 +31,8 @@ import pandas as pd
 from logic import (
     fetch_ohlcv,
     fetch_ohlcv_bulk,
+    fetch_intraday_latest_close_bulk,
+    merge_intraday_into_last_bar,
     detect_all_patterns,
     detect_buy_patterns_vectorized,
     compute_tp_sl,
@@ -147,6 +149,11 @@ def scan_backtest_driven(
 
     # 直近データもバルク一括取得（1銘柄ずつ取得しない）
     bulk_recent = fetch_ohlcv_bulk(ticker_list, period=period_recent, chunk_size=150)
+    # 15:00時点のザラ場最新価格を分足で一括取得し、直近1行のCloseに反映（バルクのみ・直列禁止）
+    intraday_latest = fetch_intraday_latest_close_bulk(
+        list(bulk_recent.keys()), period="1d", interval="5m", chunk_size=80
+    )
+    merge_intraday_into_last_bar(bulk_recent, intraday_latest)
     results: List[dict] = []
     seen: set[tuple[str, str]] = set()
     for ticker, df in bulk_recent.items():

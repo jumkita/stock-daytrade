@@ -450,6 +450,91 @@ def fetch_ohlcv_bulk(
     return result
 
 
+# 分足でザラ場の最新価格を取得するチャンクサイズ（一括取得のみ・直列禁止）
+INTRADAY_CHUNK_SIZE = 80
+
+
+def fetch_intraday_latest_close_bulk(
+    tickers: list[str],
+    period: str = "1d",
+    interval: str = "5m",
+    chunk_size: int = INTRADAY_CHUNK_SIZE,
+) -> dict[str, float]:
+    """
+    当日の分足をバルク取得し、各銘柄の「最新のClose」を返す。1銘柄ずつの直列取得は行わない。
+    15:00時点のザラ場価格を日足の仮終値として使うために利用する。
+    Returns: ticker -> latest Close (float)。取得失敗はスキップ。
+    """
+    result: dict[str, float] = {}
+    chunk_size = max(1, min(chunk_size, 150))
+    chunk_delay = 0.8 if os.environ.get("GITHUB_ACTIONS") else 0.0
+    for start in range(0, len(tickers), chunk_size):
+        chunk = tickers[start : start + chunk_size]
+        if not chunk:
+            continue
+        if chunk_delay > 0 and start > 0:
+            time.sleep(chunk_delay)
+        try:
+            raw = yf.download(
+                " ".join(chunk),
+                period=period,
+                interval=interval,
+                auto_adjust=True,
+                progress=False,
+                threads=True,
+                group_by="ticker",
+            )
+        except Exception:
+            continue
+        if raw is None or raw.empty:
+            continue
+        if len(chunk) == 1 and not isinstance(raw.columns, pd.MultiIndex):
+            raw = raw.copy()
+            raw.columns = pd.MultiIndex.from_product([[chunk[0]], raw.columns])
+        for t in chunk:
+            try:
+                if isinstance(raw.columns, pd.MultiIndex):
+                    if t not in raw.columns.get_level_values(0):
+                        continue
+                    sub = raw[t].copy()
+                else:
+                    sub = raw.copy()
+                if sub is None or sub.empty:
+                    continue
+                sub = flatten_ohlcv_columns(sub)
+                if "Close" not in sub.columns:
+                    continue
+                close_series = sub["Close"].dropna()
+                if len(close_series) == 0:
+                    continue
+                last_close = float(close_series.iloc[-1])
+                if last_close == last_close and last_close > 0:
+                    result[t] = last_close
+            except Exception:
+                continue
+    return result
+
+
+def merge_intraday_into_last_bar(
+    bulk_dfs: dict[str, pd.DataFrame],
+    ticker_to_latest_close: dict[str, float],
+) -> None:
+    """
+    日足の直近1行の Close を、分足で取得した最新価格で上書きする（in-place）。
+    15:00時点のザラ場価格を当日の仮終値としてバックテストに反映する。
+    """
+    for ticker, df in bulk_dfs.items():
+        if df is None or len(df) < 1 or "Close" not in df.columns:
+            continue
+        latest = ticker_to_latest_close.get(ticker)
+        if latest is None or (isinstance(latest, float) and (latest != latest or latest <= 0)):
+            continue
+        try:
+            df.iloc[-1, df.columns.get_loc("Close")] = float(latest)
+        except Exception:
+            continue
+
+
 def prefilter_tickers_bulk(
     tickers: list[str],
     min_volume_20d: float = 100_000,
