@@ -416,6 +416,40 @@ def main():
         except Exception:
             pass
 
+    # 初回ロード時に GitHub の JSON を自動ロード（ボタンを押さなくても最新結果を反映）
+    if (
+        daily_json_url
+        and st.session_state.daily_buy_signals is None
+        and st.session_state.daily_buy_signals_text is None
+    ):
+        try:
+            with urllib.request.urlopen(daily_json_url, timeout=10) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            if data.get("backtest_driven") and data.get("items"):
+                items = data.get("items") or []
+                n_tickers = data.get("unique_tickers", len({x.get("ticker") for x in items if x.get("ticker")}))
+                n_signals = data.get("signal_count", len(items))
+                summary = f"該当 {n_tickers} 銘柄（{n_signals} 件のシグナル）\n\n" + "\n".join(
+                    x.get("formatted_line", "") for x in items
+                )
+                st.session_state.daily_buy_signals = items
+                st.session_state.daily_buy_signals_high_potential = []
+                st.session_state.daily_buy_signals_watch = []
+                st.session_state.daily_buy_signals_text = summary if items else "本日は該当銘柄はありませんでした。"
+                st.session_state.daily_buy_signals_backtest_format = True
+            else:
+                active_list = data.get("active", data.get("all", []))
+                high_potential_list = data.get("high_potential", [])
+                watch_list = data.get("watch", [])
+                tweet_text = data.get("tweet_text", "")
+                st.session_state.daily_buy_signals = active_list if isinstance(active_list, list) else []
+                st.session_state.daily_buy_signals_high_potential = high_potential_list if isinstance(high_potential_list, list) else []
+                st.session_state.daily_buy_signals_text = tweet_text or "本日は買いシグナル点灯銘柄はありませんでした。"
+                st.session_state.daily_buy_signals_watch = watch_list if isinstance(watch_list, list) else []
+                st.session_state.daily_buy_signals_backtest_format = False
+        except Exception:
+            pass
+
     col_refresh, col_fetch, _ = st.columns([1, 1, 2])
     with col_refresh:
         if st.button("表示を更新", key="daily_signal_refresh"):
