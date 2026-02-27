@@ -1,66 +1,479 @@
-name: Auto Post Buy Signals to X
+# -*- coding: utf-8 -*-
+"""
+買いシグナル点灯銘柄を抽出し、X (Twitter) へ自動投稿するバッチ。
+乖離率・AI判定は使わず、大引け日（その日足）で買いサインが出ている銘柄のみを対象とする。
+"""
+from __future__ import annotations
 
-on:
-  schedule:
-    # 平日（月〜金）07:00 UTC = 日本時間 16:00（大引け後）
-    - cron: "0 7 * * 1-5"
-  workflow_dispatch:
+import os
+import sys
 
-env:
-  X_API_KEY: ${{ secrets.X_API_KEY }}
-  X_API_SECRET: ${{ secrets.X_API_SECRET }}
-  X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-  X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+# スクリプト配置ディレクトリとカレントを sys.path の先頭に（Actions 等で import 失敗しないよう）
+_script_dir = os.path.dirname(os.path.abspath(__file__))
+if _script_dir and _script_dir not in sys.path:
+    sys.path.insert(0, _script_dir)
+_cwd = os.getcwd()
+if _cwd and _cwd not in sys.path:
+    sys.path.insert(0, _cwd)
 
-jobs:
-  post:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
+import json
+import logging
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
+from typing import Any, List, Optional, Tuple
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+# yfinance の delisted/404 などの ERROR ログを抑制（銘柄スキャン時に大量に出るため）
+logging.getLogger("yfinance").setLevel(logging.WARNING)
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install tweepy
+import pandas as pd
 
-      - name: リポジトリのファイル確認（logic.py が同じ階層にあるか）
-        run: |
-          echo "=== カレントディレクトリ ==="
-          pwd
-          echo "=== ルート直下の .py ファイル ==="
-          ls -la *.py 2>/dev/null || true
-          echo "=== logic を含むファイル名（大文字小文字区別） ==="
-          ls -la logic.py 2>/dev/null || echo "logic.py なし"
-          find . -maxdepth 2 -name "*.py" -type f | sort
+from logic import (
+    fetch_ohlcv,
+    fetch_ohlcv_bulk,
+    fetch_intraday_latest_close_bulk,
+    merge_intraday_into_last_bar,
+    detect_all_patterns,
+    detect_buy_patterns_vectorized,
+    compute_tp_sl,
+    build_signal_rationale,
+    compute_conviction_score,
+    hybrid_classify_signal,
+    watchlist_score,
+    watchlist_eligible,
+    build_watchlist_reason_short,
+    get_volume_ratio,
+    get_ma_deviation,
+    is_provisional_market_session,
+    prefilter_ticker,
+    run_full_backtest_universe,
+    backtest_liquidity_ok,
+    passes_backtest_filters,
+    tp_sl_from_avg_return,
+)
+from screener import TARGET_TICKERS, get_ticker_name
+from ticker_universe import get_ticker_universe_with_source
 
-      - name: Python から logic を import できるか確認
-        working-directory: ${{ github.workspace }}
-        run: |
-          WP="$GITHUB_WORKSPACE"
-          echo "WORKSPACE=$WP"
-          export PYTHONPATH="$WP"
-          python -c "import sys; print('sys.path[0:3]:', sys.path[0:3]); import logic; print('import logic OK')"
+MAX_TWEET_LEN = 280
+PICK_MAX = 3
+WATCHLIST_TOP_N = 5
+SLEEP_SEC = 0.5
+# 並列処理: プレフィルターと本スキャンのワーカー数（API制限を考慮）
+PREFILTER_MAX_WORKERS = 10
+SCAN_MAX_WORKERS = 4
 
-      - name: Run auto_post.py
-        working-directory: ${{ github.workspace }}
-        env:
-          DAILY_SIGNALS_JSON_PATH: ${{ github.workspace }}/daily_buy_signals.json
-        run: |
-          WP="$GITHUB_WORKSPACE"
-          export PYTHONPATH="$WP"
-          python "$WP/auto_post.py"
 
-      - name: 結果をリポジトリにコミット・プッシュ（Streamlit で自動表示用）
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add daily_buy_signals.json
-          git diff --staged --quiet && echo "変更なし" || (git commit -m "chore: Update daily buy signals [automated]" && git push)
+def _safe_float_for_sort(val: Any) -> float:
+    """ソート用。NaN/None は 0 にし、比較エラーを防ぐ。"""
+    if val is None:
+        return 0.0
+    try:
+        f = float(val)
+        if f != f:
+            return 0.0
+        return f
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _display_name(ticker: str, name: str) -> str:
+    """Ticker の印字は1回のみ。名前が未設定またはコードと同一の場合は【コード】に統一。"""
+    t = (ticker or "").strip()
+    n = (name or "").strip()
+    if not t:
+        return n or "—"
+    if not n or n == t or n == t.replace(".T", "") or n == t.replace(".T", "") + ".T":
+        return f"【{t}】"
+    if n.startswith("【") and n.endswith("】"):
+        return n
+    return n
+
+
+def _fmt_price(val: Any) -> str:
+    """価格を ¥x,xxx 形式に。None/NaN は —。"""
+    if val is None:
+        return "—"
+    try:
+        f = float(val)
+        if f != f:
+            return "—"
+        return f"¥{f:,.0f}"
+    except (TypeError, ValueError):
+        return "—"
+
+
+def format_watchlist_line(item: dict) -> str:
+    """監視1件をパイプ区切りで1行に整形。例: 【4530.T】二本たくり線点灯。出来高増加待ち | 押し目形成中 | Score: 9.07 | 現在値: ¥6,030 | TP: ¥6,206 | SL: ¥5,942"""
+    ticker = item.get("ticker") or ""
+    code_display = f"【{ticker}】" if ticker else ""
+    reason = (item.get("reason_short") or "—").strip()
+    score = item.get("watchlist_score")
+    score_str = f"{float(score):.2f}" if score is not None and (isinstance(score, (int, float)) and score == score) else "—"
+    entry = _fmt_price(item.get("entry"))
+    tp = _fmt_price(item.get("tp"))
+    sl = _fmt_price(item.get("sl"))
+    return f"{code_display}{reason} | Score: {score_str} | 現在値: {entry} | TP: {tp} | SL: {sl}"
+
+
+def format_backtest_line(item: dict) -> str:
+    """3営業日バックテスト結果の1件をクリーンなフォーマットで出力。"""
+    ticker = item.get("ticker") or ""
+    code = f"【{ticker}】" if ticker else ""
+    pattern_name = item.get("pattern_name") or "—"
+    win_rate = item.get("win_rate")
+    wr_str = f"{int(round(win_rate * 100))}%" if win_rate is not None else "—"
+    sample = item.get("sample_count", 0)
+    avg_ret = item.get("avg_return_pct")
+    avg_str = f"+{avg_ret:.2f}%" if avg_ret is not None and avg_ret == avg_ret else "—"
+    entry_s = _fmt_price(item.get("entry"))
+    tp_s = _fmt_price(item.get("tp"))
+    sl_s = _fmt_price(item.get("sl"))
+    return f"{code} | {pattern_name} | 勝率: {wr_str} (サンプル{sample}回) | 平均リターン: {avg_str} | 現在値: {entry_s} | TP: {tp_s} | SL: {sl_s}"
+
+
+def scan_backtest_driven(
+    tickers: Optional[List[str]] = None,
+    backtest_stats: Optional[dict] = None,
+    period_recent: str = "3mo",
+) -> Tuple[List[dict], dict]:
+    """
+    3営業日バックテスト統計に基づき、足切り・優位性フィルターを通過した銘柄のみリストアップする。
+    Returns: (list of item dicts with formatted_line, backtest_stats for cache)
+    """
+    ticker_list = list(tickers or TARGET_TICKERS)
+    if not ticker_list:
+        return [], {}
+
+    if backtest_stats is None:
+        backtest_stats = run_full_backtest_universe(ticker_list, period="3y", liquidity_filter=True)
+
+    # 直近データもバルク一括取得（1銘柄ずつ取得しない）
+    bulk_recent = fetch_ohlcv_bulk(ticker_list, period=period_recent, chunk_size=150)
+    # 15:00時点のザラ場最新価格を分足で一括取得し、直近1行のCloseに反映（バルクのみ・直列禁止）
+    intraday_latest = fetch_intraday_latest_close_bulk(
+        list(bulk_recent.keys()), period="1d", interval="5m", chunk_size=80
+    )
+    merge_intraday_into_last_bar(bulk_recent, intraday_latest)
+    results: List[dict] = []
+    seen: set[tuple[str, str]] = set()
+    for ticker, df in bulk_recent.items():
+        if df is None or len(df) < 25:
+            continue
+        if not backtest_liquidity_ok(df):
+            continue
+        bar = len(df) - 1
+        by_pattern = detect_buy_patterns_vectorized(df)
+        buy_on_last = []
+        for pattern_name, indices in by_pattern.items():
+            if bar in indices:
+                buy_on_last.append((bar, pattern_name, "buy"))
+        if not buy_on_last:
+            continue
+        close = float(df["Close"].iloc[bar])
+        name = get_ticker_name(ticker)
+        for _idx, pattern_name, _side in buy_on_last:
+            if (ticker, pattern_name) in seen:
+                continue
+            key = (ticker, pattern_name)
+            stats = backtest_stats.get(key)
+            if not stats or not passes_backtest_filters(stats):
+                continue
+            seen.add((ticker, pattern_name))
+            avg_ret = stats.get("avg_return_pct", 0.0)
+            tp_sl = tp_sl_from_avg_return(close, avg_ret)
+            item = {
+                "ticker": ticker,
+                "name": name,
+                "pattern_name": pattern_name,
+                "win_rate": stats.get("win_rate"),
+                "sample_count": stats.get("sample_count", 0),
+                "avg_return_pct": avg_ret,
+                "entry": tp_sl.get("entry"),
+                "tp": tp_sl.get("tp"),
+                "sl": tp_sl.get("sl"),
+            }
+            item["formatted_line"] = format_backtest_line(item)
+            results.append(item)
+    return results, backtest_stats
+
+
+def _process_one_ticker(
+    ticker: str, provisional: bool
+) -> Tuple[List[dict], List[dict], List[dict]]:
+    """
+    1銘柄分のスキャン。本命・注目・監視候補を返す。並列実行用。
+    Returns: (active_list, high_potential_list, watch_candidates)
+    """
+    active: List[dict] = []
+    high_potential: List[dict] = []
+    watch_candidates: List[dict] = []
+    try:
+        df = fetch_ohlcv(ticker, period="3mo", interval="1d")
+    except Exception:
+        return active, high_potential, watch_candidates
+    if df is None:
+        return active, high_potential, watch_candidates
+    n = len(df)
+    bar = n - 1
+    name = get_ticker_name(ticker)
+
+    patterns: list = []
+    if n >= 25:
+        try:
+            patterns = detect_all_patterns(df)
+        except Exception:
+            pass
+    buy_on_last_day = [(i, nm, side) for i, nm, side in patterns if side == "buy" and i == bar]
+
+    if n >= 25:
+        vol_ratio = get_volume_ratio(df, bar)
+        ma_dev = get_ma_deviation(df, bar)
+        pattern_found = len(buy_on_last_day) > 0
+        pattern_names = ", ".join(nm for _, nm, _ in buy_on_last_day) if buy_on_last_day else ""
+        eligible, condition_ab = watchlist_eligible(pattern_found, vol_ratio, ma_dev)
+        if eligible and condition_ab:
+            score = watchlist_score(df, bar, pattern_found)
+            reason_short = build_watchlist_reason_short(
+                pattern_found, pattern_names, vol_ratio, ma_dev, condition_ab
+            )
+            tp_sl = compute_tp_sl(df, bar_index=bar)
+            w = {
+                "ticker": ticker,
+                "name": name,
+                "watchlist_score": score,
+                "reason_short": reason_short,
+                "entry": tp_sl.get("entry"),
+                "tp": tp_sl.get("tp"),
+                "sl": tp_sl.get("sl"),
+                "conviction_score": score,
+            }
+            w["formatted_line"] = format_watchlist_line(w)
+            watch_candidates.append(w)
+
+    if n < 76:
+        return active, high_potential, watch_candidates
+    if not buy_on_last_day:
+        return active, high_potential, watch_candidates
+    classification = hybrid_classify_signal(df, bar, has_buy_pattern=True, provisional=provisional)
+    if classification is None:
+        return active, high_potential, watch_candidates
+    status, reason_short_h = classification
+    buy_names = [nm for _, nm, _ in buy_on_last_day]
+    tp_sl = compute_tp_sl(df, bar_index=bar)
+    rationale = build_signal_rationale(
+        df, bar,
+        multiple=1.2,
+        ma_pct_display=7 if provisional else None,
+    )
+    conviction = compute_conviction_score(df, bar)
+    item = {
+        "ticker": ticker,
+        "name": name,
+        "buy_signals": ", ".join(buy_names),
+        "signal_count": len(buy_names),
+        "entry": tp_sl.get("entry"),
+        "tp": tp_sl.get("tp"),
+        "sl": tp_sl.get("sl"),
+        "rationale": rationale,
+        "provisional": provisional,
+        "status": status,
+        "reason_short": reason_short_h,
+        "conviction_score": conviction,
+    }
+    if status == "active":
+        active.append(item)
+    else:
+        high_potential.append(item)
+    return active, high_potential, watch_candidates
+
+
+def scan_hybrid() -> dict[str, Any]:
+    """
+    ハイブリッド判定で 本命(active)・注目(high_potential)・監視(watch) を返す。
+    プレフィルター（流動性・株価）で足切りし、通過銘柄のみ並列で本スキャンする。
+    """
+    tickers = list(TARGET_TICKERS)
+    print(f"DEBUG: 読み込まれた銘柄数 = {len(tickers)}")
+    if len(tickers) == 0:
+        return {"active": [], "high_potential": [], "watch": []}
+
+    # プレフィルター: 流動性100千株以上・株価100円以上を並列で判定
+    passed: List[str] = []
+    with ThreadPoolExecutor(max_workers=PREFILTER_MAX_WORKERS) as ex:
+        futs = {ex.submit(prefilter_ticker, t): t for t in tickers}
+        for fut in as_completed(futs):
+            if fut.result():
+                passed.append(futs[fut])
+    print(f"DEBUG: プレフィルター通過銘柄数 = {len(passed)}")
+    if len(passed) == 0:
+        return {"active": [], "high_potential": [], "watch": []}
+
+    provisional = is_provisional_market_session()
+    active: list[dict[str, Any]] = []
+    high_potential: list[dict[str, Any]] = []
+    watch_candidates: list[dict[str, Any]] = []
+
+    # 本スキャン: 並列で fetch + 判定（ワーカー数制限でAPI制限を緩和）
+    with ThreadPoolExecutor(max_workers=SCAN_MAX_WORKERS) as ex:
+        futs = {ex.submit(_process_one_ticker, t, provisional): t for t in passed}
+        for fut in as_completed(futs):
+            try:
+                a, h, w = fut.result()
+                active.extend(a)
+                high_potential.extend(h)
+                watch_candidates.extend(w)
+            except Exception:
+                pass
+
+    watch_candidates.sort(key=lambda x: _safe_float_for_sort(x.get("watchlist_score")), reverse=True)
+    watch = watch_candidates[:WATCHLIST_TOP_N]
+    return {"active": active, "high_potential": high_potential, "watch": watch}
+
+
+def scan_buy_signal_only() -> dict[str, list[dict[str, Any]]]:
+    """
+    後方互換: scan_hybrid() を呼び、active / high_potential を active に、
+    watch を watch にマッピングして返す（本命＋注目を active に統合する旧形式）。
+    """
+    r = scan_hybrid()
+    active = r["active"]
+    high_potential = r["high_potential"]
+    watch = r["watch"]
+    return {"active": active + high_potential, "watch": watch}
+
+
+def build_tweet(
+    picked: list[dict[str, Any]],
+    watch_names: Optional[list[str]] = None,
+    watch_items: Optional[list[dict[str, Any]]] = None,
+) -> str:
+    """
+    投稿文を組み立てる。Ticker は1回のみ【コード】で表示。数値はパイプ区切りで視認性を確保。
+    監視は watch_items があれば formatted_line（パイプ区切り1行）を優先。280文字を超えないよう調整する。
+    """
+    provisional = any(r.get("provisional") for r in picked)
+    lines = ["【本日の厳選3銘柄】"]
+    if provisional:
+        lines.append("※15:15暫定（大引け前の暫定値・TP/SLは暫定終値ベース）")
+    for r in picked:
+        label = "本命" if r.get("status") == "active" else "注目"
+        disp = _display_name(r.get("ticker") or "", r.get("name") or "")
+        lines.append(f"■ [{label}] {disp}")
+        lines.append(f"・シグナル: {r.get('buy_signals', '—')}")
+        rationale = r.get("rationale") or "—"
+        score = r.get("conviction_score")
+        score_str = f"{float(score):.2f}" if score is not None and isinstance(score, (int, float)) and score == score else "—"
+        entry_s = _fmt_price(r.get("entry"))
+        tp_s = _fmt_price(r.get("tp"))
+        sl_s = _fmt_price(r.get("sl"))
+        lines.append(f"・根拠: {rationale} | Score: {score_str} | 現在値: {entry_s} | TP: {tp_s} | SL: {sl_s}")
+        lines.append("")
+    lines.append("※機械的スクリーニング結果。投資判断は自己責任で。")
+    lines.append("#日本株 #プライスアクション")
+    text = "\n".join(lines)
+    # 監視: watch_items の formatted_line を1行ずつ追加（入る範囲）。未設定なら format_watchlist_line で生成。入らなければ短い「名前」のみ
+    if watch_items:
+        watch_lines = [(w.get("formatted_line") or format_watchlist_line(w)).strip() for w in watch_items[:3]]
+        watch_lines = [ln for ln in watch_lines if ln]
+        if watch_lines:
+            suffix = "\n\n【監視】\n" + "\n".join(watch_lines)
+            if len(text) + len(suffix) <= MAX_TWEET_LEN:
+                text = text + suffix
+        if "【監視】" not in text:
+            short = " / ".join(_display_name(w.get("ticker", ""), w.get("name", "")) for w in watch_items[:5])
+            if short and len(text) + 2 + len("【監視】 " + short) <= MAX_TWEET_LEN:
+                text = text + "\n\n【監視】 " + short
+    elif watch_names:
+        short = " / ".join(watch_names[:5])
+        if len(text) + 2 + len("【監視】 " + short) <= MAX_TWEET_LEN:
+            text = text + "\n\n【監視】 " + short
+    if len(text) <= MAX_TWEET_LEN:
+        return text
+    if len(picked) > 1:
+        return build_tweet(picked[:1], watch_names, watch_items)
+    single = {**picked[0], "buy_signals": (picked[0].get("buy_signals") or "")[:47] + "…"}
+    return build_tweet([single], watch_names, watch_items)
+
+
+def post_to_x(text: str) -> tuple[bool, str | None]:
+    """
+    tweepy で X に投稿する。
+    Returns:
+        (成功したか, エラーメッセージ or None)
+    """
+    try:
+        import tweepy
+    except ImportError:
+        print("tweepy がインストールされていません。pip install tweepy", file=sys.stderr)
+        return False, "ImportError"
+
+    api_key = os.environ.get("X_API_KEY", "").strip()
+    api_secret = os.environ.get("X_API_SECRET", "").strip()
+    access_token = os.environ.get("X_ACCESS_TOKEN", "").strip()
+    access_secret = os.environ.get("X_ACCESS_TOKEN_SECRET", "").strip()
+
+    if not all([api_key, api_secret, access_token, access_secret]):
+        print("X API の環境変数が未設定です。X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET", file=sys.stderr)
+        return False, "env"
+
+    try:
+        client = tweepy.Client(
+            consumer_key=api_key,
+            consumer_secret=api_secret,
+            access_token=access_token,
+            access_token_secret=access_secret,
+        )
+        client.create_tweet(text=text)
+        return True, None
+    except Exception as e:
+        err = str(e)
+        print(f"X 投稿エラー: {e}", file=sys.stderr)
+        return False, err
+
+
+def main() -> int:
+    # 3営業日バックテスト統計ベースのスキャン（足切り: 20日平均出来高10万株以上・200円以上、優位性: サンプル3回以上・勝率60%以上・平均リターン+1.5%以上）
+    print("バックテスト統計を算出しています（全銘柄・5年）…")
+    results, _ = scan_backtest_driven()
+    for item in results:
+        print(item.get("formatted_line", ""))
+
+    unique_tickers = len({item["ticker"] for item in results})
+    n_signals = len(results)
+    print("---")
+    print(f"該当 {unique_tickers} 銘柄（{n_signals} 件のシグナル）")
+
+    json_path = os.environ.get("DAILY_SIGNALS_JSON_PATH", "").strip()
+    if json_path:
+        try:
+            data = {
+                "updated": datetime.now(timezone.utc).isoformat(),
+                "backtest_driven": True,
+                "unique_tickers": unique_tickers,
+                "signal_count": n_signals,
+                "items": [
+                    {
+                        "ticker": x.get("ticker"),
+                        "name": x.get("name"),
+                        "pattern_name": x.get("pattern_name"),
+                        "win_rate": x.get("win_rate"),
+                        "sample_count": x.get("sample_count"),
+                        "avg_return_pct": x.get("avg_return_pct"),
+                        "entry": x.get("entry"),
+                        "tp": x.get("tp"),
+                        "sl": x.get("sl"),
+                        "formatted_line": x.get("formatted_line"),
+                    }
+                    for x in results
+                ],
+            }
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            print(f"結果を保存しました: {json_path}")
+        except Exception as e:
+            print(f"JSON 保存エラー: {e}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
