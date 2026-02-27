@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-買いシグナル点灯銘柄を抽出し、X (Twitter) へ自動投稿するバッチ。
-乖離率・AI判定は使わず、大引け日（その日足）で買いサインが出ている銘柄のみを対象とする。
+買いシグナル点灯銘柄を抽出し、バックテスト統計ベースの結果を JSON に保存するバッチ。
+X (Twitter) への投稿機能は廃止し、軽量なスクリーニング専用バッチとする。
 """
 from __future__ import annotations
 
@@ -393,42 +393,6 @@ def build_tweet(
         return build_tweet(picked[:1], watch_names, watch_items)
     single = {**picked[0], "buy_signals": (picked[0].get("buy_signals") or "")[:47] + "…"}
     return build_tweet([single], watch_names, watch_items)
-
-
-def post_to_x(text: str) -> tuple[bool, str | None]:
-    """
-    tweepy で X に投稿する。
-    Returns:
-        (成功したか, エラーメッセージ or None)
-    """
-    try:
-        import tweepy
-    except ImportError:
-        print("tweepy がインストールされていません。pip install tweepy", file=sys.stderr)
-        return False, "ImportError"
-
-    api_key = os.environ.get("X_API_KEY", "").strip()
-    api_secret = os.environ.get("X_API_SECRET", "").strip()
-    access_token = os.environ.get("X_ACCESS_TOKEN", "").strip()
-    access_secret = os.environ.get("X_ACCESS_TOKEN_SECRET", "").strip()
-
-    if not all([api_key, api_secret, access_token, access_secret]):
-        print("X API の環境変数が未設定です。X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET", file=sys.stderr)
-        return False, "env"
-
-    try:
-        client = tweepy.Client(
-            consumer_key=api_key,
-            consumer_secret=api_secret,
-            access_token=access_token,
-            access_token_secret=access_secret,
-        )
-        client.create_tweet(text=text)
-        return True, None
-    except Exception as e:
-        err = str(e)
-        print(f"X 投稿エラー: {e}", file=sys.stderr)
-        return False, err
 
 
 def main() -> int:
