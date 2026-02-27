@@ -21,6 +21,9 @@ import pandas as pd
 
 import yfinance as yf
 
+# yfinance の「possibly delisted」等のログはノイズが多いため CRITICAL 未満を抑制
+logging.getLogger("yfinance").setLevel(logging.CRITICAL)
+
 # ログ設定
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

@@ -23,8 +23,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from typing import Any, List, Optional, Tuple
 
-# yfinance の delisted/404 などの ERROR ログを抑制（銘柄スキャン時に大量に出るため）
-logging.getLogger("yfinance").setLevel(logging.WARNING)
+# yfinance の delisted/404 などのログはノイズが多いため CRITICAL 未満を抑制
+logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 
 import pandas as pd
 
