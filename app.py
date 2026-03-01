@@ -209,7 +209,11 @@ def _render_detail_chart(ticker: str, period: str) -> None:
     date_val = last_row.get("Date", df.index[-1])
     date_str = str(date_val)[:10] if date_val is not None else str(df.index[-1])
     close_price = last_row.get("Close")
-    close_str = f"¥{close_price:,.0f}" if close_price is not None and pd.notna(close_price) else "—"
+    try:
+        v = None if close_price is None else float(close_price)
+        close_str = f"¥{v:,.0f}" if v is not None and v == v and v >= 0 else "—"
+    except (TypeError, ValueError):
+        close_str = "—"
 
     active_buys = [
         c for c in valid_signals
