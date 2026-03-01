@@ -721,6 +721,176 @@ def get_sotp_suggested_multiple(ticker_symbol: str) -> dict[str, Any]:
     }
 
 
+# ========== 適正株価（PERベース）& バリュートラップ検知 ==========
+
+# セクター/業種別の同業代表銘柄（最大3〜5社）。日本株用。タイムアウト回避のため少数のみ参照。
+_SECTOR_PEER_MAP: dict[str, list[str]] = {
+    "technology": ["6758.T", "9984.T", "9432.T", "4704.T", "6861.T"],
+    "information technology": ["6758.T", "9984.T", "9432.T", "4704.T", "6861.T"],
+    "financial services": ["8316.T", "8411.T", "8601.T", "8306.T", "7182.T"],
+    "banks": ["8316.T", "8411.T", "8601.T", "8306.T"],
+    "consumer cyclical": ["7203.T", "7267.T", "7201.T", "8035.T", "6501.T"],
+    "automotive": ["7203.T", "7267.T", "7201.T", "8035.T"],
+    "industrials": ["7011.T", "6506.T", "8031.T", "6301.T", "6113.T"],
+    "healthcare": ["4519.T", "4568.T", "4502.T", "4587.T", "4503.T"],
+    "consumer defensive": ["2502.T", "2503.T", "2593.T", "2801.T", "2914.T"],
+    "communication services": ["9432.T", "9433.T", "9984.T", "4755.T"],
+    "real estate": ["8801.T", "8802.T", "8830.T", "3289.T"],
+    "basic materials": ["5401.T", "3436.T", "5713.T", "4188.T", "5020.T"],
+    "energy": ["5020.T", "1605.T", "1662.T", "5019.T"],
+    "utilities": ["9501.T", "9502.T", "9503.T", "9064.T"],
+}
+# フォールバック: 上記に該当しないセクター用
+_DEFAULT_PEERS = ["7203.T", "9984.T", "6758.T", "8306.T", "9432.T"]
+_MAX_PEERS = 5
+
+
+def _get_peer_tickers_for_sector(sector: str, industry: str) -> list[str]:
+    """セクター/業種から同業代表銘柄を最大5社返す。"""
+    combined = f"{_safe_str(sector)} {_safe_str(industry)}".lower()
+    for key, peers in _SECTOR_PEER_MAP.items():
+        if key in combined:
+            return list(peers)[:_MAX_PEERS]
+    return list(_DEFAULT_PEERS)[:_MAX_PEERS]
+
+
+def get_peer_per_median(ticker_symbol: str) -> tuple[Optional[float], str]:
+    """
+    対象銘柄の industry/sector に基づき同業3〜5社の trailingPE を取得し中央値を返す。
+    Returns: (median_per, message)。取得不可時は (None, message)。
+    """
+    try:
+        ticker = yf.Ticker(ticker_symbol)
+        info = getattr(ticker, "info", None) or {}
+        sector = _safe_str(info.get("sector") or "")
+        industry = _safe_str(info.get("industry") or "")
+        peers = _get_peer_tickers_for_sector(sector, industry)
+        pers: list[float] = []
+        for p in peers:
+            if p == ticker_symbol:
+                continue
+            try:
+                t = yf.Ticker(p)
+                pe = _safe_get(getattr(t, "info", None) or {}, "trailingPE")
+                if pe is not None:
+                    v = _to_float_safe(pe)
+                    if v and v > 0:
+                        pers.append(v)
+            except Exception:
+                continue
+        if not pers:
+            return None, "同業PER取得不可"
+        pers.sort()
+        mid = len(pers) // 2
+        median_per = (pers[mid] + pers[mid - 1]) / 2.0 if len(pers) % 2 == 0 else pers[mid]
+        return median_per, f"同業{len(pers)}社PER中央値: {median_per:.1f}倍"
+    except Exception as e:
+        logger.error("get_peer_per_median failed: %s", e)
+        return None, "同業PER取得不可"
+
+
+def get_fair_value(ticker_symbol: str) -> dict[str, Any]:
+    """
+    適正株価 = trailingEps × 同業他社PERの中央値。
+    EPS がマイナスまたは取得不可の場合は error を立てて中断。
+    Returns: theoretical_price, current_price, deviation_pct, error, message
+    """
+    result: dict[str, Any] = {
+        "theoretical_price": None,
+        "current_price": None,
+        "deviation_pct": None,
+        "error": None,
+        "message": "",
+    }
+    try:
+        ticker = yf.Ticker(ticker_symbol)
+        info = getattr(ticker, "info", None) or {}
+        eps = _safe_get(info, "trailingEps")
+        if eps is None:
+            result["error"] = "計算不可（データなし）"
+            result["message"] = "trailingEps が取得できませんでした。"
+            return result
+        eps_f = _to_float_safe(eps)
+        if eps_f <= 0 or (isinstance(eps, (int, float)) and (eps != eps)):
+            result["error"] = "計算不可（赤字）"
+            result["message"] = "EPS がマイナスまたはゼロのため適正株価を算出できません。"
+            return result
+        peer_per, msg = get_peer_per_median(ticker_symbol)
+        if peer_per is None or peer_per <= 0:
+            result["error"] = "計算不可（同業PERなし）"
+            result["message"] = msg
+            return result
+        theoretical = eps_f * peer_per
+        current = _to_float_safe(_safe_get(info, "currentPrice"))
+        if current == 0:
+            current = _to_float_safe(_safe_get(info, "regularMarketPrice"))
+        if current is None or current <= 0:
+            result["theoretical_price"] = theoretical
+            result["current_price"] = None
+            result["deviation_pct"] = None
+            result["message"] = f"適正株価 = EPS × 同業PER中央値 → ¥{theoretical:,.0f}（現在値取得不可）"
+            return result
+        # 乖離率 = (理論株価 ÷ 現在値 - 1) × 100
+        deviation_pct = (theoretical / current - 1.0) * 100.0
+        result["theoretical_price"] = theoretical
+        result["current_price"] = current
+        result["deviation_pct"] = round(deviation_pct, 1)
+        result["message"] = msg
+        return result
+    except Exception as e:
+        logger.error("get_fair_value failed for %s: %s", ticker_symbol, e)
+        result["error"] = "計算不可（エラー）"
+        result["message"] = str(e)
+        return result
+
+
+def check_value_trap(
+    ticker_symbol: str,
+    current_price: float,
+    df_ohlcv: Optional[pd.DataFrame],
+    roe_min: float = 0.08,
+    ma_window: int = 75,
+) -> dict[str, Any]:
+    """
+    バリュートラップ検知: ROE ≥ 8%、現在値 > 75日移動平均 を判定。
+    Returns: roe_ok, trend_ok, roe_value, ma75_value, message
+    """
+    out: dict[str, Any] = {
+        "roe_ok": False,
+        "trend_ok": False,
+        "roe_value": None,
+        "ma75_value": None,
+        "message": "",
+    }
+    try:
+        ticker = yf.Ticker(ticker_symbol)
+        info = getattr(ticker, "info", None) or {}
+        roe = _safe_get(info, "returnOnEquity")
+        if roe is not None:
+            roe_f = _to_float_safe(roe)
+            out["roe_value"] = roe_f
+            out["roe_ok"] = roe_f >= roe_min
+        else:
+            out["message"] = "ROE データなし"
+    except Exception:
+        out["message"] = "ROE 取得エラー"
+    if df_ohlcv is not None and not df_ohlcv.empty and "Close" in df_ohlcv.columns and len(df_ohlcv) >= ma_window:
+        close = df_ohlcv["Close"].astype(float)
+        ma75 = close.rolling(window=ma_window, min_periods=ma_window).mean()
+        if len(ma75) and ma75.iloc[-1] == ma75.iloc[-1] and ma75.iloc[-1] > 0:
+            out["ma75_value"] = float(ma75.iloc[-1])
+            out["trend_ok"] = current_price > out["ma75_value"]
+        if not out["trend_ok"] and out["ma75_value"] is not None:
+            if out["message"]:
+                out["message"] += "; "
+            out["message"] += "現在値が75日MAを下回っています"
+    else:
+        if out["message"]:
+            out["message"] += "; "
+        out["message"] += "75日MA算出に必要な足数不足"
+    return out
+
+
 # ========== テクニカル: ローソク足ユーティリティ ==========
 
 def _body(s: pd.Series) -> float:

@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Streamlit UI: SOTP理論株価 + 24種買い/26種売りパターン + 市場スクリーニング
+Streamlit UI: 適正株価・バリュートラップ検知 + 24種買い/26種売りパターン
 """
 import json
 import os
-import threading
-import time
 import urllib.request
 import streamlit as st
 import pandas as pd
@@ -29,47 +27,20 @@ if not gemini_api_key:
 api_ready = bool(gemini_api_key)
 GEMINI_SECRETS = {"GEMINI_API_KEY": gemini_api_key} if api_ready else {}
 from logic import (
-    sotp_full,
     fetch_ohlcv,
     detect_all_patterns,
     get_downtrend_mask,
-    calc_stop_loss_line,
-    get_sotp_suggested_multiple,
+    get_fair_value,
+    check_value_trap,
     gemini_echo_ticker,
 )
-from screener import TARGET_TICKERS, run_screen
-from auto_post import scan_hybrid, scan_buy_signal_only, build_tweet
+from auto_post import scan_hybrid, build_tweet
 
 
-def _render_detail_chart(ticker: str, ebitda_mult: float, period: str) -> None:
+def _render_detail_chart(ticker: str, period: str) -> None:
     """
-    単一銘柄の詳細（SOTPカード + ローソク足 + パターン）を描画。
-    単一銘柄モードとスクリーナー「詳細表示」の両方で利用。
+    単一銘柄の詳細（適正株価・バリュートラップ + ローソク足 + パターン）を描画。
     """
-    try:
-        sotp = sotp_full(ticker, ebitda_multiple=ebitda_mult)
-    except Exception as e:
-        st.error(f"SOTP 取得エラー: {e}")
-        return
-
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        theo = sotp.get("theoretical_price")
-        st.metric("理論株価 (SOTP)", f"¥{theo:,.0f}" if theo is not None else "—")
-    with col2:
-        cur = sotp.get("current_price")
-        st.metric("現在値", f"¥{cur:,.0f}" if cur is not None else "—")
-    with col3:
-        dev = sotp.get("deviation_pct")
-        st.metric("乖離率（割安度）", f"{dev:+.1f}%" if dev is not None else "—")
-
-    logic_name = sotp.get("valuation_logic")
-    if logic_name:
-        st.caption(f"**Evaluation Model:** {logic_name}")
-    msg = sotp.get("message")
-    if msg:
-        st.caption(f"計算根拠: {msg}")
-
     try:
         df = fetch_ohlcv(ticker, period=period)
     except Exception as e:
@@ -79,15 +50,59 @@ def _render_detail_chart(ticker: str, ebitda_mult: float, period: str) -> None:
         st.warning("株価データを取得できませんでした。")
         return
 
+    # ----- 適正株価の算出 & バリュートラップ検知（ボタンで実行） -----
+    st.subheader("適正株価の算出 & バリュートラップ検知")
+    run_fair_value = st.button("適正株価の算出", key="btn_fair_value")
+    run_trap = st.button("バリュートラップ検知", key="btn_value_trap")
+    if run_fair_value or run_trap:
+        fv = get_fair_value(ticker)
+        if fv.get("error"):
+            st.error(f"**{fv['error']}** — {fv.get('message', '')}")
+        else:
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                theo = fv.get("theoretical_price")
+                st.metric("適正株価", f"¥{theo:,.0f}" if theo is not None else "—")
+            with col2:
+                cur = fv.get("current_price")
+                st.metric("現在値", f"¥{cur:,.0f}" if cur is not None else "—")
+            with col3:
+                dev = fv.get("deviation_pct")
+                st.metric("乖離率（適正÷現在−1）", f"{dev:+.1f}%" if dev is not None else "—")
+            if fv.get("message"):
+                st.caption(f"計算根拠: {fv['message']}")
+
+        if run_trap or (run_fair_value and not fv.get("error")):
+            cur_price = fv.get("current_price") if not fv.get("error") else None
+            if cur_price is None and df is not None and not df.empty and "Close" in df.columns:
+                cur_price = float(df["Close"].iloc[-1])
+            if cur_price is not None and cur_price > 0:
+                trap = check_value_trap(ticker, cur_price, df, roe_min=0.08, ma_window=75)
+                dev = fv.get("deviation_pct") if not fv.get("error") else None
+                deviation_ok = dev is not None and dev >= 20.0
+                roe_ok = trap.get("roe_ok", False)
+                trend_ok = trap.get("trend_ok", False)
+                if deviation_ok and roe_ok and trend_ok:
+                    st.success("**【本命バリュー】** 乖離率20%以上かつROE≥8%・75日MA上回りを満たしています。", icon="✅")
+                elif deviation_ok and (not roe_ok or not trend_ok):
+                    st.warning(
+                        "**【トラップ警告：下落トレンドまたは資本効率低迷】** "
+                        "乖離率は高いが、ROE8%未満または現在値が75日MAを下回っています。",
+                        icon="⚠️",
+                    )
+                else:
+                    dev_str = f"{dev:+.1f}%" if dev is not None else "—"
+                    st.info(f"乖離率 {dev_str} のため本命/トラップ判定は行いません（20%以上で表示）。ROE: {trap.get('roe_ok')} / 75MA上: {trap.get('trend_ok')}")
+            else:
+                st.warning("現在値が取得できないためバリュートラップ検知をスキップしました。")
+    else:
+        st.caption("「適正株価の算出」または「バリュートラップ検知」を押すと、PERベースの適正株価とバリュートラップ判定を表示します。")
+
     try:
         patterns = detect_all_patterns(df)
     except Exception:
         patterns = []
     downtrend_mask = get_downtrend_mask(df, window=25)
-    latest_close = float(df["Close"].iloc[-1]) if len(df) > 0 else None
-    stop_loss_price = round(latest_close * 0.95) if latest_close and latest_close > 0 else None
-    if stop_loss_price is not None:
-        st.caption(f"損切りライン（現在値×0.95）: ¥{stop_loss_price:,.0f}")
 
     # バックテスト用: patterns から Buy_* / Sell_* 列を df に追加
     for i, name, side in patterns:
@@ -284,8 +299,6 @@ def _render_detail_chart(ticker: str, ebitda_mult: float, period: str) -> None:
                 hovertemplate="%{hovertext}<extra></extra>",
             )
         )
-    if stop_loss_price is not None:
-        fig.add_hline(y=stop_loss_price, line_dash="dash", line_color="red", annotation_text=f"損切り ¥{stop_loss_price:,.0f}")
     fig.update_layout(
         title=f"{ticker} ローソク足 & パターン",
         xaxis_title="日付", yaxis_title="株価",
@@ -320,17 +333,8 @@ def _render_detail_chart(ticker: str, ebitda_mult: float, period: str) -> None:
 
 
 def main():
-    st.set_page_config(page_title="日本株 SOTP・パターン分析", layout="wide")
-    st.title("日本株 SOTP 理論株価 × 勝ちパターン分析")
-
-    if "screen_results" not in st.session_state:
-        st.session_state.screen_results = None
-    if "screen_debug" not in st.session_state:
-        st.session_state.screen_debug = None
-    if "scan_shared" not in st.session_state:
-        st.session_state.scan_shared = None
-    if "scan_thread" not in st.session_state:
-        st.session_state.scan_thread = None
+    st.set_page_config(page_title="日本株 適正株価・パターン分析", layout="wide")
+    st.title("日本株 適正株価・バリュートラップ × 勝ちパターン分析")
 
     with st.sidebar:
         st.header("設定")
@@ -338,41 +342,6 @@ def main():
             st.warning("⚠️ APIキーが設定されていません。AI分析機能は利用できません。")
         period = st.selectbox("分析期間", ["3mo", "6mo", "1y", "2y"], index=0)
         ticker = st.text_input("銘柄コード", value=st.session_state.get("ticker_input", "8473.T"), help="例: 7203.T, 8473.T", key="ticker_input")
-        current_ticker = ticker
-
-        valuation_logic = None
-        multiplier_disabled = False
-        if current_ticker:
-            try:
-                sug = get_sotp_suggested_multiple(current_ticker)
-                default_mult = sug["suggested_multiple"] if sug.get("suggested_multiple") is not None else 8.0
-                sector_label = sug["sector_label"]
-                multiplier_disabled = sug.get("multiplier_disabled", False)
-                valuation_logic = sug.get("valuation_logic")
-            except Exception:
-                default_mult = 8.0
-                sector_label = "—"
-        else:
-            default_mult = 8.0
-            sector_label = "—"
-
-        if current_ticker is not None and st.session_state.get("sotp_ticker") != current_ticker:
-            st.session_state["sotp_ticker"] = current_ticker
-            st.session_state["ebitda_mult"] = default_mult
-        if multiplier_disabled:
-            st.caption(f"{valuation_logic or 'ROE-linked PBR'} のため倍率スライダーは無効")
-            ebitda_mult = 8.0
-        else:
-            ebitda_mult = st.slider(
-                "EBITDA 倍率",
-                min_value=1.0,
-                max_value=30.0,
-                value=float(st.session_state.get("ebitda_mult", default_mult)),
-                step=0.5,
-                key="ebitda_slider",
-            )
-            st.session_state["ebitda_mult"] = ebitda_mult
-            st.caption(f"(自動算出: {default_mult}倍 / 業種: {sector_label})")
 
         st.divider()
         with st.expander("Gemini API     疎通テスト"):
@@ -388,7 +357,7 @@ def main():
 
     # ----- 単一銘柄分析（常に表示） -----
     st.subheader(f"単一銘柄分析: {ticker}")
-    _render_detail_chart(ticker, ebitda_mult, period)
+    _render_detail_chart(ticker, period)
 
     st.divider()
 
@@ -647,237 +616,6 @@ def main():
         st.caption("監視銘柄はありません。")
 
     st.divider()
-
-    # ----- 市場スキャン -----
-    st.subheader("市場スキャン（厳選銘柄）")
-    st.caption(
-        f"対象: {len(TARGET_TICKERS)} 銘柄（CSV/東証リストまたは日経225）— "
-        "直近3日以内に「勝率・収益性の高いサイン」が1つ以上出た銘柄を抽出（バックテスト: 勝率50%以上・PF≥1.0・約定5回以上）。"
-        " 乖離率20%以上でさらに絞り込み。"
-    )
-
-    # スキャン中は進捗と中断ボタンを表示（スレッドで実行中のため）
-    scan_thread = st.session_state.get("scan_thread")
-    scan_shared = st.session_state.get("scan_shared")
-    scan_running = scan_thread is not None and scan_thread.is_alive()
-
-    if scan_running and scan_shared is not None:
-        cur, total, ticker = scan_shared.get("progress", (0, 1, ""))
-        total = max(1, total)
-        progress_bar = st.progress(cur / total, text=f"現在 {cur}/{total} 銘柄をスキャン中...")
-        st.caption(f"処理中: {ticker}")
-        audit_progress = scan_shared.get("audit_progress")
-        if audit_progress is not None:
-            adone, atotal, amsg = audit_progress
-            atotal = max(1, atotal)
-            st.progress(adone / atotal, text=amsg)
-        partial = scan_shared.get("partial_audit_results")
-        if partial:
-            placeholder = st.empty()
-            with placeholder.container():
-                st.caption("監査結果（3銘柄ごとに更新）")
-                df_part = pd.DataFrame(partial)
-                df_part = df_part.rename(columns={
-                    "ticker": "銘柄コード", "name": "銘柄名", "current_price": "現在値",
-                    "theoretical_price": "理論株価", "deviation_pct": "乖離率(%)",
-                    "buy_signals": "直近の買いサイン", "ai_rank": "AI判定",
-                    "strategist_eye": "ストラテジストの眼", "verdict": "Verdict",
-                })
-                # 強制数値化してから損切り目安を計算・表示用に整形
-                if "現在値" in df_part.columns:
-                    raw = pd.to_numeric(
-                        df_part["現在値"].astype(str).str.replace("¥", "", regex=False).str.replace(",", "", regex=False),
-                        errors="coerce",
-                    )
-                    df_part["損切り目安"] = raw * 0.95
-                    df_part["現在値"] = raw.apply(lambda x: f"¥{int(x):,}" if x is not None and pd.notna(x) and x == x and x > 0 else "—")
-                    df_part["損切り目安"] = df_part["損切り目安"].apply(lambda x: f"¥{int(x):,}" if x is not None and pd.notna(x) and x == x and x > 0 else "—")
-                if "理論株価" in df_part.columns:
-                    df_part["理論株価"] = df_part["理論株価"].apply(lambda x: f"¥{int(x):,}" if x is not None and pd.notna(x) else "—")
-                if "乖離率(%)" in df_part.columns:
-                    df_part["乖離率(%)"] = df_part["乖離率(%)"].apply(lambda x: f"{x:+.1f}%" if x is not None else "—")
-                cols = [c for c in ["銘柄コード", "銘柄名", "現在値", "損切り目安", "理論株価", "乖離率(%)", "AI判定", "ストラテジストの眼", "Verdict", "直近の買いサイン"] if c in df_part.columns]
-                st.dataframe(df_part[cols], width="stretch")
-        if st.button("中断", key="scan_stop_btn"):
-            scan_shared["stop"] = True
-            st.caption("中断リクエストを送りました。現在の銘柄処理後に停止します。")
-            st.rerun()
-        time.sleep(0.5)
-        st.rerun()
-
-    # スキャン終了直後: 結果を反映してスレッド・共有状態をクリア
-    if not scan_running and scan_shared is not None:
-        data = scan_shared.get("result")
-        if data is not None:
-            st.session_state.screen_results = data.get("results", [])
-            st.session_state.screen_debug = data.get("debug", [])
-        if scan_shared.get("stopped"):
-            st.info("スキャンを中断しました。")
-        if scan_shared.get("error"):
-            st.error(f"スキャンエラー: {scan_shared['error']}")
-        st.session_state.scan_shared = None
-        st.session_state.scan_thread = None
-        st.rerun()
-
-    col_scan, col_stop = st.columns(2)
-    with col_scan:
-        if st.button("厳選銘柄をスキャン", type="primary", key="scan_start_btn"):
-            shared = {
-                "stop": False,
-                "progress": (0, len(TARGET_TICKERS), ""),
-                "audit_progress": None,
-                "partial_audit_results": None,
-                "result": None,
-                "stopped": False,
-            }
-            st.session_state.scan_shared = shared
-
-            gemini_secrets = GEMINI_SECRETS
-
-            def worker(secrets_for_audit):
-                def on_progress(current: int, total: int, t: str):
-                    shared["progress"] = (current, total, t)
-
-                def on_audit_progress(done: int, total: int, msg: str, results_so_far=None):
-                    shared["audit_progress"] = (done, total, msg)
-                    if results_so_far is not None:
-                        shared["partial_audit_results"] = results_so_far
-
-                try:
-                    data = run_screen(
-                        ebitda_multiple=ebitda_mult,
-                        min_deviation_pct=20.0,
-                        recent_days=3,
-                        progress_callback=on_progress,
-                        stop_check=lambda: shared.get("stop", False),
-                        enable_gemini_audit=api_ready,
-                        streamlit_secrets=secrets_for_audit,
-                        audit_progress_callback=on_audit_progress,
-                        holding_days=5,
-                        stop_loss_pct=0.05,
-                        min_win_rate=0.5,
-                    )
-                    shared["result"] = data
-                    shared["stopped"] = shared.get("stop", False)
-                except Exception as e:
-                    shared["result"] = {"results": [], "debug": []}
-                    shared["error"] = str(e)
-
-            th = threading.Thread(target=worker, args=(gemini_secrets,))
-            st.session_state.scan_thread = th
-            th.start()
-            st.rerun()
-
-    if st.session_state.screen_results is not None:
-        results = st.session_state.screen_results
-        if not results:
-            st.info("条件を満たす銘柄はありませんでした。")
-        else:
-            st.success(f"**{len(results)} 銘柄**が条件を満たしました。")
-            for r in results:
-                r.setdefault("ai_rank", "—")
-                r.setdefault("strategist_eye", "")
-                r.setdefault("verdict", "OK")
-            df_display = pd.DataFrame(results)
-            df_display = df_display.rename(columns={
-                "ticker": "銘柄コード",
-                "name": "銘柄名",
-                "current_price": "現在値",
-                "theoretical_price": "理論株価",
-                "deviation_pct": "乖離率(%)",
-                "buy_signals": "直近の買いサイン",
-                "ai_rank": "AI判定",
-                "strategist_eye": "ストラテジストの眼",
-                "verdict": "Verdict",
-            })
-            # 強制数値化（文字列 '¥3,489' 混入で損切りが 0 になるのを防ぐ）
-            df_display["現在値"] = pd.to_numeric(
-                df_display["現在値"].astype(str).str.replace("¥", "", regex=False).str.replace(",", "", regex=False),
-                errors="coerce",
-            )
-            df_display["理論株価"] = pd.to_numeric(
-                df_display["理論株価"].astype(str).str.replace("¥", "", regex=False).str.replace(",", "", regex=False),
-                errors="coerce",
-            )
-            # 損切り目安を数値で計算してから表示用に整形
-            raw_price = df_display["現在値"]
-            df_display["損切り目安"] = raw_price * 0.95
-            df_display["現在値"] = raw_price.apply(lambda x: f"¥{int(x):,}" if x is not None and pd.notna(x) and x == x and x > 0 else "—")
-            df_display["損切り目安"] = df_display["損切り目安"].apply(lambda x: f"¥{int(x):,}" if x is not None and pd.notna(x) and x == x and x > 0 else "—")
-            df_display["理論株価"] = df_display["理論株価"].apply(lambda x: f"¥{int(x):,}" if x is not None and pd.notna(x) and x == x else "—")
-            df_display["乖離率(%)"] = df_display["乖離率(%)"].apply(lambda x: f"{x:+.1f}%" if x is not None and pd.notna(x) else "—")
-            # Rank D の場合は Verdict を強制 AVOID に（理論株価が高くても注意）
-            if "Verdict" in df_display.columns:
-                df_display["Verdict"] = df_display.apply(
-                    lambda r: "AVOID" if str(r.get("AI判定", "")).strip() == "D" else r.get("Verdict", "OK"),
-                    axis=1,
-                )
-            # 表示順
-            col_order = ["銘柄コード", "銘柄名", "現在値", "損切り目安", "理論株価", "乖離率(%)", "AI判定", "ストラテジストの眼", "Verdict", "直近の買いサイン"]
-            df_display = df_display[[c for c in col_order if c in df_display.columns]]
-            # 行ハイライト: Rank A = 薄緑, Rank D = 薄赤
-            def _row_style(row):
-                rank = str(row.get("AI判定", "")).strip()
-                if rank == "A":
-                    return ["background-color: rgba(200,255,200,0.5)"] * len(row)
-                if rank == "D":
-                    return ["background-color: rgba(255,200,200,0.5)"] * len(row)
-                return [""] * len(row)
-            try:
-                st.dataframe(
-                    df_display.style.apply(_row_style, axis=1),
-                    width="stretch",
-                    hide_index=True,
-                )
-            except Exception:
-                st.dataframe(df_display, width="stretch", hide_index=True)
-            st.caption("🟢 Rank A: 割安に正当な理由あり　🔴 Rank D: 万年割安の可能性（Verdict=AVOID）")
-
-            st.divider()
-            st.subheader("詳細分析")
-            options = [f"{r['ticker']} - {r['name']}" for r in results]
-            selected = st.selectbox(
-                "詳細表示する銘柄を選択（上段の単一銘柄分析に反映）",
-                options=options,
-                key="screener_detail_select",
-            )
-            if selected:
-                ticker_for_detail = selected.split(" - ")[0].strip()
-                if ticker_for_detail != st.session_state.get("ticker_input"):
-                    st.session_state["ticker_input"] = ticker_for_detail
-                    st.rerun()
-
-        # デバッグ用: スキャンした全銘柄のリスト（理論株価 None/0 の可視化）
-        debug_list = getattr(st.session_state, "screen_debug", None)
-        if debug_list:
-            st.divider()
-            st.subheader("デバッグ用: 全銘柄スキャン結果")
-            st.caption("条件（乖離率>20%）に関係なく、スキャンした全銘柄の取得結果です。理論株価が None/0 の原因特定に利用してください。")
-            df_debug = pd.DataFrame(debug_list)
-            df_debug = df_debug.rename(columns={
-                "ticker": "Ticker",
-                "price": "Price",
-                "model_type": "Model Type",
-                "theoretical_price": "Theoretical Price",
-                "upside_pct": "Upside (%)",
-                "status": "Status",
-            })
-            def _fmt_price(x):
-                if x is None or (isinstance(x, float) and x != x):
-                    return "—"
-                return f"¥{x:,.0f}"
-            def _fmt_theo(x):
-                if x is None:
-                    return "None"
-                if isinstance(x, (int, float)) and x == x:
-                    return f"¥{x:,.0f}"
-                return str(x)
-            df_debug["Price"] = df_debug["Price"].apply(_fmt_price)
-            df_debug["Theoretical Price"] = df_debug["Theoretical Price"].apply(_fmt_theo)
-            df_debug["Upside (%)"] = df_debug["Upside (%)"].apply(lambda x: f"{x:+.1f}%" if x is not None else "—")
-            st.dataframe(df_debug, width="stretch", hide_index=True)
-    else:
-        st.info("「厳選銘柄をスキャン」ボタンで一括スキャンを実行してください。")
 
 
 if __name__ == "__main__":
