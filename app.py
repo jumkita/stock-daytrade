@@ -35,6 +35,7 @@ from logic import (
     gemini_echo_ticker,
 )
 from auto_post import scan_hybrid, build_tweet
+from batch_value_screen import run_batch, format_line
 
 
 def _render_detail_chart(ticker: str, period: str) -> None:
@@ -358,6 +359,48 @@ def main():
     # ----- 単一銘柄分析（常に表示） -----
     st.subheader(f"単一銘柄分析: {ticker}")
     _render_detail_chart(ticker, period)
+
+    st.divider()
+
+    # ----- 本命の割安株（バッチ一括スキャン） -----
+    st.subheader("本命の割安株（バッチ一括スキャン）")
+    st.caption(
+        "銘柄リスト（CSV/東証）から適正株価の乖離率を一括算出し、"
+        "ROE≥8%・75MA突破・出来高10万株以上の足切りを通した「本命」のみを乖離率上位で表示します。"
+        "初回はキャッシュ取得のため数分かかることがあります。"
+    )
+    top_n_batch = st.sidebar.number_input("バッチで表示する上位銘柄数", min_value=1, max_value=50, value=10, key="batch_top_n")
+    if st.button("本命の割安株を一括スキャン", type="primary", key="batch_value_screen_btn"):
+        with st.spinner("銘柄リストを読み込み、キャッシュを参照／補完してスキャンしています…"):
+            try:
+                rows = run_batch(refill_missing=True, top_n=int(top_n_batch))
+                if rows:
+                    st.success(f"**{len(rows)} 銘柄**が条件を満たしました（乖離率上位）。")
+                    for r in rows:
+                        st.markdown(f"- {format_line(r)}")
+                    df_batch = pd.DataFrame(rows)
+                    df_batch = df_batch.rename(columns={
+                        "ticker": "銘柄",
+                        "current_price": "現在値",
+                        "theoretical_price": "理論株価",
+                        "deviation_pct": "乖離率(%)",
+                        "roe_pct": "ROE(%)",
+                    })
+                    with st.expander("結果を表で表示", expanded=False):
+                        st.dataframe(
+                            df_batch[["銘柄", "現在値", "理論株価", "乖離率(%)", "ROE(%)"]].style.format({
+                                "現在値": "¥{:,.0f}",
+                                "理論株価": "¥{:,.0f}",
+                                "乖離率(%)": "+{:.1f}%",
+                                "ROE(%)": "{:.1f}%",
+                            }),
+                            hide_index=True,
+                            use_container_width=True,
+                        )
+                else:
+                    st.info("条件を満たす銘柄はありませんでした。キャッシュを更新するか、しばらく経ってから再実行してください。")
+            except Exception as e:
+                st.error(f"バッチスキャンエラー: {e}")
 
     st.divider()
 
