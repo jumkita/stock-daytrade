@@ -45,8 +45,20 @@ DEFAULT_TICKER_MAPPING_PATH = "ticker_mapping.json"
 DEFAULT_SKIP_TICKERS_PATH = "jpx_skip_tickers.txt"
 JPX_LIST_PAGE = "https://www.jpx.co.jp/markets/statistics-equities/misc/01.html"
 
-# 取得をスキップする銘柄（上場廃止・データなし等）。jpx_skip_tickers.txt で追加可能
-SKIP_TICKERS_DEFAULT = {"6576.T"}  # 上場廃止等で Yahoo にデータなし
+# 取得をスキップする銘柄（上場廃止・Yahoo にデータなし）。jpx_skip_tickers.txt で追加可能
+SKIP_TICKERS_DEFAULT = {
+    "1432.T", "1445.T", "1452.T", "1479.T", "1480.T", "1484.T", "1485.T", "1490.T", "1498.T",
+    "1585.T", "1653.T", "1654.T", "1679.T", "1992.T", "2067.T", "2068.T", "2070.T", "2071.T", "2073.T",
+    "2240.T", "2452.T", "2560.T", "2643.T", "2649.T", "2848.T", "2985.T", "2990.T", "2992.T", "2994.T", "2995.T",
+    "3448.T", "3450.T", "3483.T", "3526.T", "4426.T", "5022.T", "5037.T", "5072.T", "5077.T", "5130.T", "5135.T",
+    "5249.T", "5251.T", "5380.T", "5525.T", "5528.T", "5531.T", "5534.T", "5536.T", "5573.T", "5581.T", "5584.T",
+    "5594.T", "5596.T", "5598.T", "5617.T", "5620.T", "5622.T", "5727.T", "5820.T", "5840.T", "5866.T", "5883.T",
+    "5886.T", "5887.T", "5890.T", "5893.T", "6168.T", "6174.T", "6346.T", "6527.T", "6576.T", "6596.T", "6695.T",
+    "7056.T", "7064.T", "7098.T", "7132.T", "7136.T", "7137.T", "7139.T", "7170.T", "7176.T", "7355.T", "7364.T",
+    "7376.T", "7425.T", "7445.T", "7464.T", "7680.T", "7681.T", "7690.T", "7691.T", "7693.T", "7817.T", "7923.T",
+    "8225.T", "8301.T", "8921.T", "9146.T", "9149.T", "9156.T", "9169.T", "9214.T", "9222.T", "9226.T", "9239.T",
+    "9243.T", "9334.T", "9335.T", "9600.T", "9776.T",
+}
 
 _name_mapping_cache: Optional[Dict[str, str]] = None
 _skip_tickers_cache: Optional[set] = None
@@ -248,7 +260,13 @@ def get_ticker_universe_with_source(csv_path: Optional[str] = None) -> tuple[Lis
     対象銘柄リストと取得元ラベルを返す。
     Returns: (tickers, source)  source は "csv" | "excel" | "jpx" | "nikkei225"
     jpx_all_tickers.csv が無い場合は jpx_all_tickers.xlsx / .xls も参照する。
+    GitHub Actions で USE_NIKKEI225_ONLY が設定されている場合は日経225のみ返し（実行時間短縮）。
     """
+    use_nikkei_only = (os.environ.get("USE_NIKKEI225_ONLY", "").strip().lower() in ("1", "true", "yes"))
+    if use_nikkei_only and os.environ.get("GITHUB_ACTIONS"):
+        skip = get_skip_tickers()
+        tickers = [f"{c}.T" for c in NIKKEI_225_CODES if f"{c}.T" not in skip]
+        return tickers, "nikkei225"
     path = csv_path or os.environ.get("JPX_TICKERS_CSV", "").strip() or DEFAULT_CSV_PATH
     root = os.path.dirname(os.path.abspath(__file__))
     if not os.path.isabs(path):

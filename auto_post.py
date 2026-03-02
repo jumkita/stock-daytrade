@@ -145,7 +145,8 @@ def scan_backtest_driven(
         return [], {}
 
     if backtest_stats is None:
-        backtest_stats = run_full_backtest_universe(ticker_list, period="3y", liquidity_filter=True)
+        period_bt = (os.environ.get("BACKTEST_PERIOD", "") or "3y").strip() or "3y"
+        backtest_stats = run_full_backtest_universe(ticker_list, period=period_bt, liquidity_filter=True)
 
     # 直近データもバルク一括取得（1銘柄ずつ取得しない）
     bulk_recent = fetch_ohlcv_bulk(ticker_list, period=period_recent, chunk_size=150)
