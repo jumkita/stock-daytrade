@@ -1,17 +1,35 @@
+# 買いシグナル点灯銘柄をバックテスト統計ベースで抽出し、daily_buy_signals.json を更新するワークフロー。
+#
+# 【タイムゾーン】cron は UTC。JST 15:00 に実行するには 06:00 UTC（cron: '0 6 * * 1-5'）で設定する。
+#
+# 【時間がかかる要因と改善】
+# 1. 対象銘柄数: 東証全銘柄（数千）だと prefilter + 3年バックテスト + 直近3mo の一括取得が重い
+#    → 改善: Actions では USE_NIKKEI225_ONLY=true で日経225銘柄のみに限定（約1/10以下に短縮）
+# 2. バックテスト期間: period=3y はデータ量・計算量が大きい
+#    → 改善: BACKTEST_PERIOD=1y で約1/3に短縮（必要に応じて 3y に変更可能）
+# 3. yfinance の一括取得はチャンク単位のため、銘柄数が多いとリクエスト回数・待ち時間が増える
+#    → 上記の銘柄数削減でリクエスト数も減少
+# 4. タイムアウト: 15分だと全銘柄時には不足しがち
+#    → 改善: timeout-minutes: 20 に延長し、軽量設定（日経225+1y）で 15:00 JST 完了を狙う
+#
 name: Auto Post Buy Signals to X
 
 on:
   schedule:
-    # 平日（月〜金）06:00 UTC = 日本時間 15:00（ザラ場・最新価格取得）
-    - cron: "0 6 * * 1-5"
+    - cron: '0 6 * * 1-5'
   workflow_dispatch:
 
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     permissions:
       contents: write
+    env:
+      # 軽量化: Actions では日経225銘柄のみ対象にしタイムアウトを防ぐ（ローカルでは未設定で全銘柄）
+      USE_NIKKEI225_ONLY: 'true'
+      # バックテスト期間短縮（1y で約1/3のデータ量、任意で 3y に戻せる）
+      BACKTEST_PERIOD: '1y'
     steps:
       - uses: actions/checkout@v4
 
