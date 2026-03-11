@@ -1,56 +1,44 @@
 {
-  "updated": "2026-03-10T06:54:02.598398+00:00",
+  "updated": "2026-03-11T06:56:42.587364+00:00",
   "backtest_driven": true,
-  "unique_tickers": 4,
-  "signal_count": 4,
+  "unique_tickers": 3,
+  "signal_count": 3,
   "items": [
     {
-      "ticker": "4183.T",
-      "name": "MITSUI CHEMICALS INC",
-      "pattern_name": "二本たくり線",
-      "win_rate": 0.6923,
-      "sample_count": 13,
-      "avg_return_pct": 2.7191,
-      "entry": 2049.0,
-      "tp": 2104.71,
-      "sl": 2021.14,
-      "formatted_line": "【4183.T】 | 二本たくり線 | 勝率: 69% (サンプル13回) | 平均リターン: +2.72% | 現在値: ¥2,049 | TP: ¥2,105 | SL: ¥2,021"
-    },
-    {
-      "ticker": "5801.T",
-      "name": "FURUKAWA ELECTRIC CO",
+      "ticker": "4004.T",
+      "name": "RESONAC HOLDINGS CORPORATION",
       "pattern_name": "陰線後の陽線",
-      "win_rate": 0.6111,
-      "sample_count": 54,
-      "avg_return_pct": 2.6369,
-      "entry": 27480.0,
-      "tp": 28204.62,
-      "sl": 27117.69,
-      "formatted_line": "【5801.T】 | 陰線後の陽線 | 勝率: 61% (サンプル54回) | 平均リターン: +2.64% | 現在値: ¥27,480 | TP: ¥28,205 | SL: ¥27,118"
+      "win_rate": 0.6122,
+      "sample_count": 49,
+      "avg_return_pct": 1.9407,
+      "entry": 11925.0,
+      "tp": 12156.43,
+      "sl": 11809.29,
+      "formatted_line": "【4004.T】 | 陰線後の陽線 | 勝率: 61% (サンプル49回) | 平均リターン: +1.94% | 現在値: ¥11,925 | TP: ¥12,156 | SL: ¥11,809"
     },
     {
-      "ticker": "5831.T",
-      "name": "SHIZUOKA FINANCIAL GROUP INC.",
-      "pattern_name": "二本たくり線",
-      "win_rate": 1.0,
-      "sample_count": 7,
-      "avg_return_pct": 2.6533,
-      "entry": 2680.0,
-      "tp": 2751.11,
-      "sl": 2644.45,
-      "formatted_line": "【5831.T】 | 二本たくり線 | 勝率: 100% (サンプル7回) | 平均リターン: +2.65% | 現在値: ¥2,680 | TP: ¥2,751 | SL: ¥2,644"
+      "ticker": "5706.T",
+      "name": "MITSUI KINZOKU CO LTD",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.6522,
+      "sample_count": 46,
+      "avg_return_pct": 3.5468,
+      "entry": 32410.0,
+      "tp": 33559.52,
+      "sl": 31835.24,
+      "formatted_line": "【5706.T】 | 陰線後の陽線 | 勝率: 65% (サンプル46回) | 平均リターン: +3.55% | 現在値: ¥32,410 | TP: ¥33,560 | SL: ¥31,835"
     },
     {
-      "ticker": "6857.T",
-      "name": "ADVANTEST CORP",
-      "pattern_name": "二本たくり線",
-      "win_rate": 0.8333,
-      "sample_count": 12,
-      "avg_return_pct": 4.7012,
-      "entry": 23960.0,
-      "tp": 25086.41,
-      "sl": 23396.8,
-      "formatted_line": "【6857.T】 | 二本たくり線 | 勝率: 83% (サンプル12回) | 平均リターン: +4.70% | 現在値: ¥23,960 | TP: ¥25,086 | SL: ¥23,397"
+      "ticker": "6703.T",
+      "name": "OKI ELECTRIC INDUSTRY CO",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.6226,
+      "sample_count": 53,
+      "avg_return_pct": 2.4408,
+      "entry": 2892.0,
+      "tp": 2962.59,
+      "sl": 2856.71,
+      "formatted_line": "【6703.T】 | 陰線後の陽線 | 勝率: 62% (サンプル53回) | 平均リターン: +2.44% | 現在値: ¥2,892 | TP: ¥2,963 | SL: ¥2,857"
     }
   ]
 }
