@@ -229,7 +229,9 @@ def scan_backtest_driven(
                 continue
             key_sell = (ticker, pattern_name)
             stats_sell = sell_stats_computed.get(key_sell)
-            if not stats_sell or not passes_backtest_filters(stats_sell, min_win_rate=0.70):
+            if not stats_sell or not passes_backtest_filters(
+                stats_sell, min_win_rate=0.70, min_avg_return_pct=0.0
+            ):
                 continue
             seen_sell.add((ticker, pattern_name))
             wr = stats_sell.get("win_rate")

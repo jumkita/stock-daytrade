@@ -1354,14 +1354,19 @@ def run_full_backtest_universe_sell_from_bulk(
     return aggregate_backtest_stats(all_trades)
 
 
-def passes_backtest_filters(stats: dict[str, Any], min_win_rate: float = BACKTEST_MIN_WIN_RATE) -> bool:
-    """サンプル3回以上・勝率 min_win_rate 以上・平均リターン+1.5%以上。"""
+def passes_backtest_filters(
+    stats: dict[str, Any],
+    min_win_rate: float = BACKTEST_MIN_WIN_RATE,
+    min_avg_return_pct: float | None = None,
+) -> bool:
+    """サンプル3回以上・勝率 min_win_rate 以上・平均リターン min_avg_return_pct 以上（未指定時は BACKTEST_MIN_AVG_RETURN_PCT）。"""
     if not stats:
         return False
     n = stats.get("sample_count", 0)
     wr = stats.get("win_rate", 0.0)
     avg = stats.get("avg_return_pct", 0.0)
-    return n >= BACKTEST_MIN_SAMPLES and wr >= min_win_rate and avg >= BACKTEST_MIN_AVG_RETURN_PCT
+    min_avg = min_avg_return_pct if min_avg_return_pct is not None else BACKTEST_MIN_AVG_RETURN_PCT
+    return n >= BACKTEST_MIN_SAMPLES and wr >= min_win_rate and avg >= min_avg
 
 
 def tp_sl_from_avg_return(current_price: float, avg_return_pct: float) -> dict[str, float]:
