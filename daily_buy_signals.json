@@ -1,5 +1,5 @@
 {
-  "updated": "2026-03-13T13:43:22.071207+00:00",
+  "updated": "2026-03-13T13:54:11.920931+00:00",
   "backtest_driven": true,
   "unique_tickers": 13,
   "signal_count": 15,
@@ -68,13 +68,13 @@
       "ticker": "5706.T",
       "name": "MITSUI KINZOKU CO LTD",
       "pattern_name": "包み線",
-      "win_rate": 0.6364,
-      "sample_count": 33,
-      "avg_return_pct": 2.4219,
+      "win_rate": 0.6471,
+      "sample_count": 34,
+      "avg_return_pct": 2.4759,
       "entry": 31710.0,
-      "tp": 32477.98,
-      "sl": 31326.01,
-      "formatted_line": "【5706.T】 | 包み線 | 勝率: 64% (サンプル33回) | 平均リターン: +2.42% | 現在値: ¥31,710 | TP: ¥32,478 | SL: ¥31,326"
+      "tp": 32495.11,
+      "sl": 31317.45,
+      "formatted_line": "【5706.T】 | 包み線 | 勝率: 65% (サンプル34回) | 平均リターン: +2.48% | 現在値: ¥31,710 | TP: ¥32,495 | SL: ¥31,317"
     },
     {
       "ticker": "5801.T",
@@ -185,5 +185,34 @@
       "formatted_line": "【9501.T】 | 包み線 | 勝率: 65% (サンプル26回) | 平均リターン: +2.18% | 現在値: ¥640 | TP: ¥654 | SL: ¥633"
     }
   ],
-  "items_sell": []
+  "items_sell": [
+    {
+      "ticker": "2432.T",
+      "name": "DENA CO LTD",
+      "pattern_name": "アウトサイドバー",
+      "entry": 2532.0,
+      "formatted_line": "【2432.T】アウトサイドバー | 勝率: 72% (サンプル18回) | 現在値: ¥2,532"
+    },
+    {
+      "ticker": "4578.T",
+      "name": "OTSUKA HLDGS CO LTD",
+      "pattern_name": "リバーサルハイ",
+      "entry": 10980.0,
+      "formatted_line": "【4578.T】リバーサルハイ | 勝率: 70% (サンプル10回) | 現在値: ¥10,980"
+    },
+    {
+      "ticker": "4704.T",
+      "name": "TREND MICRO INC",
+      "pattern_name": "アウトサイドバー",
+      "entry": 5392.0,
+      "formatted_line": "【4704.T】アウトサイドバー | 勝率: 74% (サンプル19回) | 現在値: ¥5,392"
+    },
+    {
+      "ticker": "7733.T",
+      "name": "OLYMPUS CORPORATION",
+      "pattern_name": "スパイクハイ",
+      "entry": 1304.0,
+      "formatted_line": "【7733.T】スパイクハイ | 勝率: 70% (サンプル20回) | 現在値: ¥1,304"
+    }
+  ]
 }
