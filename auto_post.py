@@ -20,7 +20,7 @@ import json
 import logging
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Any, List, Optional, Tuple
 
 # yfinance の delisted/404 などのログはノイズが多いため CRITICAL 未満を抑制
@@ -53,6 +53,8 @@ from logic import (
 )
 from screener import TARGET_TICKERS, get_ticker_name
 from ticker_universe import get_ticker_universe_with_source
+
+JST = timezone(timedelta(hours=9))
 
 MAX_TWEET_LEN = 280
 PICK_MAX = 3
@@ -411,8 +413,10 @@ def main() -> int:
     json_path = os.environ.get("DAILY_SIGNALS_JSON_PATH", "").strip()
     if json_path:
         try:
+            now_utc = datetime.now(timezone.utc)
+            updated_iso = now_utc.isoformat()
             data = {
-                "updated": datetime.now(timezone.utc).isoformat(),
+                "updated": updated_iso,
                 "backtest_driven": True,
                 "unique_tickers": unique_tickers,
                 "signal_count": n_signals,
@@ -435,6 +439,16 @@ def main() -> int:
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             print(f"結果を保存しました: {json_path}")
+            # 日付付きのヒストリーファイルも保存（例: daily_buy_signals_2025-03-03.json）
+            try:
+                jst_date = now_utc.astimezone(JST).date().isoformat()
+                base_dir = os.path.dirname(json_path) or "."
+                hist_path = os.path.join(base_dir, f"daily_buy_signals_{jst_date}.json")
+                with open(hist_path, "w", encoding="utf-8") as f_hist:
+                    json.dump(data, f_hist, ensure_ascii=False, indent=2)
+                print(f"ヒストリーを保存しました: {hist_path}")
+            except Exception as e_hist:
+                print(f"ヒストリーファイル保存エラー: {e_hist}", file=sys.stderr)
         except Exception as e:
             print(f"JSON 保存エラー: {e}", file=sys.stderr)
     return 0

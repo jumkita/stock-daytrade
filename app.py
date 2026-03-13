@@ -36,6 +36,53 @@ from logic import (
 )
 from auto_post import scan_hybrid, build_tweet
 from batch_value_screen import run_batch, format_line
+from verify_signal_returns import verify_returns, summary_stats
+
+
+def _list_signal_history_files(root_dir: str) -> list[tuple[pd.Timestamp, str]]:
+    """daily_buy_signals_YYYY-MM-DD.json を日付降順で返す。"""
+    files: list[tuple[pd.Timestamp, str]] = []
+    try:
+        for name in os.listdir(root_dir):
+            if not name.startswith("daily_buy_signals_") or not name.endswith(".json"):
+                continue
+            date_str = name.replace("daily_buy_signals_", "").replace(".json", "")
+            try:
+                dt = pd.to_datetime(date_str)
+            except Exception:
+                continue
+            files.append((dt, os.path.join(root_dir, name)))
+    except Exception:
+        return []
+    files.sort(key=lambda x: x[0], reverse=True)
+    return files
+
+
+def _compute_portfolio_pnl_100_shares(rows: list[dict]) -> tuple[float, float]:
+    """
+    各銘柄100株ずつ買った場合の合計損益(¥)と投下資金に対するリターン(%)を返す。
+    exit_price / entry が欠損の銘柄は除外。
+    """
+    total_profit = 0.0
+    total_invested = 0.0
+    for r in rows:
+        entry = r.get("entry")
+        exit_price = r.get("exit_price")
+        if entry is None or exit_price is None:
+            continue
+        try:
+            e = float(entry)
+            x = float(exit_price)
+        except (TypeError, ValueError):
+            continue
+        if e <= 0:
+            continue
+        total_profit += (x - e) * 100.0
+        total_invested += e * 100.0
+    if total_invested <= 0:
+        return 0.0, 0.0
+    pct = total_profit / total_invested * 100.0
+    return total_profit, pct
 
 
 def _render_detail_chart(ticker: str, period: str) -> None:
@@ -424,6 +471,8 @@ def main():
         st.session_state.daily_buy_signals_high_potential = None
     if "daily_buy_signals_backtest_format" not in st.session_state:
         st.session_state.daily_buy_signals_backtest_format = False
+    if "daily_buy_signals_updated" not in st.session_state:
+        st.session_state.daily_buy_signals_updated = None
 
     daily_json_url = os.environ.get("DAILY_SIGNALS_JSON_URL", "").strip()
     if not daily_json_url:
@@ -449,6 +498,7 @@ def main():
                     x.get("formatted_line", "") for x in items
                 )
                 st.session_state.daily_buy_signals = items
+                st.session_state.daily_buy_signals_updated = data.get("updated")
                 st.session_state.daily_buy_signals_high_potential = []
                 st.session_state.daily_buy_signals_watch = []
                 st.session_state.daily_buy_signals_text = summary if items else "本日は該当銘柄はありませんでした。"
@@ -507,6 +557,7 @@ def main():
                         x.get("formatted_line", "") for x in items
                     )
                     st.session_state.daily_buy_signals = items
+                    st.session_state.daily_buy_signals_updated = data.get("updated")
                     st.session_state.daily_buy_signals_high_potential = []
                     st.session_state.daily_buy_signals_watch = []
                     st.session_state.daily_buy_signals_text = summary if items else "本日は該当銘柄はありませんでした。"
@@ -613,6 +664,77 @@ def main():
             st.info("本日は該当銘柄はありませんでした。")
     else:
         st.caption("「GitHub の結果を読み込み」で daily_buy_signals.json を表示します。「表示を更新」で従来スキャンも実行できます。")
+
+    # ----- シグナル検証（引け購入でどれだけ儲かったか） -----
+    st.subheader("シグナル検証（引け購入でどれだけ儲かったか）")
+    st.caption("GitHub で出力した銘柄を「シグナル日の引けで購入 → 指定営業日後に利確」した場合の実際のリターン（%）を検証します。")
+    holding_days_verify = st.sidebar.number_input("検証時の保有営業日数", min_value=1, max_value=20, value=3, key="verify_holding_days")
+    if st.button("引け購入リターンを検証する", key="btn_verify_returns"):
+        full_list = st.session_state.get("daily_buy_signals") or []
+        if not full_list:
+            st.warning("先に「GitHub の結果を読み込み」または「表示を更新」でシグナルを読み込んでください。")
+        else:
+            payload = {
+                "items": full_list,
+                "updated": st.session_state.get("daily_buy_signals_updated"),
+            }
+            with st.spinner("各銘柄の価格を取得してリターンを計算しています…"):
+                try:
+                    rows = verify_returns(payload, holding_days=int(holding_days_verify))
+                    stats = summary_stats(rows)
+                except Exception as e:
+                    st.error(f"検証エラー: {e}")
+                    rows = []
+                    stats = {"count": 0, "win_rate": None, "avg_return_pct": None, "total_return_pct": None}
+            if rows:
+                st.success(f"**有効 {stats['count']} 件** | 勝率: {stats['win_rate'] or '—'}% | 平均リターン: {stats['avg_return_pct'] or '—'}%")
+                df_v = pd.DataFrame(rows)
+                df_v = df_v.rename(columns={
+                    "ticker": "銘柄", "pattern_name": "パターン", "entry": "エントリー(¥)",
+                    "exit_price": "利確(¥)", "return_pct": "リターン(%)", "signal_date": "シグナル日", "exit_date": "利確日",
+                })
+                display_v = ["銘柄", "パターン", "エントリー(¥)", "利確(¥)", "リターン(%)", "シグナル日", "利確日"]
+                display_v = [c for c in display_v if c in df_v.columns]
+                st.dataframe(
+                    df_v[display_v].style.format({
+                        "エントリー(¥)": "¥{:,.0f}",
+                        "利確(¥)": "¥{:,.0f}",
+                        "リターン(%)": "{:+.2f}%",
+                    }, na_rep="—"),
+                    hide_index=True,
+                    use_container_width=True,
+                )
+                for r in rows:
+                    if r.get("error"):
+                        st.caption(f"【{r.get('ticker')}】{r['error']}")
+            else:
+                st.info("検証対象のシグナルがありません（バックテスト形式の items に entry があるものを使用します）。")
+
+    # ----- 過去3日分の「100株ずつ買っていた場合」のリターン -----
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    history_files = _list_signal_history_files(root_dir)
+    if history_files:
+        st.caption("直近のシグナルについて、各銘柄を100株ずつ買っていた場合のポートフォリオ損益を自動集計します。")
+        horizons = [1, 2, 3]
+        labels = {1: "1日後リターン（1日前の銘柄）", 2: "2日後リターン（2日前の銘柄）", 3: "3日後リターン（3日前の銘柄）"}
+        for idx, h in enumerate(horizons, start=1):
+            if len(history_files) <= idx:
+                continue
+            dt, path_hist = history_files[idx]
+            try:
+                with open(path_hist, "r", encoding="utf-8") as f_hist:
+                    data_hist = json.load(f_hist)
+            except Exception:
+                continue
+            rows_h = verify_returns(data_hist, holding_days=h)
+            stats_h = summary_stats(rows_h)
+            profit_yen, profit_pct = _compute_portfolio_pnl_100_shares(rows_h)
+            st.markdown(
+                f"- **{labels[h]}**: シグナル日 {dt.date().isoformat()} / "
+                f"有効 {stats_h['count']} 件 / 勝率 {stats_h['win_rate'] or '—'}% / "
+                f"平均リターン {stats_h['avg_return_pct'] or '—'}% / "
+                f"100株ずつの合計損益 {profit_yen:+,.0f}円 (ポートフォリオ {profit_pct:+.2f}%)"
+            )
 
     # ----- 注目（High Potential） -----
     st.subheader("注目（High Potential）")
