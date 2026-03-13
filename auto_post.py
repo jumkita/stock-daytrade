@@ -47,6 +47,8 @@ from logic import (
     is_provisional_market_session,
     prefilter_ticker,
     run_full_backtest_universe,
+    run_full_backtest_universe_with_bulk,
+    run_full_backtest_universe_sell_from_bulk,
     backtest_liquidity_ok,
     passes_backtest_filters,
     tp_sl_from_avg_return,
@@ -136,19 +138,25 @@ def format_backtest_line(item: dict) -> str:
 def scan_backtest_driven(
     tickers: Optional[List[str]] = None,
     backtest_stats: Optional[dict] = None,
+    sell_stats: Optional[dict] = None,
     period_recent: str = "3mo",
-) -> Tuple[List[dict], dict]:
+) -> Tuple[List[dict], List[dict], dict]:
     """
     3営業日バックテスト統計に基づき、足切り・優位性フィルターを通過した銘柄のみリストアップする。
-    Returns: (list of item dicts with formatted_line, backtest_stats for cache)
+    買いは勝率60%以上・売りは勝率70%以上の統計を満たすもののみ。backtest_stats を渡す場合は sell_stats も渡すと売りが有効になる。
+    Returns: (results, results_sell, backtest_stats)
     """
     ticker_list = list(tickers or TARGET_TICKERS)
     if not ticker_list:
-        return [], {}
+        return [], [], {}
 
+    sell_stats_computed: dict = sell_stats if sell_stats is not None else {}
     if backtest_stats is None:
         period_bt = (os.environ.get("BACKTEST_PERIOD", "") or "3y").strip() or "3y"
-        backtest_stats = run_full_backtest_universe(ticker_list, period=period_bt, liquidity_filter=True)
+        backtest_stats, bulk_bt = run_full_backtest_universe_with_bulk(
+            ticker_list, period=period_bt, liquidity_filter=True
+        )
+        sell_stats_computed = run_full_backtest_universe_sell_from_bulk(bulk_bt)
 
     # 直近データもバルク一括取得（1銘柄ずつ取得しない）
     bulk_recent = fetch_ohlcv_bulk(ticker_list, period=period_recent, chunk_size=150)
@@ -197,7 +205,48 @@ def scan_backtest_driven(
             }
             item["formatted_line"] = format_backtest_line(item)
             results.append(item)
-    return results, backtest_stats
+
+    # 売りシグナル: 直近足で検出した売りパターンのうち、勝率70%以上（同一期間のバックテスト統計）のもののみ
+    results_sell: List[dict] = []
+    seen_sell: set[tuple[str, str]] = set()
+    for ticker, df in bulk_recent.items():
+        if df is None or len(df) < 25:
+            continue
+        if not backtest_liquidity_ok(df):
+            continue
+        bar = len(df) - 1
+        try:
+            patterns_all = detect_all_patterns(df)
+        except Exception:
+            continue
+        sell_on_last = [(i, nm, side) for i, nm, side in patterns_all if side == "sell" and i == bar]
+        if not sell_on_last:
+            continue
+        close = float(df["Close"].iloc[bar])
+        name = get_ticker_name(ticker)
+        for _idx, pattern_name, _side in sell_on_last:
+            if (ticker, pattern_name) in seen_sell:
+                continue
+            key_sell = (ticker, pattern_name)
+            stats_sell = sell_stats_computed.get(key_sell)
+            if not stats_sell or not passes_backtest_filters(stats_sell, min_win_rate=0.70):
+                continue
+            seen_sell.add((ticker, pattern_name))
+            wr = stats_sell.get("win_rate")
+            sample = stats_sell.get("sample_count", 0)
+            avg_ret = stats_sell.get("avg_return_pct", 0.0)
+            wr_str = f"{wr * 100:.0f}%" if wr is not None else "-"
+            results_sell.append({
+                "ticker": ticker,
+                "name": name,
+                "pattern_name": pattern_name,
+                "entry": close,
+                "win_rate": wr,
+                "sample_count": sample,
+                "avg_return_pct": avg_ret,
+                "formatted_line": f"【{ticker}】{pattern_name} | 勝率: {wr_str} (サンプル{sample}回) | 現在値: ¥{close:,.0f}",
+            })
+    return results, results_sell, backtest_stats
 
 
 def _process_one_ticker(
@@ -401,7 +450,7 @@ def build_tweet(
 def main() -> int:
     # 3営業日バックテスト統計ベースのスキャン（足切り: 20日平均出来高10万株以上・200円以上、優位性: サンプル3回以上・勝率60%以上・平均リターン+1.5%以上）
     print("バックテスト統計を算出しています（全銘柄・5年）…")
-    results, _ = scan_backtest_driven()
+    results, results_sell, _ = scan_backtest_driven()
     for item in results:
         print(item.get("formatted_line", ""))
 
@@ -434,6 +483,16 @@ def main() -> int:
                         "formatted_line": x.get("formatted_line"),
                     }
                     for x in results
+                ],
+                "items_sell": [
+                    {
+                        "ticker": x.get("ticker"),
+                        "name": x.get("name"),
+                        "pattern_name": x.get("pattern_name"),
+                        "entry": x.get("entry"),
+                        "formatted_line": x.get("formatted_line"),
+                    }
+                    for x in results_sell
                 ],
             }
             with open(json_path, "w", encoding="utf-8") as f:

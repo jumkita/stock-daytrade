@@ -470,11 +470,11 @@ def main():
 
     st.divider()
 
-    # ----- 本日の買いシグナル（16:00想定＝X投稿と同じ内容） -----
-    st.subheader("本日の買いシグナル（16:00想定）")
+    # ----- 本日の買い・売りシグナル（15:00更新想定） -----
+    st.subheader("本日の買い・売りシグナル（15:00更新想定）")
     st.caption(
-        "X 自動投稿（毎日16:00）と同じ条件で表示します。"
-        " 大引け日で買いサインが出た銘柄のみ（乖離率・AI判定は使わない）。"
+        "平日15:00に更新。大引けで買い・売りサインが出た銘柄を表示します。"
+        " 買いは勝率70%以上のシグナルに絞って表示（乖離率・AI判定は使わない）。"
     )
     if "daily_buy_signals" not in st.session_state:
         st.session_state.daily_buy_signals = None
@@ -488,6 +488,8 @@ def main():
         st.session_state.daily_buy_signals_backtest_format = False
     if "daily_buy_signals_updated" not in st.session_state:
         st.session_state.daily_buy_signals_updated = None
+    if "daily_buy_signals_sell" not in st.session_state:
+        st.session_state.daily_buy_signals_sell = None
 
     daily_json_url = os.environ.get("DAILY_SIGNALS_JSON_URL", "").strip()
     if not daily_json_url:
@@ -515,6 +517,7 @@ def main():
                 )
                 st.session_state.daily_buy_signals = items
                 st.session_state.daily_buy_signals_updated = data.get("updated")
+                st.session_state.daily_buy_signals_sell = data.get("items_sell") or []
                 st.session_state.daily_buy_signals_high_potential = []
                 st.session_state.daily_buy_signals_watch = []
                 st.session_state.daily_buy_signals_text = summary if items else "本日は該当銘柄はありませんでした。"
@@ -525,6 +528,7 @@ def main():
                 watch_list = data.get("watch", [])
                 tweet_text = data.get("tweet_text", "")
                 st.session_state.daily_buy_signals = active_list if isinstance(active_list, list) else []
+                st.session_state.daily_buy_signals_sell = []
                 st.session_state.daily_buy_signals_high_potential = high_potential_list if isinstance(high_potential_list, list) else []
                 st.session_state.daily_buy_signals_text = tweet_text or "本日は買いシグナル点灯銘柄はありませんでした。"
                 st.session_state.daily_buy_signals_watch = watch_list if isinstance(watch_list, list) else []
@@ -575,6 +579,7 @@ def main():
                     )
                     st.session_state.daily_buy_signals = items
                     st.session_state.daily_buy_signals_updated = data.get("updated")
+                    st.session_state.daily_buy_signals_sell = data.get("items_sell") or []
                     st.session_state.daily_buy_signals_high_potential = []
                     st.session_state.daily_buy_signals_watch = []
                     st.session_state.daily_buy_signals_text = summary if items else "本日は該当銘柄はありませんでした。"
@@ -585,6 +590,7 @@ def main():
                     watch_list = data.get("watch", [])
                     tweet_text = data.get("tweet_text", "")
                     st.session_state.daily_buy_signals = active_list if isinstance(active_list, list) else []
+                    st.session_state.daily_buy_signals_sell = data.get("items_sell") or []
                     st.session_state.daily_buy_signals_high_potential = high_potential_list if isinstance(high_potential_list, list) else []
                     st.session_state.daily_buy_signals_text = tweet_text or "本日は買いシグナル点灯銘柄はありませんでした。"
                     st.session_state.daily_buy_signals_watch = watch_list if isinstance(watch_list, list) else []
@@ -606,44 +612,70 @@ def main():
         except (TypeError, ValueError):
             return "—"
 
-    # ----- 本命（Active Signal）／バックテスト該当銘柄 -----
-    st.subheader("本命（Active Signal）／バックテスト該当銘柄")
+    # ----- 本命（買い：勝率70%以上）／バックテスト該当銘柄 -----
+    st.subheader("本命（買い：勝率70%以上）／バックテスト該当銘柄")
     backtest_format = st.session_state.get("daily_buy_signals_backtest_format", False)
     if backtest_format:
-        st.caption("3営業日バックテスト統計ベース。サンプル3回以上・勝率60%以上・平均リターン+1.5%以上の銘柄のみ。")
+        st.caption("3営業日バックテスト統計ベース。買いは勝率70%以上のシグナルのみ表示（サンプル3回以上・平均リターン+1.5%以上）。")
     else:
-        st.caption("全条件合致（確信度高）。Type-A トレンド追随 または Type-B リバウンドで 3/3 充足。X 投稿は本命・注目から確信度上位最大3銘柄。")
+        st.caption("全条件合致（確信度高）。Type-A トレンド追随 または Type-B リバウンドで 3/3 充足。")
     if st.session_state.daily_buy_signals_text is not None:
-        st.text_area(
-            "結果サマリ",
-            value=st.session_state.daily_buy_signals_text,
-            height=220,
-            disabled=True,
-            label_visibility="collapsed",
-        )
+        if st.session_state.daily_buy_signals:
+            full_list = list(st.session_state.daily_buy_signals)
+            # バックテスト形式では勝率70%以上に絞る
+            if backtest_format and full_list and full_list[0].get("pattern_name") is not None:
+                filtered_buy = [x for x in full_list if (x.get("win_rate") or 0) >= 0.70]
+                summary_for_display = "\n".join(x.get("formatted_line", "") for x in filtered_buy) if filtered_buy else "勝率70%以上の買いシグナルはありません。"
+                n_total, n_show = len(full_list), len(filtered_buy)
+                st.text_area(
+                    "結果サマリ",
+                    value=summary_for_display,
+                    height=220,
+                    disabled=True,
+                    label_visibility="collapsed",
+                )
+                st.caption(f"**勝率70%以上の買いシグナルのみ表示（全 {n_total} 件中 {n_show} 件）**　※機械的スクリーニング結果。投資判断は自己責任で。")
+                df_16 = pd.DataFrame(filtered_buy) if filtered_buy else None
+            else:
+                st.text_area(
+                    "結果サマリ",
+                    value=st.session_state.daily_buy_signals_text,
+                    height=220,
+                    disabled=True,
+                    label_visibility="collapsed",
+                )
+                filtered_buy = full_list
+                df_16 = pd.DataFrame(full_list)
+        else:
+            st.text_area(
+                "結果サマリ",
+                value=st.session_state.daily_buy_signals_text,
+                height=220,
+                disabled=True,
+                label_visibility="collapsed",
+            )
+            filtered_buy = []
         if st.session_state.daily_buy_signals:
             full_list = list(st.session_state.daily_buy_signals)
             if backtest_format and full_list and full_list[0].get("pattern_name") is not None:
-                # バックテスト駆動の items 形式
-                n = len(full_list)
-                st.caption(f"**全 {n} 件のシグナル**　※機械的スクリーニング結果。投資判断は自己責任で。")
-                df_16 = pd.DataFrame(full_list)
-                rename_bt = {
-                    "ticker": "銘柄コード", "name": "銘柄名", "pattern_name": "パターン名",
-                    "win_rate": "勝率", "sample_count": "サンプル数", "avg_return_pct": "平均リターン%",
-                    "entry": "エントリー想定", "tp": "利確(TP)", "sl": "損切り(SL)",
-                }
-                df_16 = df_16.rename(columns={k: v for k, v in rename_bt.items() if k in df_16.columns})
-                cols_bt = ["銘柄コード", "銘柄名", "パターン名", "勝率", "サンプル数", "平均リターン%", "エントリー想定", "利確(TP)", "損切り(SL)"]
-                display_cols_bt = [c for c in cols_bt if c in df_16.columns]
-                if "勝率" in df_16.columns:
-                    df_16["勝率"] = df_16["勝率"].apply(lambda x: f"{float(x)*100:.0f}%" if x is not None and x == x else "—")
-                if "平均リターン%" in df_16.columns:
-                    df_16["平均リターン%"] = df_16["平均リターン%"].apply(lambda x: f"+{float(x):.2f}%" if x is not None and x == x else "—")
-                for col in ("エントリー想定", "利確(TP)", "損切り(SL)"):
-                    if col in df_16.columns:
-                        df_16[col] = df_16[col].apply(_fmt_price)
-                st.dataframe(df_16[display_cols_bt], hide_index=True, use_container_width=True)
+                # 表は上で作成済み（filtered_buy）
+                if df_16 is not None and not df_16.empty:
+                    rename_bt = {
+                        "ticker": "銘柄コード", "name": "銘柄名", "pattern_name": "パターン名",
+                        "win_rate": "勝率", "sample_count": "サンプル数", "avg_return_pct": "平均リターン%",
+                        "entry": "エントリー想定", "tp": "利確(TP)", "sl": "損切り(SL)",
+                    }
+                    df_16 = df_16.rename(columns={k: v for k, v in rename_bt.items() if k in df_16.columns})
+                    cols_bt = ["銘柄コード", "銘柄名", "パターン名", "勝率", "サンプル数", "平均リターン%", "エントリー想定", "利確(TP)", "損切り(SL)"]
+                    display_cols_bt = [c for c in cols_bt if c in df_16.columns]
+                    if "勝率" in df_16.columns:
+                        df_16["勝率"] = df_16["勝率"].apply(lambda x: f"{float(x)*100:.0f}%" if x is not None and x == x else "—")
+                    if "平均リターン%" in df_16.columns:
+                        df_16["平均リターン%"] = df_16["平均リターン%"].apply(lambda x: f"+{float(x):.2f}%" if x is not None and x == x else "—")
+                    for col in ("エントリー想定", "利確(TP)", "損切り(SL)"):
+                        if col in df_16.columns:
+                            df_16[col] = df_16[col].apply(_fmt_price)
+                    st.dataframe(df_16[display_cols_bt], hide_index=True, use_container_width=True)
             else:
                 # 旧形式（本命・注目）
                 high_for_top = st.session_state.get("daily_buy_signals_high_potential") or []
@@ -677,6 +709,18 @@ def main():
                 if "損切り(SL)" in df_16.columns:
                     df_16["損切り(SL)"] = df_16["損切り(SL)"].apply(_fmt_price)
                 st.dataframe(df_16[display_cols], hide_index=True, use_container_width=True)
+
+            # 本日の売りシグナル
+            sell_list = st.session_state.get("daily_buy_signals_sell") or []
+            if sell_list:
+                st.subheader("本日の売りシグナル")
+                df_sell = pd.DataFrame(sell_list)
+                df_sell = df_sell.rename(columns={"ticker": "銘柄コード", "name": "銘柄名", "pattern_name": "パターン名", "entry": "現在値(¥)"})
+                cols_sell = ["銘柄コード", "銘柄名", "パターン名", "現在値(¥)"]
+                cols_sell = [c for c in cols_sell if c in df_sell.columns]
+                if "現在値(¥)" in df_sell.columns:
+                    df_sell["現在値(¥)"] = df_sell["現在値(¥)"].apply(lambda x: f"¥{float(x):,.0f}" if x is not None and pd.notna(x) else "—")
+                st.dataframe(df_sell[cols_sell], hide_index=True, use_container_width=True)
         else:
             st.info("本日は該当銘柄はありませんでした。")
     else:
@@ -752,54 +796,6 @@ def main():
                 f"平均リターン {stats_h['avg_return_pct'] or '—'}% / "
                 f"100株ずつの合計損益 {profit_yen:+,.0f}円 (ポートフォリオ {profit_pct:+.2f}%)"
             )
-
-    # ----- 注目（High Potential） -----
-    st.subheader("注目（High Potential）")
-    st.caption("条件の8割以上を充足（確信度中）。Type-A/Type-B で 2/3 以上。")
-    high_potential_list = st.session_state.get("daily_buy_signals_high_potential") or []
-    if high_potential_list:
-        active_for_top = st.session_state.get("daily_buy_signals") or []
-        merged_all_h = active_for_top + high_potential_list
-        merged_all_h.sort(key=lambda x: float(x.get("conviction_score", 0)), reverse=True)
-        top3_tickers_h = {x["ticker"] for x in merged_all_h[:3]}
-        high_potential_list = sorted(high_potential_list, key=lambda x: float(x.get("conviction_score", 0)), reverse=True)
-        df_h = pd.DataFrame(high_potential_list)
-        rename_h = {
-            "ticker": "銘柄コード", "name": "銘柄名", "buy_signals": "検出シグナル", "signal_count": "シグナル数",
-            "entry": "エントリー想定", "tp": "利確(TP)", "sl": "損切り(SL)", "rationale": "根拠",
-            "reason_short": "不足理由", "conviction_score": "確信度スコア",
-        }
-        df_h = df_h.rename(columns={k: v for k, v in rename_h.items() if k in df_h.columns})
-        df_h["★高確信度"] = df_h["銘柄コード"].apply(lambda t: "★高確信度" if t in top3_tickers_h else "")
-        cols_h = ["銘柄コード", "銘柄名", "★高確信度", "確信度スコア", "不足理由", "検出シグナル", "シグナル数", "エントリー想定", "利確(TP)", "損切り(SL)", "根拠"]
-        display_cols_h = [c for c in cols_h if c in df_h.columns]
-        for col in ("エントリー想定", "利確(TP)", "損切り(SL)"):
-            if col in df_h.columns:
-                df_h[col] = df_h[col].apply(_fmt_price)
-        st.dataframe(df_h[display_cols_h], hide_index=True, use_container_width=True)
-    else:
-        st.caption("注目銘柄はありません。")
-
-    # ----- 監視（Watchlist） -----
-    st.subheader("監視（Watchlist）")
-    st.caption("24種の買いパターンを主軸にしたニアミス。条件A（パターン点灯+出来高1.0倍以上+MA5%以内）または条件B（パターン未点灯+出来高2倍+MA3%以内）を満たす銘柄からスコア上位5件。各銘柄に「何が足りないか」を表示。")
-    watch_list = st.session_state.get("daily_buy_signals_watch") or []
-    if watch_list:
-        df_w = pd.DataFrame(watch_list)
-        rename_w = {
-            "ticker": "銘柄コード", "name": "銘柄名",
-            "entry": "エントリー想定", "tp": "利確(TP)", "sl": "損切り(SL)",
-            "reason_short": "不足理由", "watchlist_score": "ウォッチスコア",
-        }
-        df_w = df_w.rename(columns={k: v for k, v in rename_w.items() if k in df_w.columns})
-        cols_w = ["銘柄コード", "銘柄名", "不足理由", "ウォッチスコア", "エントリー想定", "利確(TP)", "損切り(SL)"]
-        display_cols_w = [c for c in cols_w if c in df_w.columns]
-        for col in ("エントリー想定", "利確(TP)", "損切り(SL)"):
-            if col in df_w.columns:
-                df_w[col] = df_w[col].apply(_fmt_price)
-        st.dataframe(df_w[display_cols_w], hide_index=True, use_container_width=True)
-    else:
-        st.caption("監視銘柄はありません。")
 
     st.divider()
 

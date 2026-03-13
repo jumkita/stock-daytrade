@@ -1205,6 +1205,52 @@ def run_backtest_3day_vectorized(df: pd.DataFrame, ticker: str = "") -> list[tup
     return out
 
 
+def run_backtest_3day_vectorized_sell(df: pd.DataFrame, ticker: str = "") -> list[tuple[str, float]]:
+    """
+    売りパターン点灯時の3営業日ホールドリターン（ショート: 翌日寄りでエントリー・3営業日後終値で決済）。
+    Returns: [(pattern_name, return_pct), ...]
+    """
+    if df is None or getattr(df, "empty", True) or len(df) < 5:
+        return []
+    for col in ("Open", "High", "Low", "Close"):
+        if col not in df.columns:
+            return []
+    open_arr = np.asarray(df["Open"], dtype=np.float64)
+    close_arr = np.asarray(df["Close"], dtype=np.float64)
+    n = len(df)
+    out: list[tuple[str, float]] = []
+    try:
+        patterns_all = detect_all_patterns(df)
+        sell_only = [(i, name) for i, name, side in patterns_all if side == "sell"]
+        from collections import defaultdict
+        by_pattern: dict[str, list[int]] = defaultdict(list)
+        for bar_i, pattern_name in sell_only:
+            by_pattern[pattern_name].append(bar_i)
+        for pattern_name, bar_inds in by_pattern.items():
+            bar_inds = np.array(bar_inds, dtype=np.int64)
+            next_i = bar_inds + 1
+            exit_i = bar_inds + 4
+            valid = (exit_i < n) & (next_i < n)
+            bar_inds = bar_inds[valid]
+            next_i = next_i[valid]
+            exit_i = exit_i[valid]
+            if len(bar_inds) == 0:
+                continue
+            entry_prices = open_arr[next_i]
+            exit_prices = close_arr[exit_i]
+            valid2 = entry_prices > 0
+            if not np.any(valid2):
+                continue
+            entry_prices = entry_prices[valid2]
+            exit_prices = exit_prices[valid2]
+            ret_pct = (entry_prices - exit_prices) / entry_prices * 100.0
+            for r in ret_pct:
+                out.append((pattern_name, float(r)))
+    except Exception:
+        pass
+    return out
+
+
 def aggregate_backtest_stats(
     trades: list[tuple[str, str, float]],
 ) -> dict[tuple[str, str], dict[str, Any]]:
@@ -1264,14 +1310,27 @@ def run_full_backtest_universe(
     """
     全銘柄で3営業日バックテストを実行。(ticker, pattern_name) ごとに win_rate, avg_return_pct, sample_count を返す。
     - 事前足切り: 軽量バルクで直近2ヶ月取得し、出来高10万株未満・200円未満を除外してから本取得。
-    - 本取得: 通過銘柄のみ 3年分をチャンク一括ダウンロード（for で1銘柄ずつ取得しない）。
+    - 本取得: 通過銘柄のみ period 分をチャンク一括ダウンロード（デフォルト3年。環境変数 BACKTEST_PERIOD で 1y 等に変更可）。
     - 計算: ベクトル化パターン検知・リターン算出（iterrows/行ループなし）。
     """
+    stats, _ = run_full_backtest_universe_with_bulk(tickers, period=period, liquidity_filter=liquidity_filter, chunk_size=chunk_size)
+    return stats
+
+
+def run_full_backtest_universe_with_bulk(
+    tickers: list[str],
+    period: str = "3y",
+    liquidity_filter: bool = True,
+    chunk_size: int = BULK_CHUNK_SIZE,
+) -> tuple[dict[tuple[str, str], dict[str, Any]], dict[str, pd.DataFrame]]:
+    """
+    買いバックテストを実行し、(stats, bulk) を返す。bulk は売りバックテストで再利用可能。
+    """
     if not tickers:
-        return {}
+        return {}, {}
     passed_tickers = prefilter_tickers_bulk(tickers, chunk_size=chunk_size) if liquidity_filter else list(tickers)
     if not passed_tickers:
-        return {}
+        return {}, {}
     bulk = fetch_ohlcv_bulk(passed_tickers, period=period, chunk_size=chunk_size)
     all_trades: list[tuple[str, str, float]] = []
     for ticker, df in bulk.items():
@@ -1279,17 +1338,30 @@ def run_full_backtest_universe(
             continue
         for pattern_name, ret_pct in run_backtest_3day_vectorized(df, ticker):
             all_trades.append((ticker, pattern_name, ret_pct))
+    return aggregate_backtest_stats(all_trades), bulk
+
+
+def run_full_backtest_universe_sell_from_bulk(
+    bulk: dict[str, pd.DataFrame],
+) -> dict[tuple[str, str], dict[str, Any]]:
+    """既に取得した bulk OHLCV で売りパターンの3営業日バックテストを実行。"""
+    all_trades: list[tuple[str, str, float]] = []
+    for ticker, df in bulk.items():
+        if df is None or len(df) < 5:
+            continue
+        for pattern_name, ret_pct in run_backtest_3day_vectorized_sell(df, ticker):
+            all_trades.append((ticker, pattern_name, ret_pct))
     return aggregate_backtest_stats(all_trades)
 
 
-def passes_backtest_filters(stats: dict[str, Any]) -> bool:
-    """サンプル3回以上・勝率60%以上・平均リターン+1.5%以上。"""
+def passes_backtest_filters(stats: dict[str, Any], min_win_rate: float = BACKTEST_MIN_WIN_RATE) -> bool:
+    """サンプル3回以上・勝率 min_win_rate 以上・平均リターン+1.5%以上。"""
     if not stats:
         return False
     n = stats.get("sample_count", 0)
     wr = stats.get("win_rate", 0.0)
     avg = stats.get("avg_return_pct", 0.0)
-    return n >= BACKTEST_MIN_SAMPLES and wr >= BACKTEST_MIN_WIN_RATE and avg >= BACKTEST_MIN_AVG_RETURN_PCT
+    return n >= BACKTEST_MIN_SAMPLES and wr >= min_win_rate and avg >= BACKTEST_MIN_AVG_RETURN_PCT
 
 
 def tp_sl_from_avg_return(current_price: float, avg_return_pct: float) -> dict[str, float]:
