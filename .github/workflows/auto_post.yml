@@ -71,6 +71,15 @@ jobs:
           export PYTHONPATH="$WP"
           python "$WP/auto_post.py"
 
+      - name: ヒストリーファイルの存在確認
+        run: |
+          echo "=== 現在のディレクトリ ==="
+          pwd
+          echo "=== daily_buy_signals*.json 一覧 ==="
+          ls -la daily_buy_signals*.json || echo "no daily_buy_signals*.json"
+          echo "=== git status ==="
+          git status
+
       - name: 結果をリポジトリにコミット・プッシュ（Streamlit で自動表示用）
         run: |
           git config user.name "github-actions[bot]"
