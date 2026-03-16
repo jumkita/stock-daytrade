@@ -1,0 +1,24 @@
+{
+  "updated": "2026-03-16T07:22:15.708014+00:00",
+  "backtest_driven": true,
+  "unique_tickers": 11,
+  "signal_count": 13,
+  "items": [
+    {
+      "ticker": "3103.T",
+      "name": "UNITIKA LTD",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.8261,
+      "sample_count": 23,
+      "avg_return_pct": 9.0189,
+      "entry": 1295.0,
+      "tp": 1411.79,
+      "sl": 1236.6,
+      "formatted_line": "【3103.T】 | インサイドバー | 勝率: 83% (サンプル23回) | 平均リターン: +9.02% | 現在値: ¥1,295 | TP: ¥1,412 | SL: ¥1,237"
+    },
+    ...
+  ],
+  "items_sell": [
+    ...
+  ]
+}
