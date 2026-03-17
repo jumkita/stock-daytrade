@@ -1,180 +1,29 @@
 {
-  "updated": "2026-03-16T13:59:57.261680+00:00",
+  "updated": "2026-03-17T07:08:52.978772+00:00",
   "backtest_driven": true,
-  "unique_tickers": 11,
-  "signal_count": 13,
+  "unique_tickers": 1,
+  "signal_count": 1,
   "items": [
     {
-      "ticker": "3103.T",
-      "name": "UNITIKA LTD",
-      "pattern_name": "インサイドバー",
-      "win_rate": 0.8261,
-      "sample_count": 23,
-      "avg_return_pct": 9.0189,
-      "entry": 1295.0,
-      "tp": 1411.79,
-      "sl": 1236.6,
-      "formatted_line": "【3103.T】 | インサイドバー | 勝率: 83% (サンプル23回) | 平均リターン: +9.02% | 現在値: ¥1,295 | TP: ¥1,412 | SL: ¥1,237"
-    },
-    {
-      "ticker": "3863.T",
-      "name": "NIPPON PAPER INDUSTRIES CO LTD",
-      "pattern_name": "ピンバー",
-      "win_rate": 0.8667,
-      "sample_count": 15,
-      "avg_return_pct": 2.6543,
-      "entry": 1268.0,
-      "tp": 1301.66,
-      "sl": 1251.17,
-      "formatted_line": "【3863.T】 | ピンバー | 勝率: 87% (サンプル15回) | 平均リターン: +2.65% | 現在値: ¥1,268 | TP: ¥1,302 | SL: ¥1,251"
-    },
-    {
-      "ticker": "4004.T",
-      "name": "RESONAC HOLDINGS CORPORATION",
-      "pattern_name": "包み線",
-      "win_rate": 0.6154,
-      "sample_count": 26,
-      "avg_return_pct": 1.5012,
-      "entry": 11030.0,
-      "tp": 11195.58,
-      "sl": 10947.21,
-      "formatted_line": "【4004.T】 | 包み線 | 勝率: 62% (サンプル26回) | 平均リターン: +1.50% | 現在値: ¥11,030 | TP: ¥11,196 | SL: ¥10,947"
-    },
-    {
-      "ticker": "5333.T",
-      "name": "NGK INSULATORS",
-      "pattern_name": "包み線",
-      "win_rate": 0.6757,
-      "sample_count": 37,
-      "avg_return_pct": 1.506,
-      "entry": 4032.0,
-      "tp": 4092.72,
-      "sl": 4001.64,
-      "formatted_line": "【5333.T】 | 包み線 | 勝率: 68% (サンプル37回) | 平均リターン: +1.51% | 現在値: ¥4,032 | TP: ¥4,093 | SL: ¥4,002"
-    },
-    {
-      "ticker": "5802.T",
-      "name": "SUMITOMO ELECTRIC INDUSTRIES",
-      "pattern_name": "インサイドバー",
-      "win_rate": 0.8,
-      "sample_count": 20,
-      "avg_return_pct": 3.6008,
-      "entry": 10210.0,
-      "tp": 10577.64,
-      "sl": 10026.18,
-      "formatted_line": "【5802.T】 | インサイドバー | 勝率: 80% (サンプル20回) | 平均リターン: +3.60% | 現在値: ¥10,210 | TP: ¥10,578 | SL: ¥10,026"
-    },
-    {
-      "ticker": "6146.T",
-      "name": "DISCO CORPORATION",
-      "pattern_name": "ピンバー",
-      "win_rate": 0.7143,
-      "sample_count": 7,
-      "avg_return_pct": 5.694,
-      "entry": 69950.0,
-      "tp": 73932.95,
-      "sl": 67958.52,
-      "formatted_line": "【6146.T】 | ピンバー | 勝率: 71% (サンプル7回) | 平均リターン: +5.69% | 現在値: ¥69,950 | TP: ¥73,933 | SL: ¥67,959"
-    },
-    {
-      "ticker": "6146.T",
-      "name": "DISCO CORPORATION",
-      "pattern_name": "スパイクロー",
+      "ticker": "7267.T",
+      "name": "HONDA MOTOR CO",
+      "pattern_name": "二本たくり線",
       "win_rate": 0.625,
       "sample_count": 8,
-      "avg_return_pct": 5.0553,
-      "entry": 69950.0,
-      "tp": 73486.18,
-      "sl": 68181.91,
-      "formatted_line": "【6146.T】 | スパイクロー | 勝率: 62% (サンプル8回) | 平均リターン: +5.06% | 現在値: ¥69,950 | TP: ¥73,486 | SL: ¥68,182"
-    },
-    {
-      "ticker": "6674.T",
-      "name": "GS YUASA CORP",
-      "pattern_name": "インサイドバー",
-      "win_rate": 0.7895,
-      "sample_count": 19,
-      "avg_return_pct": 2.7263,
-      "entry": 5057.0,
-      "tp": 5194.87,
-      "sl": 4988.07,
-      "formatted_line": "【6674.T】 | インサイドバー | 勝率: 79% (サンプル19回) | 平均リターン: +2.73% | 現在値: ¥5,057 | TP: ¥5,195 | SL: ¥4,988"
-    },
-    {
-      "ticker": "6920.T",
-      "name": "LASERTEC CORP",
-      "pattern_name": "スパイクロー",
-      "win_rate": 0.7778,
-      "sample_count": 9,
-      "avg_return_pct": 8.4561,
-      "entry": 37740.0,
-      "tp": 40931.33,
-      "sl": 36144.33,
-      "formatted_line": "【6920.T】 | スパイクロー | 勝率: 78% (サンプル9回) | 平均リターン: +8.46% | 現在値: ¥37,740 | TP: ¥40,931 | SL: ¥36,144"
-    },
-    {
-      "ticker": "6976.T",
-      "name": "TAIYO YUDEN CO LTD",
-      "pattern_name": "包み線",
-      "win_rate": 0.6897,
-      "sample_count": 29,
-      "avg_return_pct": 2.3031,
-      "entry": 3965.0,
-      "tp": 4056.32,
-      "sl": 3919.34,
-      "formatted_line": "【6976.T】 | 包み線 | 勝率: 69% (サンプル29回) | 平均リターン: +2.30% | 現在値: ¥3,965 | TP: ¥4,056 | SL: ¥3,919"
-    },
-    {
-      "ticker": "8801.T",
-      "name": "MITSUI FUDOSAN",
-      "pattern_name": "リバーサルロー",
-      "win_rate": 0.7778,
-      "sample_count": 9,
-      "avg_return_pct": 1.6359,
-      "entry": 1822.5,
-      "tp": 1852.31,
-      "sl": 1807.59,
-      "formatted_line": "【8801.T】 | リバーサルロー | 勝率: 78% (サンプル9回) | 平均リターン: +1.64% | 現在値: ¥1,822 | TP: ¥1,852 | SL: ¥1,808"
-    },
-    {
-      "ticker": "8801.T",
-      "name": "MITSUI FUDOSAN",
-      "pattern_name": "包み線",
-      "win_rate": 0.6061,
-      "sample_count": 33,
-      "avg_return_pct": 1.8161,
-      "entry": 1822.5,
-      "tp": 1855.6,
-      "sl": 1805.95,
-      "formatted_line": "【8801.T】 | 包み線 | 勝率: 61% (サンプル33回) | 平均リターン: +1.82% | 現在値: ¥1,822 | TP: ¥1,856 | SL: ¥1,806"
-    },
-    {
-      "ticker": "9984.T",
-      "name": "SOFTBANK GROUP CORP",
-      "pattern_name": "包み線",
-      "win_rate": 0.6667,
-      "sample_count": 21,
-      "avg_return_pct": 4.3821,
-      "entry": 3612.0,
-      "tp": 3770.28,
-      "sl": 3532.86,
-      "formatted_line": "【9984.T】 | 包み線 | 勝率: 67% (サンプル21回) | 平均リターン: +4.38% | 現在値: ¥3,612 | TP: ¥3,770 | SL: ¥3,533"
+      "avg_return_pct": 1.7951,
+      "entry": 1337.0,
+      "tp": 1361.0,
+      "sl": 1325.0,
+      "formatted_line": "【7267.T】 | 二本たくり線 | 勝率: 62% (サンプル8回) | 平均リターン: +1.80% | 現在値: ¥1,337 | TP: ¥1,361 | SL: ¥1,325"
     }
   ],
   "items_sell": [
     {
-      "ticker": "7832.T",
-      "name": "BANDAI NAMCO HOLDINGS INC",
-      "pattern_name": "リバーサルハイ",
-      "entry": 4253.0,
-      "formatted_line": "【7832.T】リバーサルハイ | 勝率: 86% (サンプル7回) | 現在値: ¥4,253"
-    },
-    {
-      "ticker": "8035.T",
-      "name": "TOKYO ELECTRON",
-      "pattern_name": "アウトサイドバー",
-      "entry": 39040.0,
-      "formatted_line": "【8035.T】アウトサイドバー | 勝率: 79% (サンプル14回) | 現在値: ¥39,040"
+      "ticker": "1925.T",
+      "name": "DAIWA HOUSE INDUSTRY CO",
+      "pattern_name": "スパイクハイ",
+      "entry": 5217.0,
+      "formatted_line": "【1925.T】スパイクハイ | 勝率: 73% (サンプル15回) | 現在値: ¥5,217"
     }
   ]
 }
