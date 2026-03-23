@@ -1,20 +1,32 @@
 {
-  "updated": "2026-03-20T07:00:04.054720+00:00",
+  "updated": "2026-03-23T07:15:43.152240+00:00",
   "backtest_driven": true,
-  "unique_tickers": 5,
-  "signal_count": 6,
+  "unique_tickers": 13,
+  "signal_count": 14,
   "items": [
     {
-      "ticker": "3103.T",
-      "name": "UNITIKA LTD",
-      "pattern_name": "インサイドバー",
-      "win_rate": 0.8261,
-      "sample_count": 23,
-      "avg_return_pct": 9.0189,
-      "entry": 1460.0,
-      "tp": 1591.68,
-      "sl": 1394.16,
-      "formatted_line": "【3103.T】 | インサイドバー | 勝率: 83% (サンプル23回) | 平均リターン: +9.02% | 現在値: ¥1,460 | TP: ¥1,592 | SL: ¥1,394"
+      "ticker": "3863.T",
+      "name": "NIPPON PAPER INDUSTRIES CO LTD",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.9231,
+      "sample_count": 13,
+      "avg_return_pct": 3.0216,
+      "entry": 1183.0,
+      "tp": 1218.75,
+      "sl": 1165.13,
+      "formatted_line": "【3863.T】 | スパイクロー | 勝率: 92% (サンプル13回) | 平均リターン: +3.02% | 現在値: ¥1,183 | TP: ¥1,219 | SL: ¥1,165"
+    },
+    {
+      "ticker": "4004.T",
+      "name": "RESONAC HOLDINGS CORPORATION",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.875,
+      "sample_count": 8,
+      "avg_return_pct": 2.6182,
+      "entry": 10390.0,
+      "tp": 10662.03,
+      "sl": 10253.98,
+      "formatted_line": "【4004.T】 | 二本たくり線 | 勝率: 88% (サンプル8回) | 平均リターン: +2.62% | 現在値: ¥10,390 | TP: ¥10,662 | SL: ¥10,254"
     },
     {
       "ticker": "4004.T",
@@ -23,88 +35,158 @@
       "win_rate": 0.6,
       "sample_count": 10,
       "avg_return_pct": 3.5901,
-      "entry": 11115.0,
-      "tp": 11514.04,
-      "sl": 10915.48,
-      "formatted_line": "【4004.T】 | ピンバー | 勝率: 60% (サンプル10回) | 平均リターン: +3.59% | 現在値: ¥11,115 | TP: ¥11,514 | SL: ¥10,915"
+      "entry": 10390.0,
+      "tp": 10763.01,
+      "sl": 10203.49,
+      "formatted_line": "【4004.T】 | ピンバー | 勝率: 60% (サンプル10回) | 平均リターン: +3.59% | 現在値: ¥10,390 | TP: ¥10,763 | SL: ¥10,203"
     },
     {
-      "ticker": "4004.T",
-      "name": "RESONAC HOLDINGS CORPORATION",
-      "pattern_name": "包み線",
-      "win_rate": 0.6154,
-      "sample_count": 26,
-      "avg_return_pct": 1.5012,
-      "entry": 11115.0,
-      "tp": 11281.86,
-      "sl": 11031.57,
-      "formatted_line": "【4004.T】 | 包み線 | 勝率: 62% (サンプル26回) | 平均リターン: +1.50% | 現在値: ¥11,115 | TP: ¥11,282 | SL: ¥11,032"
+      "ticker": "4021.T",
+      "name": "NISSAN CHEMICAL CORPORATION",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.7778,
+      "sample_count": 9,
+      "avg_return_pct": 1.6803,
+      "entry": 5923.0,
+      "tp": 6022.52,
+      "sl": 5873.24,
+      "formatted_line": "【4021.T】 | スパイクロー | 勝率: 78% (サンプル9回) | 平均リターン: +1.68% | 現在値: ¥5,923 | TP: ¥6,023 | SL: ¥5,873"
+    },
+    {
+      "ticker": "4043.T",
+      "name": "TOKUYAMA CORP",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.7692,
+      "sample_count": 13,
+      "avg_return_pct": 1.5461,
+      "entry": 3605.0,
+      "tp": 3660.74,
+      "sl": 3577.13,
+      "formatted_line": "【4043.T】 | ピンバー | 勝率: 77% (サンプル13回) | 平均リターン: +1.55% | 現在値: ¥3,605 | TP: ¥3,661 | SL: ¥3,577"
+    },
+    {
+      "ticker": "4061.T",
+      "name": "DENKA COMPANY LIMITED",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.8571,
+      "sample_count": 7,
+      "avg_return_pct": 3.436,
+      "entry": 3181.0,
+      "tp": 3290.3,
+      "sl": 3126.35,
+      "formatted_line": "【4061.T】 | ピンバー | 勝率: 86% (サンプル7回) | 平均リターン: +3.44% | 現在値: ¥3,181 | TP: ¥3,290 | SL: ¥3,126"
     },
     {
       "ticker": "5706.T",
       "name": "MITSUI KINZOKU CO LTD",
-      "pattern_name": "ピンバー",
-      "win_rate": 0.7692,
-      "sample_count": 13,
-      "avg_return_pct": 4.2201,
-      "entry": 31400.0,
-      "tp": 32725.11,
-      "sl": 30737.44,
-      "formatted_line": "【5706.T】 | ピンバー | 勝率: 77% (サンプル13回) | 平均リターン: +4.22% | 現在値: ¥31,400 | TP: ¥32,725 | SL: ¥30,737"
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.8333,
+      "sample_count": 12,
+      "avg_return_pct": 4.0772,
+      "entry": 29205.0,
+      "tp": 30395.75,
+      "sl": 28609.63,
+      "formatted_line": "【5706.T】 | スパイクロー | 勝率: 83% (サンプル12回) | 平均リターン: +4.08% | 現在値: ¥29,205 | TP: ¥30,396 | SL: ¥28,610"
+    },
+    {
+      "ticker": "5714.T",
+      "name": "DOWA HOLDINGS",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.625,
+      "sample_count": 8,
+      "avg_return_pct": 1.6068,
+      "entry": 8710.0,
+      "tp": 8849.95,
+      "sl": 8640.02,
+      "formatted_line": "【5714.T】 | スパイクロー | 勝率: 62% (サンプル8回) | 平均リターン: +1.61% | 現在値: ¥8,710 | TP: ¥8,850 | SL: ¥8,640"
     },
     {
       "ticker": "5802.T",
       "name": "SUMITOMO ELECTRIC INDUSTRIES",
-      "pattern_name": "包み線",
-      "win_rate": 0.6667,
-      "sample_count": 21,
-      "avg_return_pct": 2.3119,
-      "entry": 9927.0,
-      "tp": 10156.5,
-      "sl": 9812.25,
-      "formatted_line": "【5802.T】 | 包み線 | 勝率: 67% (サンプル21回) | 平均リターン: +2.31% | 現在値: ¥9,927 | TP: ¥10,156 | SL: ¥9,812"
+      "pattern_name": "ピンバー",
+      "win_rate": 0.8182,
+      "sample_count": 11,
+      "avg_return_pct": 4.8079,
+      "entry": 9236.0,
+      "tp": 9680.06,
+      "sl": 9013.97,
+      "formatted_line": "【5802.T】 | ピンバー | 勝率: 82% (サンプル11回) | 平均リターン: +4.81% | 現在値: ¥9,236 | TP: ¥9,680 | SL: ¥9,014"
     },
     {
-      "ticker": "8253.T",
-      "name": "CREDIT SAISON CO",
+      "ticker": "6526.T",
+      "name": "SOCIONEXT INC",
+      "pattern_name": "リバーサルロー",
+      "win_rate": 0.7143,
+      "sample_count": 7,
+      "avg_return_pct": 2.2635,
+      "entry": 1746.0,
+      "tp": 1785.52,
+      "sl": 1726.24,
+      "formatted_line": "【6526.T】 | リバーサルロー | 勝率: 71% (サンプル7回) | 平均リターン: +2.26% | 現在値: ¥1,746 | TP: ¥1,786 | SL: ¥1,726"
+    },
+    {
+      "ticker": "6674.T",
+      "name": "GS YUASA CORP",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.6429,
+      "sample_count": 14,
+      "avg_return_pct": 1.7115,
+      "entry": 4862.0,
+      "tp": 4945.21,
+      "sl": 4820.39,
+      "formatted_line": "【6674.T】 | スパイクロー | 勝率: 64% (サンプル14回) | 平均リターン: +1.71% | 現在値: ¥4,862 | TP: ¥4,945 | SL: ¥4,820"
+    },
+    {
+      "ticker": "8233.T",
+      "name": "TAKASHIMAYA CO",
+      "pattern_name": "リバーサルロー",
+      "win_rate": 0.8,
+      "sample_count": 5,
+      "avg_return_pct": 2.7802,
+      "entry": 1801.5,
+      "tp": 1851.59,
+      "sl": 1776.46,
+      "formatted_line": "【8233.T】 | リバーサルロー | 勝率: 80% (サンプル5回) | 平均リターン: +2.78% | 現在値: ¥1,802 | TP: ¥1,852 | SL: ¥1,776"
+    },
+    {
+      "ticker": "8354.T",
+      "name": "FUKUOKA FINANCIAL GROUP INC.",
       "pattern_name": "ピンバー",
-      "win_rate": 0.75,
-      "sample_count": 16,
-      "avg_return_pct": 1.5844,
-      "entry": 4244.0,
-      "tp": 4311.24,
-      "sl": 4210.38,
-      "formatted_line": "【8253.T】 | ピンバー | 勝率: 75% (サンプル16回) | 平均リターン: +1.58% | 現在値: ¥4,244 | TP: ¥4,311 | SL: ¥4,210"
+      "win_rate": 0.6429,
+      "sample_count": 14,
+      "avg_return_pct": 2.0811,
+      "entry": 5900.0,
+      "tp": 6022.78,
+      "sl": 5838.61,
+      "formatted_line": "【8354.T】 | ピンバー | 勝率: 64% (サンプル14回) | 平均リターン: +2.08% | 現在値: ¥5,900 | TP: ¥6,023 | SL: ¥5,839"
+    },
+    {
+      "ticker": "9503.T",
+      "name": "KANSAI ELECTRIC POWER CO INC",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.7143,
+      "sample_count": 14,
+      "avg_return_pct": 1.7188,
+      "entry": 2478.5,
+      "tp": 2521.1,
+      "sl": 2457.2,
+      "formatted_line": "【9503.T】 | ピンバー | 勝率: 71% (サンプル14回) | 平均リターン: +1.72% | 現在値: ¥2,478 | TP: ¥2,521 | SL: ¥2,457"
     }
   ],
   "items_sell": [
     {
-      "ticker": "4503.T",
-      "name": "ASTELLAS PHARMA",
-      "pattern_name": "スパイクハイ",
-      "entry": 2378.0,
-      "formatted_line": "【4503.T】スパイクハイ | 勝率: 73% (サンプル15回) | 現在値: ¥2,378"
+      "ticker": "9107.T",
+      "name": "KAWASAKI KISEN KAISHA",
+      "pattern_name": "黒三兵",
+      "entry": 2571.0,
+      "formatted_line": "【9107.T】黒三兵 | 勝率: 85% (サンプル13回) | 現在値: ¥2,571"
     },
     {
-      "ticker": "4704.T",
-      "name": "TREND MICRO INC",
-      "pattern_name": "アウトサイドバー",
-      "entry": 5325.0,
-      "formatted_line": "【4704.T】アウトサイドバー | 勝率: 79% (サンプル19回) | 現在値: ¥5,325"
-    },
-    {
-      "ticker": "6752.T",
-      "name": "PANASONIC HOLDINGS CORP",
-      "pattern_name": "リバーサルハイ",
-      "entry": 2599.5,
-      "formatted_line": "【6752.T】リバーサルハイ | 勝率: 88% (サンプル8回) | 現在値: ¥2,600"
-    },
-    {
-      "ticker": "8795.T",
-      "name": "T&D HOLDINGS INC",
-      "pattern_name": "スパイクハイ",
-      "entry": 3733.0,
-      "formatted_line": "【8795.T】スパイクハイ | 勝率: 72% (サンプル18回) | 現在値: ¥3,733"
+      "ticker": "9147.T",
+      "name": "NIPPON EXPRESS HLDGS INC",
+      "pattern_name": "黒三兵",
+      "entry": 3500.0,
+      "formatted_line": "【9147.T】黒三兵 | 勝率: 70% (サンプル10回) | 現在値: ¥3,500"
     }
   ]
 }
