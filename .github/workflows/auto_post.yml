@@ -78,11 +78,37 @@ jobs:
           echo "=== daily_buy_signals*.json 一覧 ==="
           ls -la daily_buy_signals*.json || echo "no daily_buy_signals*.json"
           echo "=== git status ==="
-          git status
+          git status --porcelain
+          echo "=== git check-ignore ==="
+          git check-ignore -v daily_buy_signals.json daily_buy_signals_*.json || true
 
-      - name: 結果をリポジトリにコミット・プッシュ（Streamlit で自動表示用）
+      - name: 結果をリポジトリにコミット・プッシュ（厳格）
+        shell: bash
         run: |
+          set -euo pipefail
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # glob任せにせず明示的にadd
           git add daily_buy_signals.json
-          git diff --staged --quiet && echo "変更なし" || (git commit -m "chore: Update daily buy signals [automated]" && git push)
+          git add daily_buy_signals_*.json
+
+          echo "=== staged files ==="
+          git diff --staged --name-only
+
+          # JST当日分のヒストリーファイルがstagedされていなければ失敗
+          TODAY_JST="$(TZ=Asia/Tokyo date +%F)"
+          TODAY_FILE="daily_buy_signals_${TODAY_JST}.json"
+          if ! git diff --staged --name-only | grep -Fx "$TODAY_FILE" >/dev/null; then
+            echo "ERROR: $TODAY_FILE が staged されていません"
+            exit 1
+          fi
+
+          if git diff --staged --quiet; then
+            echo "ERROR: staged changes がありません"
+            exit 1
+          fi
+
+          git commit -m "chore: Update daily buy signals [automated]"
+          git push
