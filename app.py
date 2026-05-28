@@ -183,27 +183,28 @@ def _render_buy_signals_table(items: list[dict[str, Any]], *, mobile: bool) -> N
     cols = [c for c in display_columns(mobile=mobile) if c in show.columns]
     st.dataframe(show[cols], hide_index=True, use_container_width=True)
     with st.expander("銘柄詳細（4象限内訳・TP/SL）", expanded=False):
-        for item in raw_items:
+        for idx, item in enumerate(raw_items):
             code = str(item.get("ticker", "")).replace(".T", "")
-            title = f"{code} {item.get('name', '')} — {item.get('pattern_name', '')}"
+            pat = str(item.get("pattern_name") or "")
+            title = f"{code} {item.get('name', '')} — {pat}"
             bd = breakdown_from_item(item)
-            c1, c2 = st.columns([1, 1])
-            with c1:
-                st.markdown(f"**{title}**")
-                st.caption(
-                    f"セクター: {item.get('sector_label', '—')} | "
-                    f"出来高: {item.get('vol_ratio', '—')}倍 | ROE: {item.get('roe_pct', '—')}%"
+            st.markdown(f"**{title}**")
+            st.caption(
+                f"セクター: {item.get('sector_label', '—')} | "
+                f"出来高: {item.get('vol_ratio', '—')}倍 | ROE: {item.get('roe_pct', '—')}%"
+            )
+            st.write(
+                f"エントリー {fmt_price(item.get('entry'))} / "
+                f"TP {fmt_price(item.get('tp'))} / SL {fmt_price(item.get('sl'))}"
+            )
+            if sum(bd.values()) > 0:
+                st.plotly_chart(
+                    _quadrant_breakdown_figure(bd, f"4象限 {item.get('quadrant_score', '—')}点"),
+                    use_container_width=True,
+                    key=f"quad_breakdown_{idx}",
                 )
-                st.write(
-                    f"エントリー {fmt_price(item.get('entry'))} / "
-                    f"TP {fmt_price(item.get('tp'))} / SL {fmt_price(item.get('sl'))}"
-                )
-            with c2:
-                if sum(bd.values()) > 0:
-                    st.plotly_chart(
-                        _quadrant_breakdown_figure(bd, f"4象限 {item.get('quadrant_score', '—')}点"),
-                        use_container_width=True,
-                    )
+            if idx < len(raw_items) - 1:
+                st.divider()
 
 
 def _render_sell_table(sell_list: list[dict[str, Any]]) -> None:
