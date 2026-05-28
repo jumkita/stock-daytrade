@@ -33,3 +33,13 @@ python -m pytest tests/test_quadrant_screening.py -q
 ## 日次シグナル（GitHub Actions）
 
 平日 JST 15:00 頃に `auto_post.py` が実行され、`daily_buy_signals.json` を更新します。
+
+`auto_post.py` はバックテスト通過後に **4象限スクリーニング**（75MA・500円/30万株・スコア順）を適用します。
+
+環境変数:
+
+| 変数 | 既定 | 説明 |
+|------|------|------|
+| `QUADRANT_SCREEN` | `1` | `0` で4象限を無効化 |
+| `QUADRANT_MIN_SCORE` | `25` | この点数未満のシグナルを除外 |
+| `QUADRANT_TOP_N` | 未設定 | 設定時は上位N件に制限 |

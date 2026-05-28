@@ -16,9 +16,7 @@ _cwd = os.getcwd()
 if _cwd and _cwd not in sys.path:
     sys.path.insert(0, _cwd)
 
-import json
-import logging
-import time
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone, timedelta
 from typing import Any, List, Optional, Tuple
@@ -55,6 +53,8 @@ from logic import (
 )
 from screener import TARGET_TICKERS, get_ticker_name
 from ticker_universe import get_ticker_universe_with_source
+from quadrant_screening.integrate import apply_quadrant_to_backtest_items
+from quadrant_screening.ticker_utils import normalize_ticker
 
 JST = timezone(timedelta(hours=9))
 
@@ -65,6 +65,14 @@ SLEEP_SEC = 0.5
 # 並列処理: プレフィルターと本スキャンのワーカー数（API制限を考慮）
 PREFILTER_MAX_WORKERS = 10
 SCAN_MAX_WORKERS = 4
+
+
+def _quadrant_enabled() -> bool:
+    return os.environ.get("QUADRANT_SCREEN", "1").strip().lower() not in ("0", "false", "no")
+
+
+def _jpx_csv_path() -> str:
+    return os.path.join(_script_dir, "jpx_all_tickers.csv")
 
 
 def _safe_float_for_sort(val: Any) -> float:
@@ -140,7 +148,7 @@ def scan_backtest_driven(
     backtest_stats: Optional[dict] = None,
     sell_stats: Optional[dict] = None,
     period_recent: str = "3mo",
-) -> Tuple[List[dict], List[dict], dict]:
+) -> Tuple[List[dict], List[dict], dict, Any]:
     """
     3営業日バックテスト統計に基づき、足切り・優位性フィルターを通過した銘柄のみリストアップする。
     買いは勝率60%以上・売りは勝率70%以上の統計を満たすもののみ。backtest_stats を渡す場合は sell_stats も渡すと売りが有効になる。
@@ -148,7 +156,7 @@ def scan_backtest_driven(
     """
     ticker_list = list(tickers or TARGET_TICKERS)
     if not ticker_list:
-        return [], [], {}
+        return [], [], {}, None
 
     sell_stats_computed: dict = sell_stats if sell_stats is not None else {}
     if backtest_stats is None:
@@ -192,8 +200,9 @@ def scan_backtest_driven(
             seen.add((ticker, pattern_name))
             avg_ret = stats.get("avg_return_pct", 0.0)
             tp_sl = tp_sl_from_avg_return(close, avg_ret)
+            norm_ticker = normalize_ticker(ticker) or ticker
             item = {
-                "ticker": ticker,
+                "ticker": norm_ticker,
                 "name": name,
                 "pattern_name": pattern_name,
                 "win_rate": stats.get("win_rate"),
@@ -248,7 +257,21 @@ def scan_backtest_driven(
                 "avg_return_pct": avg_ret,
                 "formatted_line": f"【{ticker}】{pattern_name} | 勝率: {wr_str} (サンプル{sample}回) | 現在値: ¥{close:,.0f}",
             })
-    return results, results_sell, backtest_stats
+    quadrant_stats = None
+    if _quadrant_enabled() and results:
+        csv_path = Path(_jpx_csv_path())
+        if csv_path.is_file():
+            results, quadrant_stats = apply_quadrant_to_backtest_items(
+                results, bulk_recent, csv_path
+            )
+            print(
+                f"4象限スクリーニング: {quadrant_stats.before}件 → {quadrant_stats.after}件 "
+                f"(一次除外{quadrant_stats.dropped_primary}, 75MA除外{quadrant_stats.dropped_ma}, "
+                f"スコア下限除外{quadrant_stats.dropped_score})"
+            )
+        else:
+            print(f"警告: 4象限用CSVなし ({csv_path})、従来出力のまま", file=sys.stderr)
+    return results, results_sell, backtest_stats, quadrant_stats
 
 
 def _process_one_ticker(
@@ -452,7 +475,7 @@ def build_tweet(
 def main() -> int:
     # 3営業日バックテスト統計ベースのスキャン（足切り: 20日平均出来高10万株以上・200円以上、優位性: サンプル3回以上・勝率60%以上・平均リターン+1.5%以上）
     print("バックテスト統計を算出しています（全銘柄・5年）…")
-    results, results_sell, _ = scan_backtest_driven()
+    results, results_sell, _, quadrant_stats = scan_backtest_driven()
     for item in results:
         print(item.get("formatted_line", ""))
 
@@ -469,8 +492,12 @@ def main() -> int:
             data = {
                 "updated": updated_iso,
                 "backtest_driven": True,
+                "quadrant_screening": _quadrant_enabled(),
                 "unique_tickers": unique_tickers,
                 "signal_count": n_signals,
+                "quadrant_top": [
+                    x.get("formatted_line") for x in results[:5] if x.get("formatted_line")
+                ],
                 "items": [
                     {
                         "ticker": x.get("ticker"),
@@ -479,6 +506,10 @@ def main() -> int:
                         "win_rate": x.get("win_rate"),
                         "sample_count": x.get("sample_count"),
                         "avg_return_pct": x.get("avg_return_pct"),
+                        "quadrant_score": x.get("quadrant_score"),
+                        "vol_ratio": x.get("vol_ratio"),
+                        "sector_label": x.get("sector_label"),
+                        "roe_pct": x.get("roe_pct"),
                         "entry": x.get("entry"),
                         "tp": x.get("tp"),
                         "sl": x.get("sl"),
@@ -497,6 +528,14 @@ def main() -> int:
                     for x in results_sell
                 ],
             }
+            if quadrant_stats is not None:
+                data["quadrant_stats"] = {
+                    "before": quadrant_stats.before,
+                    "after": quadrant_stats.after,
+                    "dropped_primary": quadrant_stats.dropped_primary,
+                    "dropped_ma": quadrant_stats.dropped_ma,
+                    "dropped_score": quadrant_stats.dropped_score,
+                }
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             print(f"結果を保存しました: {json_path}")
