@@ -226,3 +226,25 @@ def history_json_url(base_url: str, date_str: str) -> str:
     if "daily_buy_signals.json" in base_url:
         return base_url.replace("daily_buy_signals.json", f"daily_buy_signals_{date_str}.json")
     return base_url.rstrip("/") + f"/daily_buy_signals_{date_str}.json"
+
+
+def serialize_buy_signal_item(item: dict[str, Any]) -> dict[str, Any]:
+    """daily_buy_signals.json の items 要素（Streamlit UI 向けフィールド含む）。"""
+    return {
+        "ticker": item.get("ticker"),
+        "name": item.get("name"),
+        "pattern_name": item.get("pattern_name"),
+        "win_rate": item.get("win_rate"),
+        "sample_count": item.get("sample_count"),
+        "avg_return_pct": item.get("avg_return_pct"),
+        "quadrant_score": item.get("quadrant_score"),
+        "quadrant_breakdown": item.get("quadrant_breakdown"),
+        "quadrant_sign": item.get("quadrant_sign"),
+        "vol_ratio": item.get("vol_ratio"),
+        "sector_label": item.get("sector_label"),
+        "roe_pct": item.get("roe_pct"),
+        "entry": item.get("entry"),
+        "tp": item.get("tp"),
+        "sl": item.get("sl"),
+        "formatted_line": item.get("formatted_line"),
+    }

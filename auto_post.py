@@ -57,6 +57,7 @@ from screener import TARGET_TICKERS, get_ticker_name
 from ticker_universe import get_ticker_universe_with_source
 from quadrant_screening.integrate import apply_quadrant_to_backtest_items
 from quadrant_screening.ticker_utils import normalize_ticker
+from ui_helpers import serialize_buy_signal_item
 
 JST = timezone(timedelta(hours=9))
 
@@ -500,25 +501,7 @@ def main() -> int:
                 "quadrant_top": [
                     x.get("formatted_line") for x in results[:5] if x.get("formatted_line")
                 ],
-                "items": [
-                    {
-                        "ticker": x.get("ticker"),
-                        "name": x.get("name"),
-                        "pattern_name": x.get("pattern_name"),
-                        "win_rate": x.get("win_rate"),
-                        "sample_count": x.get("sample_count"),
-                        "avg_return_pct": x.get("avg_return_pct"),
-                        "quadrant_score": x.get("quadrant_score"),
-                        "vol_ratio": x.get("vol_ratio"),
-                        "sector_label": x.get("sector_label"),
-                        "roe_pct": x.get("roe_pct"),
-                        "entry": x.get("entry"),
-                        "tp": x.get("tp"),
-                        "sl": x.get("sl"),
-                        "formatted_line": x.get("formatted_line"),
-                    }
-                    for x in results
-                ],
+                "items": [serialize_buy_signal_item(x) for x in results],
                 "items_sell": [
                     {
                         "ticker": x.get("ticker"),
