@@ -1,11 +1,11 @@
 {
-  "updated": "2026-05-28T07:54:59.499449+00:00",
+  "updated": "2026-05-28T08:59:28.841660+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
   "unique_tickers": 15,
   "signal_count": 20,
   "quadrant_top": [
-    "【6981】総合スコア: 90点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 8.8% | 現在値: ¥8,618 | TP: ¥8,867 | SL: ¥8,494",
+    "【6981】総合スコア: 90点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 8.8% | 現在値: ¥8,618 | TP: ¥8,879 | SL: ¥8,487",
     "【6981】総合スコア: 90点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 8.8% | 現在値: ¥8,618 | TP: ¥8,824 | SL: ¥8,515",
     "【6674】総合スコア: 85点 | サイン: 包み線 | 需給(出来高): 1.2倍 | セクター: 良 | ROE: 11.4% | 現在値: ¥6,470 | TP: ¥6,573 | SL: ¥6,418",
     "【6674】総合スコア: 85点 | サイン: 包み線 | 需給(出来高): 1.2倍 | セクター: 良 | ROE: 11.4% | 現在値: ¥6,470 | TP: ¥6,569 | SL: ¥6,421",
@@ -16,17 +16,24 @@
       "ticker": "6981.T",
       "name": "MURATA MANUFACTURING CO",
       "pattern_name": "包み線",
-      "win_rate": 0.6333,
-      "sample_count": 30,
-      "avg_return_pct": 2.8891,
+      "win_rate": 0.6552,
+      "sample_count": 29,
+      "avg_return_pct": 3.0314,
       "quadrant_score": 90.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 25,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "包み線、上昇三法",
       "vol_ratio": 1.53,
       "sector_label": "良",
       "roe_pct": 8.83,
       "entry": 8618.0,
-      "tp": 8866.98,
-      "sl": 8493.51,
-      "formatted_line": "【6981】総合スコア: 90点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 8.8% | 現在値: ¥8,618 | TP: ¥8,867 | SL: ¥8,494"
+      "tp": 8879.25,
+      "sl": 8487.38,
+      "formatted_line": "【6981】総合スコア: 90点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 8.8% | 現在値: ¥8,618 | TP: ¥8,879 | SL: ¥8,487"
     },
     {
       "ticker": "6981.T",
@@ -36,6 +43,13 @@
       "sample_count": 49,
       "avg_return_pct": 2.3934,
       "quadrant_score": 90.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 25,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "包み線、上昇三法",
       "vol_ratio": 1.53,
       "sector_label": "良",
       "roe_pct": 8.83,
@@ -52,6 +66,13 @@
       "sample_count": 27,
       "avg_return_pct": 1.5942,
       "quadrant_score": 85.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 10,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "包み線",
       "vol_ratio": 1.17,
       "sector_label": "良",
       "roe_pct": 11.38,
@@ -68,6 +89,13 @@
       "sample_count": 48,
       "avg_return_pct": 1.5269,
       "quadrant_score": 85.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 10,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "包み線",
       "vol_ratio": 1.17,
       "sector_label": "良",
       "roe_pct": 11.38,
@@ -84,6 +112,13 @@
       "sample_count": 39,
       "avg_return_pct": 5.5416,
       "quadrant_score": 80.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 25,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "包み線、上昇三法",
       "vol_ratio": 1.83,
       "sector_label": "良",
       "roe_pct": 4.46,
@@ -100,6 +135,13 @@
       "sample_count": 52,
       "avg_return_pct": 3.7911,
       "quadrant_score": 80.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 25,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "包み線、上昇三法",
       "vol_ratio": 1.83,
       "sector_label": "良",
       "roe_pct": 4.46,
@@ -116,6 +158,13 @@
       "sample_count": 17,
       "avg_return_pct": 1.7025,
       "quadrant_score": 75.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "赤三兵、たくり線",
       "vol_ratio": 0.83,
       "sector_label": "良",
       "roe_pct": 20.39,
@@ -132,6 +181,13 @@
       "sample_count": 8,
       "avg_return_pct": 1.6831,
       "quadrant_score": 75.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "赤三兵、たくり線",
       "vol_ratio": 0.83,
       "sector_label": "良",
       "roe_pct": 20.39,
@@ -146,8 +202,15 @@
       "pattern_name": "ピンバー",
       "win_rate": 0.75,
       "sample_count": 16,
-      "avg_return_pct": 1.5764,
+      "avg_return_pct": 1.5763,
       "quadrant_score": 70.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 10,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
       "vol_ratio": 1.22,
       "sector_label": "良",
       "roe_pct": 10.33,
@@ -164,6 +227,13 @@
       "sample_count": 8,
       "avg_return_pct": 3.9852,
       "quadrant_score": 65.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 10,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "赤三兵、たくり線",
       "vol_ratio": 1.16,
       "sector_label": "良",
       "roe_pct": 3.48,
@@ -180,6 +250,13 @@
       "sample_count": 9,
       "avg_return_pct": 2.8168,
       "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 10,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "ハンマー、たくり線",
       "vol_ratio": 1.16,
       "sector_label": "悪",
       "roe_pct": 6.83,
@@ -196,6 +273,13 @@
       "sample_count": 3,
       "avg_return_pct": 1.8668,
       "quadrant_score": 45.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 10,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "赤三兵",
       "vol_ratio": 1.17,
       "sector_label": "悪",
       "roe_pct": 8.28,
@@ -212,6 +296,13 @@
       "sample_count": 10,
       "avg_return_pct": 3.4815,
       "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "たくり線",
       "vol_ratio": 1.15,
       "sector_label": "悪",
       "roe_pct": 7.81,
@@ -228,6 +319,13 @@
       "sample_count": 29,
       "avg_return_pct": 2.2241,
       "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "赤三兵",
       "vol_ratio": 1.03,
       "sector_label": "悪",
       "roe_pct": 4.99,
@@ -244,6 +342,13 @@
       "sample_count": 43,
       "avg_return_pct": 1.8492,
       "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "たくり線",
       "vol_ratio": 1.15,
       "sector_label": "悪",
       "roe_pct": 7.81,
@@ -260,6 +365,13 @@
       "sample_count": 15,
       "avg_return_pct": 1.5681,
       "quadrant_score": 30.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "インサイドバー",
       "vol_ratio": 0.76,
       "sector_label": "良",
       "roe_pct": 2.19,
@@ -276,6 +388,13 @@
       "sample_count": 17,
       "avg_return_pct": 3.1543,
       "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "ピンバー",
       "vol_ratio": 0.84,
       "sector_label": "悪",
       "roe_pct": 31.51,
@@ -292,6 +411,13 @@
       "sample_count": 52,
       "avg_return_pct": 2.2415,
       "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 10,
+        "technical": 15.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "陰線後の陽線",
       "vol_ratio": 1.23,
       "sector_label": "悪",
       "roe_pct": -3.48,
@@ -308,6 +434,13 @@
       "sample_count": 11,
       "avg_return_pct": 1.8114,
       "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "たくり線",
       "vol_ratio": 1.01,
       "sector_label": "悪",
       "roe_pct": 5.0,
@@ -324,6 +457,13 @@
       "sample_count": 4,
       "avg_return_pct": 2.9644,
       "quadrant_score": 20.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 0.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "リバーサルロー",
       "vol_ratio": 1.14,
       "sector_label": "悪",
       "roe_pct": 13.5,
