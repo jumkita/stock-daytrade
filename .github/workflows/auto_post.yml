@@ -32,7 +32,8 @@ jobs:
       BACKTEST_PERIOD: '1y'
       # 4象限スクリーニング（auto_post 内でバックテスト結果を再ランク・足切り）
       QUADRANT_SCREEN: '1'
-      QUADRANT_MIN_SCORE: '25'
+      QUADRANT_MODE: 'rank'
+      QUADRANT_MIN_SCORE: '0'
     steps:
       - uses: actions/checkout@v4
 

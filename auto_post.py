@@ -149,7 +149,7 @@ def scan_backtest_driven(
     tickers: Optional[List[str]] = None,
     backtest_stats: Optional[dict] = None,
     sell_stats: Optional[dict] = None,
-    period_recent: str = "3mo",
+    period_recent: str = "6mo",
 ) -> Tuple[List[dict], List[dict], dict, Any]:
     """
     3営業日バックテスト統計に基づき、足切り・優位性フィルターを通過した銘柄のみリストアップする。
@@ -267,9 +267,9 @@ def scan_backtest_driven(
                 results, bulk_recent, csv_path
             )
             print(
-                f"4象限スクリーニング: {quadrant_stats.before}件 → {quadrant_stats.after}件 "
+                f"4象限スクリーニング({quadrant_stats.mode}): {quadrant_stats.before}件 → {quadrant_stats.after}件 "
                 f"(一次除外{quadrant_stats.dropped_primary}, 75MA除外{quadrant_stats.dropped_ma}, "
-                f"スコア下限除外{quadrant_stats.dropped_score})"
+                f"スコア下限除外{quadrant_stats.dropped_score}, スコア未算出で維持{quadrant_stats.unscored_kept})"
             )
         else:
             print(f"警告: 4象限用CSVなし ({csv_path})、従来出力のまま", file=sys.stderr)
@@ -534,9 +534,11 @@ def main() -> int:
                 data["quadrant_stats"] = {
                     "before": quadrant_stats.before,
                     "after": quadrant_stats.after,
+                    "mode": quadrant_stats.mode,
                     "dropped_primary": quadrant_stats.dropped_primary,
                     "dropped_ma": quadrant_stats.dropped_ma,
                     "dropped_score": quadrant_stats.dropped_score,
+                    "unscored_kept": quadrant_stats.unscored_kept,
                 }
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)

@@ -4,11 +4,12 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import pandas as pd
 
-from quadrant_screening.fundamentals import fetch_fundamentals_parallel
+from quadrant_screening.fundamentals import FundamentalSnapshot, fetch_fundamentals_parallel
+from quadrant_screening.config import ROE_DEFAULT_PCT
 from quadrant_screening.scoring import ScoreBreakdown, compute_score
 from quadrant_screening.sector import SectorMomentum, load_sector_momentum
 from quadrant_screening.technical import (
@@ -19,6 +20,8 @@ from quadrant_screening.technical import (
 from quadrant_screening.ticker_utils import display_code, normalize_ticker
 from quadrant_screening.universe import load_prime_universe
 
+QuadrantMode = Literal["rank", "filter"]
+
 
 @dataclass
 class QuadrantApplyStats:
@@ -27,6 +30,13 @@ class QuadrantApplyStats:
     dropped_primary: int
     dropped_ma: int
     dropped_score: int
+    unscored_kept: int = 0
+    mode: str = "rank"
+
+
+def _quadrant_mode() -> QuadrantMode:
+    raw = os.environ.get("QUADRANT_MODE", "rank").strip().lower()
+    return "filter" if raw == "filter" else "rank"
 
 
 def _sector_map_from_csv(csv_path: Path) -> dict[str, int | None]:
@@ -69,21 +79,67 @@ def format_backtest_quadrant_line(item: dict[str, Any]) -> str:
     )
 
 
+def _enrich_item(
+    item: dict[str, Any],
+    ticker: str,
+    tech: Any,
+    fund: FundamentalSnapshot,
+    sec_mom: SectorMomentum | None,
+    breakdown: ScoreBreakdown,
+) -> dict[str, Any]:
+    pattern = str(item.get("pattern_name") or "")
+    patterns = tech.patterns or ([pattern] if pattern else [])
+    sign = "、".join(dict.fromkeys(patterns)) if patterns else pattern or "トレンド継続"
+    tp, sl = compute_tp_sl(tech.price, tech.atr14)
+    entry = item.get("entry")
+    try:
+        entry_f = float(entry) if entry is not None else tech.price
+    except (TypeError, ValueError):
+        entry_f = tech.price
+
+    new_item = {
+        **item,
+        "ticker": ticker,
+        "quadrant_score": breakdown.total,
+        "quadrant_breakdown": {
+            "sector": breakdown.sector_pts,
+            "volume": breakdown.volume_pts,
+            "technical": breakdown.technical_pts,
+            "fundamental": breakdown.fundamental_pts,
+        },
+        "quadrant_sign": sign,
+        "vol_ratio": round(tech.vol_ratio, 2),
+        "sector_label": breakdown.sector_label,
+        "roe_pct": round(fund.roe_pct, 2),
+        "entry": entry_f,
+        "tp": item.get("tp") if item.get("tp") is not None else tp,
+        "sl": item.get("sl") if item.get("sl") is not None else sl,
+    }
+    new_item["formatted_line"] = format_backtest_quadrant_line(new_item)
+    return new_item
+
+
 def apply_quadrant_to_backtest_items(
     items: list[dict[str, Any]],
     bulk_ohlcv: dict[str, pd.DataFrame],
     csv_path: Path,
     min_score: float | None = None,
     top_n: int | None = None,
+    mode: QuadrantMode | None = None,
 ) -> tuple[list[dict[str, Any]], QuadrantApplyStats]:
     """
-    バックテスト通過シグナルに4象限スコアを付与し、75MA・一次フィルタで足切り後にスコア順ソート。
+    バックテスト通過シグナルに4象限スコアを付与。
+
+    mode=rank（既定）: シグナルは落とさずスコア付きで並べ替えのみ。
+    mode=filter: 一次・75MA・min_score で足切り（スタンドアロン向け）。
     """
+    mode = mode or _quadrant_mode()
     if min_score is None:
         try:
-            min_score = float(os.environ.get("QUADRANT_MIN_SCORE", "25"))
+            default_min = "25" if mode == "filter" else "0"
+            min_score = float(os.environ.get("QUADRANT_MIN_SCORE", default_min))
         except ValueError:
-            min_score = 25.0
+            min_score = 25.0 if mode == "filter" else 0.0
     if top_n is None:
         try:
             top_n = int(os.environ.get("QUADRANT_TOP_N", "0")) or None
@@ -103,7 +159,7 @@ def apply_quadrant_to_backtest_items(
     fundamentals = fetch_fundamentals_parallel(unique_tickers)
 
     enriched: list[dict[str, Any]] = []
-    dropped_primary = dropped_ma = dropped_score = 0
+    dropped_primary = dropped_ma = dropped_score = unscored_kept = 0
 
     for item in items:
         raw_t = str(item.get("ticker") or "")
@@ -111,27 +167,40 @@ def apply_quadrant_to_backtest_items(
         df = bulk_ohlcv.get(ticker)
         if df is None:
             df = bulk_ohlcv.get(raw_t)
+
         if df is None or df.empty:
-            dropped_primary += 1
+            if mode == "filter":
+                dropped_primary += 1
+                continue
+            enriched.append(dict(item))
+            unscored_kept += 1
             continue
+
         tech = analyze_technical(df)
         if tech is None:
-            dropped_primary += 1
-            continue
-        if not passes_primary_filter(tech.price, tech.vol_20d_avg):
-            dropped_primary += 1
-            continue
-        if not tech.above_75ma:
-            dropped_ma += 1
+            if mode == "filter":
+                dropped_primary += 1
+                continue
+            enriched.append(dict(item))
+            unscored_kept += 1
             continue
 
-        fund = fundamentals.get(ticker)
-        if fund is None:
-            fund = fundamentals.get(raw_t)
-        if fund is None:
-            from quadrant_screening.fundamentals import FundamentalSnapshot, ROE_DEFAULT_PCT
+        if mode == "filter":
+            if not passes_primary_filter(tech.price, tech.vol_20d_avg):
+                dropped_primary += 1
+                continue
+            if not tech.above_75ma:
+                dropped_ma += 1
+                continue
 
-            fund = FundamentalSnapshot(roe_pct=ROE_DEFAULT_PCT, trailing_eps=None, trailing_pe=None, roe_is_default=True)
+        fund = fundamentals.get(ticker) or fundamentals.get(raw_t)
+        if fund is None:
+            fund = FundamentalSnapshot(
+                roe_pct=ROE_DEFAULT_PCT,
+                trailing_eps=None,
+                trailing_pe=None,
+                roe_is_default=True,
+            )
 
         sec_code = sector_map.get(ticker)
         sec_mom: SectorMomentum | None = None
@@ -139,48 +208,20 @@ def apply_quadrant_to_backtest_items(
             sec_mom = sector_momentum[sec_code]
 
         breakdown: ScoreBreakdown = compute_score(tech, fund, sec_mom)
-        if breakdown.total < min_score:
+        if mode == "filter" and breakdown.total < min_score:
             dropped_score += 1
             continue
 
-        pattern = str(item.get("pattern_name") or "")
-        patterns = tech.patterns or ([pattern] if pattern else [])
-        sign = "、".join(dict.fromkeys(patterns)) if patterns else pattern or "トレンド継続"
+        enriched.append(_enrich_item(item, ticker, tech, fund, sec_mom, breakdown))
 
-        tp, sl = compute_tp_sl(tech.price, tech.atr14)
-        entry = item.get("entry")
-        try:
-            entry_f = float(entry) if entry is not None else tech.price
-        except (TypeError, ValueError):
-            entry_f = tech.price
+    def _sort_key(x: dict[str, Any]) -> tuple[float, float]:
+        qs = x.get("quadrant_score")
+        score = float(qs) if qs is not None else -1.0
+        ar = x.get("avg_return_pct")
+        avg = float(ar) if ar is not None else 0.0
+        return (-score, -avg)
 
-        new_item = {
-            **item,
-            "ticker": ticker,
-            "quadrant_score": breakdown.total,
-            "quadrant_breakdown": {
-                "sector": breakdown.sector_pts,
-                "volume": breakdown.volume_pts,
-                "technical": breakdown.technical_pts,
-                "fundamental": breakdown.fundamental_pts,
-            },
-            "quadrant_sign": sign,
-            "vol_ratio": round(tech.vol_ratio, 2),
-            "sector_label": breakdown.sector_label,
-            "roe_pct": round(fund.roe_pct, 2),
-            "entry": entry_f,
-            "tp": item.get("tp") if item.get("tp") is not None else tp,
-            "sl": item.get("sl") if item.get("sl") is not None else sl,
-        }
-        new_item["formatted_line"] = format_backtest_quadrant_line(new_item)
-        enriched.append(new_item)
-
-    enriched.sort(
-        key=lambda x: (
-            -float(x.get("quadrant_score") or 0),
-            -float(x.get("avg_return_pct") or 0),
-        )
-    )
+    enriched.sort(key=_sort_key)
     if top_n and top_n > 0:
         enriched = enriched[:top_n]
 
@@ -190,5 +231,7 @@ def apply_quadrant_to_backtest_items(
         dropped_primary=dropped_primary,
         dropped_ma=dropped_ma,
         dropped_score=dropped_score,
+        unscored_kept=unscored_kept,
+        mode=mode,
     )
     return enriched, stats

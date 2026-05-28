@@ -41,5 +41,6 @@ python -m pytest tests/test_quadrant_screening.py -q
 | 変数 | 既定 | 説明 |
 |------|------|------|
 | `QUADRANT_SCREEN` | `1` | `0` で4象限を無効化 |
-| `QUADRANT_MIN_SCORE` | `25` | この点数未満のシグナルを除外 |
+| `QUADRANT_MODE` | `rank` | `rank`=除外せず並べ替えのみ / `filter`=足切り |
+| `QUADRANT_MIN_SCORE` | `0`（rank時） | filter モード時の下限点 |
 | `QUADRANT_TOP_N` | 未設定 | 設定時は上位N件に制限 |
