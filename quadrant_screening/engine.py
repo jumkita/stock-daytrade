@@ -87,7 +87,7 @@ def run_quadrant_screen(
         if sec_code is not None and sec_code in sector_momentum:
             sec_mom = sector_momentum[sec_code]
 
-        score = compute_score(tech, fund, sec_mom)
+        score = compute_score(tech, fund, sec_mom, sector_code=sec_code, ticker=t)
         sign = "、".join(tech.patterns) if tech.patterns else "トレンド継続"
         if tech.patterns or tech.vol_ratio >= 1.15:
             pattern_or_vol += 1

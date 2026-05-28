@@ -207,7 +207,9 @@ def apply_quadrant_to_backtest_items(
         if sec_code is not None and sec_code in sector_momentum:
             sec_mom = sector_momentum[sec_code]
 
-        breakdown: ScoreBreakdown = compute_score(tech, fund, sec_mom)
+        breakdown: ScoreBreakdown = compute_score(
+            tech, fund, sec_mom, sector_code=sec_code, ticker=ticker
+        )
         if mode == "filter" and breakdown.total < min_score:
             dropped_score += 1
             continue

@@ -7,6 +7,7 @@ from quadrant_screening.config import (
     ROE_BONUS_THRESHOLD,
     SCORE_ABOVE_MA,
     SCORE_EPS_DISCOUNT,
+    SCORE_MAX,
     SCORE_PATTERN,
     SCORE_ROE_BONUS,
     SCORE_SECTOR_OUTPERFORM,
@@ -34,6 +35,8 @@ def compute_score(
     tech: TechnicalSnapshot,
     fund: FundamentalSnapshot,
     sector: SectorMomentum | None,
+    sector_code: int | None = None,
+    ticker: str | None = None,
 ) -> ScoreBreakdown:
     sector_pts = 0.0
     sector_label = "—"
@@ -57,11 +60,17 @@ def compute_score(
     fundamental_pts = 0.0
     if not fund.roe_is_default and fund.roe_pct >= ROE_BONUS_THRESHOLD:
         fundamental_pts += SCORE_ROE_BONUS
-    disc = eps_discount_pct(tech.price, fund.trailing_eps)
+    disc = eps_discount_pct(
+        tech.price,
+        fund.trailing_eps,
+        sector_code=sector_code,
+        growth_pct=fund.growth_pct,
+        ticker=ticker,
+    )
     if disc is not None and disc > 0:
         fundamental_pts += SCORE_EPS_DISCOUNT
 
-    total = min(100.0, sector_pts + volume_pts + technical_pts + fundamental_pts)
+    total = min(float(SCORE_MAX), sector_pts + volume_pts + technical_pts + fundamental_pts)
     return ScoreBreakdown(
         total=round(total, 1),
         sector_pts=sector_pts,
