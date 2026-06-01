@@ -122,4 +122,4 @@ python -m pytest tests/ -q
 | ワークフロー | トリガー | 内容 |
 |-------------|---------|------|
 | `Tests` | push / PR | pytest 全件 |
-| `Auto Post Buy Signals to X` | 平日 cron / 手動 / `repository_dispatch`（`daily-buy-signals`） | 日次 JSON 生成・push |
+| `Auto Post Buy Signals to X` | 平日 cron（JST 15:15 目安）/ 手動 / `repository_dispatch`（`daily-buy-signals`） | 日次 JSON 生成・push |
