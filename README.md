@@ -51,7 +51,24 @@ python scripts/run_quadrant_screen.py
 
 ## 日次シグナル（GitHub Actions）
 
-平日 JST 15:00 頃に `auto_post.py` が実行され、`daily_buy_signals.json` を更新します。
+平日 **06:00 UTC（JST 15:00 相当）** を目安に `schedule` でキューされます。GitHub Actions の仕様上、**開始時刻は保証されず**遅延することがあります。また GitHub 上で見える更新時刻は、多くの場合 **`git push` が完了した時刻（ジョブ終了付近）** です。15:00 JST ちょうどにコミットが付くことは期待しないでください。
+
+精密に時刻を合わせたい場合の例:
+
+1. **手動:** Actions の「Run workflow」から `workflow_dispatch` を実行する。
+2. **外部スケジューラ（JST 固定）:** 指定時刻に GitHub API の `repository_dispatch` を呼び出し、イベント種別 `daily-buy-signals` で本ワークフローと同じジョブを起動する（PAT はリポジトリシークレットに置き、クライアント側に書かない）。
+
+```bash
+# 例: 毎営業日 15:05 JST に実行するジョブから（GITHUB_TOKEN はリポジトリ外のシークレットを想定）
+curl -sS -L -X POST \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer ${GITHUB_PAT_DISPATCH}" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  https://api.github.com/repos/jumkita/stock-daytrade/dispatches \
+  -d '{"event_type":"daily-buy-signals"}'
+```
+
+スケジュール遅延の説明は GitHub 公式の [Scheduled events](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) を参照してください。
 
 `auto_post.py` はバックテスト通過後に **4象限スクリーニング**（rank モード: 除外せずスコア順）を適用します。
 
@@ -90,4 +107,4 @@ python -m pytest tests/ -q
 | ワークフロー | トリガー | 内容 |
 |-------------|---------|------|
 | `Tests` | push / PR | pytest 全件 |
-| `Auto Post Buy Signals to X` | 平日 cron / 手動 | 日次 JSON 生成・push |
+| `Auto Post Buy Signals to X` | 平日 cron / 手動 / `repository_dispatch`（`daily-buy-signals`） | 日次 JSON 生成・push |

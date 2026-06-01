@@ -1,6 +1,9 @@
 # 買いシグナル点灯銘柄をバックテスト統計ベースで抽出し、daily_buy_signals.json を更新するワークフロー。
 #
-# 【タイムゾーン】cron は UTC。JST 15:00 に実行するには 06:00 UTC（cron: '0 6 * * 1-5'）で設定する。
+# 【タイムゾーン】cron は常に UTC。JST 15:00 に「キューされる」目安は 06:00 UTC（cron: '0 6 * * 1-5'）。
+# 【スケジュールの限界】GitHub は負荷状況により開始が数分〜数時間遅れることがある（公式ドキュメント参照）。
+# 画面上のコミット時刻は多くの場合「ジョブ完了時刻」であり、必ずしも 15:00 JST ではない。
+# 15:00 JST 前後に精密に走らせたい場合は workflow_dispatch / repository_dispatch を外部スケジューラから叩く方法を README に記載。
 #
 # 【時間がかかる要因と改善】
 # 1. 対象銘柄数: 東証全銘柄（数千）だと prefilter + 3年バックテスト + 直近3mo の一括取得が重い
@@ -18,6 +21,8 @@ on:
   schedule:
     - cron: '0 6 * * 1-5'
   workflow_dispatch:
+  repository_dispatch:
+    types: [daily-buy-signals]
 
 # 同一ワークフローの同時実行で push が競合するのを避ける（キュー実行）
 concurrency:
@@ -44,6 +49,18 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+
+      - name: 実行開始時刻（JST/UTC・トリガー種別）
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== runner now (UTC) ==="
+          date -u '+%Y-%m-%d %H:%M:%S %Z'
+          echo "=== same instant (Asia/Tokyo) ==="
+          TZ=Asia/Tokyo date '+%Y-%m-%d %H:%M:%S %Z'
+          echo "=== GitHub event ==="
+          echo "github.event_name=${{ github.event_name }}"
+          echo "github.event.schedule=${{ github.event.schedule }}"
 
       - name: Set up Python
         uses: actions/setup-python@v5
