@@ -359,7 +359,10 @@ def _render_detail_chart(
 
 def _render_signals_tab(daily_json_url: str, root_dir: str) -> None:
     st.subheader("本日の買い・売りシグナル")
-    st.caption("GitHub Actions が平日15:00頃に更新。4象限スコア順がデフォルト表示です。")
+    st.caption(
+        "GitHub Actions が平日 15:00 頃（JST）に更新。**反映が遅いときは** GitHub の Actions で "
+        "「Auto Post Buy Signals to X」が緑か確認し、画面上部の **「最新データを読み込み」** を押してください。"
+    )
 
     hc1, hc2 = st.columns([1, 3])
     with hc1:

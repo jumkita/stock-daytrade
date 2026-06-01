@@ -85,7 +85,14 @@ def parse_signals_payload(data: dict[str, Any]) -> dict[str, Any]:
 
 def fetch_signals_json(url: str, timeout: int = 10) -> dict[str, Any]:
     bust = with_cache_buster(url)
-    with urllib.request.urlopen(bust, timeout=timeout) as resp:
+    req = urllib.request.Request(
+        bust,
+        headers={
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 

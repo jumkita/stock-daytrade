@@ -19,6 +19,11 @@ on:
     - cron: '0 6 * * 1-5'
   workflow_dispatch:
 
+# 同一ワークフローの同時実行で push が競合するのを避ける（キュー実行）
+concurrency:
+  group: auto-post-buy-signals
+  cancel-in-progress: false
+
 jobs:
   post:
     runs-on: ubuntu-latest
@@ -36,6 +41,9 @@ jobs:
       QUADRANT_MIN_SCORE: '0'
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -115,4 +123,20 @@ jobs:
           fi
 
           git commit -m "chore: Update daily buy signals [automated]"
-          git push
+
+          # auto_post 実行中に main が進んでいると push が reject されるため、rebase してから push（数回リトライ）
+          for attempt in 1 2 3 4 5 6; do
+            git fetch origin main
+            if ! git pull --rebase origin main; then
+              echo "ERROR: git pull --rebase failed (attempt $attempt)"
+              exit 1
+            fi
+            if git push origin main; then
+              echo "push succeeded on attempt $attempt"
+              exit 0
+            fi
+            echo "WARN: git push failed (attempt $attempt), sleeping before retry..."
+            sleep $((attempt * 20))
+          done
+          echo "ERROR: git push failed after all retries"
+          exit 1
