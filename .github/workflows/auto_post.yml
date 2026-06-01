@@ -1,9 +1,9 @@
 # 買いシグナル点灯銘柄をバックテスト統計ベースで抽出し、daily_buy_signals.json を更新するワークフロー。
 #
-# 【タイムゾーン】cron は常に UTC。JST 15:00 に「キューされる」目安は 06:00 UTC（cron: '0 6 * * 1-5'）。
+# 【タイムゾーン】cron は常に UTC。JST 15:15 に「キューされる」目安は 06:15 UTC（cron: '15 6 * * 1-5'）。
 # 【スケジュールの限界】GitHub は負荷状況により開始が数分〜数時間遅れることがある（公式ドキュメント参照）。
-# 画面上のコミット時刻は多くの場合「ジョブ完了時刻」であり、必ずしも 15:00 JST ではない。
-# 15:00 JST 前後に精密に走らせたい場合は workflow_dispatch / repository_dispatch を外部スケジューラから叩く方法を README に記載。
+# 画面上のコミット時刻は多くの場合「ジョブ完了時刻」であり、必ずしも 15:15 JST ではない。
+# 15:15 JST に近づけたい場合は README のとおり repository_dispatch を外部（Automation）から叩く。
 #
 # 【時間がかかる要因と改善】
 # 1. 対象銘柄数: 東証全銘柄（数千）だと prefilter + 3年バックテスト + 直近3mo の一括取得が重い
@@ -13,13 +13,14 @@
 # 3. yfinance の一括取得はチャンク単位のため、銘柄数が多いとリクエスト回数・待ち時間が増える
 #    → 上記の銘柄数削減でリクエスト数も減少
 # 4. タイムアウト: 15分だと全銘柄時には不足しがち
-#    → 改善: timeout-minutes: 20 に延長し、軽量設定（日経225+1y）で 15:00 JST 完了を狙う
+#    → 改善: timeout-minutes: 20 に延長し、軽量設定（日経225+1y）で push までを短時間に抑える
 #
 name: Auto Post Buy Signals to X
 
 on:
   schedule:
-    - cron: '0 6 * * 1-5'
+    # 06:15 UTC = JST 15:15（平日）。GitHub 側遅延があるため「ちょうど 15:15 開始」は保証されない。
+    - cron: '15 6 * * 1-5'
   workflow_dispatch:
   repository_dispatch:
     types: [daily-buy-signals]

@@ -51,15 +51,32 @@ python scripts/run_quadrant_screen.py
 
 ## 日次シグナル（GitHub Actions）
 
-平日 **06:00 UTC（JST 15:00 相当）** を目安に `schedule` でキューされます。GitHub Actions の仕様上、**開始時刻は保証されず**遅延することがあります。また GitHub 上で見える更新時刻は、多くの場合 **`git push` が完了した時刻（ジョブ終了付近）** です。15:00 JST ちょうどにコミットが付くことは期待しないでください。
+### いつ走るか（目標）
 
-精密に時刻を合わせたい場合の例:
+- **既定:** 平日 **06:15 UTC（JST 15:15）** を目安に `schedule` でキューされます。
+- **狙い:** バックテスト＋ push が **おおよそ 15:25 JST まで**に終わり、Streamlit 側で **「最新データを読み込み」** またはページ再表示すれば Raw JSON が取り直せる状態にする（ジョブ所要は負荷により前後します）。`fetch_signals_json` は `Cache-Control: no-cache` とクエリ `_ts` でキャッシュを避けています。GitHub の CDN や Streamlit Cloud の挙動で数分ラグすることがあります。
+- GitHub Actions の仕様上、**開始時刻は保証されません**（遅延の公式説明は [Scheduled events](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule)）。コミット時刻は多くの場合 **`git push` 完了時刻**です。
 
-1. **手動:** Actions の「Run workflow」から `workflow_dispatch` を実行する。
-2. **外部スケジューラ（JST 固定）:** 指定時刻に GitHub API の `repository_dispatch` を呼び出し、イベント種別 `daily-buy-signals` で本ワークフローと同じジョブを起動する（PAT はリポジトリシークレットに置き、クライアント側に書かない）。
+### Automation で「15:15 起動」を組み込む
+
+GitHub の `schedule` だけだとキュー遅延があり得るため、**JST 15:15 に確実にキューしたい**場合は、外部の定時サービスから **`repository_dispatch`** を叩いてください（イベント種別は `daily-buy-signals`）。リポジトリの `schedule` はフォールバックとして残せます。
+
+設定例（[cron-job.org](https://cron-job.org) など）:
+
+| 項目 | 値 |
+|------|-----|
+| スケジュール | 月〜金 **15:15**（タイムゾーン **Asia/Tokyo**） |
+| メソッド | `POST` |
+| URL | `https://api.github.com/repos/jumkita/stock-daytrade/dispatches` |
+| ヘッダ | `Accept: application/vnd.github+json`、`Authorization: Bearer <PAT>`、`X-GitHub-Api-Version: 2022-11-28` |
+| ボディ | `{"event_type":"daily-buy-signals"}` |
+
+PAT は **クライアント側の画面に貼らず**、サービスが提供する秘密欄に保存してください。権限は GitHub 公式の [Create a repository dispatch event](https://docs.github.com/en/rest/repos/repos#create-a-repository-dispatch-event) に従い、classic なら通常 **`repo`**、fine-grained なら当該リポジトリで dispatch に必要な権限を付与します。
+
+手動で同じことをする場合: Actions の「Run workflow」から `workflow_dispatch` を実行。
 
 ```bash
-# 例: 毎営業日 15:05 JST に実行するジョブから（GITHUB_TOKEN はリポジトリ外のシークレットを想定）
+# 例: 自前サーバの cron から毎営業日 15:15 JST（cron で TZ=Asia/Tokyo を指定）
 curl -sS -L -X POST \
   -H "Accept: application/vnd.github+json" \
   -H "Authorization: Bearer ${GITHUB_PAT_DISPATCH}" \
@@ -67,8 +84,6 @@ curl -sS -L -X POST \
   https://api.github.com/repos/jumkita/stock-daytrade/dispatches \
   -d '{"event_type":"daily-buy-signals"}'
 ```
-
-スケジュール遅延の説明は GitHub 公式の [Scheduled events](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) を参照してください。
 
 `auto_post.py` はバックテスト通過後に **4象限スクリーニング**（rank モード: 除外せずスコア順）を適用します。
 
