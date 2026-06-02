@@ -14,7 +14,7 @@ stock-daytrade 形式の daily_buy_signals_YYYY-MM-DD.json を集計する。
   - stock-daytrade の logic.py では「3営業日ホールド」で算出される:
     パターン点灯日の翌営業日寄りでエントリー、さらに3営業日後の大引けで決済
     （run_backtest_3day_vectorized）。シグナル日引け買いの検証は verify_signal_returns.py
-    （既定 holding_days=3）とエントリー価格の定義が異なる点に注意。
+    （既定 holding_days=1＝翌営業日引け）とエントリー価格の定義が異なる点に注意。
   - プレースホルダー（...）のみの JSON はスキップされる。
 """
 from __future__ import annotations

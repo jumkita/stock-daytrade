@@ -500,7 +500,7 @@ def _render_analysis_tab(ticker: str, period: str) -> None:
 
 def _render_verify_tab(root_dir: str) -> None:
     st.subheader("シグナル検証（引け購入リターン）")
-    holding = st.session_state.get("verify_holding_days", 3)
+    holding = st.session_state.get("verify_holding_days", 1)
     if st.button("引け購入リターンを検証する", key="btn_verify_returns"):
         full_list = st.session_state.get("daily_buy_signals") or []
         if not full_list:
@@ -588,7 +588,12 @@ def main() -> None:
             format_func=lambda x: {"quadrant_score": "4象限スコア", "win_rate": "勝率", "avg_return_pct": "平均リターン"}[x],
         )
         st.session_state.ui_mobile_compact = st.checkbox("モバイル向け簡易列", value=False)
-        st.session_state.verify_holding_days = st.number_input("検証保有日数", 1, 20, 3)
+        st.session_state.verify_holding_days = st.number_input(
+            "検証保有日数（1=翌営業日引けで利確）",
+            1,
+            20,
+            1,
+        )
         st.session_state.batch_top_n = st.number_input("バッチ上位N", 1, 50, 10)
 
     st.title("日本株 適正株価 × 勝ちパターン分析")
