@@ -1,24 +1,116 @@
 {
-  "updated": "2026-06-03T06:20:11.543884+00:00",
+  "updated": "2026-06-03T11:26:34.178449+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
   "unique_tickers": 25,
-  "signal_count": 26,
+  "signal_count": 29,
   "quadrant_top": [
-    "【6674】総合スコア: 75点 | サイン: 陰線後の陽線 | 需給(出来高): 1.3倍 | セクター: 良 | ROE: 11.4% | 現在値: ¥7,498 | TP: ¥7,641 | SL: ¥7,426",
-    "【9766】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 19.1% | 現在値: ¥19,765 | TP: ¥20,088 | SL: ¥19,604",
-    "【4063】総合スコア: 65点 | サイン: 上昇三法 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 10.7% | 現在値: ¥7,798 | TP: ¥7,945 | SL: ¥7,725",
-    "【6701】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 12.6% | 現在値: ¥4,270 | TP: ¥4,348 | SL: ¥4,231",
-    "【4631】総合スコア: 65点 | サイン: 赤三兵 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 10.2% | 現在値: ¥5,015 | TP: ¥5,105 | SL: ¥4,970"
+    "【6526】総合スコア: 80点 | サイン: 上昇三法 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 6.5% | 現在値: ¥2,999 | TP: ¥3,083 | SL: ¥2,957",
+    "【6098】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 30.8% | 現在値: ¥10,905 | TP: ¥11,219 | SL: ¥10,748",
+    "【5803】総合スコア: 75点 | サイン: 明けの明星 | 需給(出来高): 1.3倍 | セクター: 悪 | ROE: 31.5% | 現在値: ¥5,027 | TP: ¥5,154 | SL: ¥4,963",
+    "【9766】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 19.1% | 現在値: ¥19,805 | TP: ¥20,187 | SL: ¥19,614",
+    "【6674】総合スコア: 75点 | サイン: 陰線後の陽線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 11.4% | 現在値: ¥7,508 | TP: ¥7,652 | SL: ¥7,436"
   ],
   "items": [
+    {
+      "ticker": "6526.T",
+      "name": "SOCIONEXT INC",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.8333,
+      "sample_count": 6,
+      "avg_return_pct": 2.8,
+      "quadrant_score": 80.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 25,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "上昇三法",
+      "vol_ratio": 1.51,
+      "sector_label": "良",
+      "roe_pct": 6.47,
+      "entry": 2999.0,
+      "tp": 3082.97,
+      "sl": 2957.01,
+      "formatted_line": "【6526】総合スコア: 80点 | サイン: 上昇三法 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 6.5% | 現在値: ¥2,999 | TP: ¥3,083 | SL: ¥2,957"
+    },
+    {
+      "ticker": "6098.T",
+      "name": "RECRUIT HOLDINGS CO LTD",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.7,
+      "sample_count": 10,
+      "avg_return_pct": 2.8778,
+      "quadrant_score": 75.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.53,
+      "sector_label": "良",
+      "roe_pct": 30.83,
+      "entry": 10905.0,
+      "tp": 11218.82,
+      "sl": 10748.09,
+      "formatted_line": "【6098】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 30.8% | 現在値: ¥10,905 | TP: ¥11,219 | SL: ¥10,748"
+    },
+    {
+      "ticker": "5803.T",
+      "name": "FUJIKURA",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.617,
+      "sample_count": 47,
+      "avg_return_pct": 2.5359,
+      "quadrant_score": 75.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 25,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "明けの明星",
+      "vol_ratio": 1.28,
+      "sector_label": "悪",
+      "roe_pct": 31.51,
+      "entry": 5027.0,
+      "tp": 5154.48,
+      "sl": 4963.26,
+      "formatted_line": "【5803】総合スコア: 75点 | サイン: 明けの明星 | 需給(出来高): 1.3倍 | セクター: 悪 | ROE: 31.5% | 現在値: ¥5,027 | TP: ¥5,154 | SL: ¥4,963"
+    },
+    {
+      "ticker": "9766.T",
+      "name": "KONAMI GROUP CORPORATION",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.6667,
+      "sample_count": 12,
+      "avg_return_pct": 1.9278,
+      "quadrant_score": 75.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.69,
+      "sector_label": "良",
+      "roe_pct": 19.11,
+      "entry": 19805.0,
+      "tp": 20186.8,
+      "sl": 19614.1,
+      "formatted_line": "【9766】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 19.1% | 現在値: ¥19,805 | TP: ¥20,187 | SL: ¥19,614"
+    },
     {
       "ticker": "6674.T",
       "name": "GS YUASA CORP",
       "pattern_name": "陰線後の陽線",
       "win_rate": 0.6383,
       "sample_count": 47,
-      "avg_return_pct": 1.9085,
+      "avg_return_pct": 1.912,
       "quadrant_score": 75.0,
       "quadrant_breakdown": {
         "sector": 15,
@@ -27,13 +119,13 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "陰線後の陽線",
-      "vol_ratio": 1.31,
+      "vol_ratio": 1.52,
       "sector_label": "良",
       "roe_pct": 11.38,
-      "entry": 7498.0,
-      "tp": 7641.1,
-      "sl": 7426.45,
-      "formatted_line": "【6674】総合スコア: 75点 | サイン: 陰線後の陽線 | 需給(出来高): 1.3倍 | セクター: 良 | ROE: 11.4% | 現在値: ¥7,498 | TP: ¥7,641 | SL: ¥7,426"
+      "entry": 7508.0,
+      "tp": 7651.55,
+      "sl": 7436.22,
+      "formatted_line": "【6674】総合スコア: 75点 | サイン: 陰線後の陽線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 11.4% | 現在値: ¥7,508 | TP: ¥7,652 | SL: ¥7,436"
     },
     {
       "ticker": "9766.T",
@@ -50,36 +142,13 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "たくり線",
-      "vol_ratio": 0.42,
+      "vol_ratio": 0.69,
       "sector_label": "良",
       "roe_pct": 19.11,
-      "entry": 19765.0,
-      "tp": 20087.96,
-      "sl": 19603.52,
-      "formatted_line": "【9766】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 19.1% | 現在値: ¥19,765 | TP: ¥20,088 | SL: ¥19,604"
-    },
-    {
-      "ticker": "4063.T",
-      "name": "SHIN-ETSU CHEMICAL CO",
-      "pattern_name": "陰線後の陽線",
-      "win_rate": 0.7021,
-      "sample_count": 47,
-      "avg_return_pct": 1.8809,
-      "quadrant_score": 65.0,
-      "quadrant_breakdown": {
-        "sector": 15,
-        "volume": 0.0,
-        "technical": 40.0,
-        "fundamental": 10.0
-      },
-      "quadrant_sign": "上昇三法",
-      "vol_ratio": 0.61,
-      "sector_label": "良",
-      "roe_pct": 10.68,
-      "entry": 7798.0,
-      "tp": 7944.67,
-      "sl": 7724.66,
-      "formatted_line": "【4063】総合スコア: 65点 | サイン: 上昇三法 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 10.7% | 現在値: ¥7,798 | TP: ¥7,945 | SL: ¥7,725"
+      "entry": 19805.0,
+      "tp": 20128.61,
+      "sl": 19643.19,
+      "formatted_line": "【9766】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 19.1% | 現在値: ¥19,805 | TP: ¥20,129 | SL: ¥19,643"
     },
     {
       "ticker": "6701.T",
@@ -96,13 +165,13 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "たくり線",
-      "vol_ratio": 0.6,
+      "vol_ratio": 0.77,
       "sector_label": "良",
       "roe_pct": 12.56,
-      "entry": 4270.0,
-      "tp": 4348.44,
-      "sl": 4230.78,
-      "formatted_line": "【6701】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 12.6% | 現在値: ¥4,270 | TP: ¥4,348 | SL: ¥4,231"
+      "entry": 4268.0,
+      "tp": 4346.4,
+      "sl": 4228.8,
+      "formatted_line": "【6701】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 12.6% | 現在値: ¥4,268 | TP: ¥4,346 | SL: ¥4,229"
     },
     {
       "ticker": "4631.T",
@@ -119,36 +188,13 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "赤三兵",
-      "vol_ratio": 0.6,
+      "vol_ratio": 0.77,
       "sector_label": "良",
       "roe_pct": 10.21,
-      "entry": 5015.0,
-      "tp": 5105.03,
-      "sl": 4969.98,
-      "formatted_line": "【4631】総合スコア: 65点 | サイン: 赤三兵 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 10.2% | 現在値: ¥5,015 | TP: ¥5,105 | SL: ¥4,970"
-    },
-    {
-      "ticker": "5803.T",
-      "name": "FUJIKURA",
-      "pattern_name": "陰線後の陽線",
-      "win_rate": 0.617,
-      "sample_count": 47,
-      "avg_return_pct": 2.5359,
-      "quadrant_score": 60.0,
-      "quadrant_breakdown": {
-        "sector": 0.0,
-        "volume": 10,
-        "technical": 40.0,
-        "fundamental": 10.0
-      },
-      "quadrant_sign": "明けの明星",
-      "vol_ratio": 1.22,
-      "sector_label": "悪",
-      "roe_pct": 31.51,
-      "entry": 5074.0,
-      "tp": 5202.67,
-      "sl": 5009.66,
-      "formatted_line": "【5803】総合スコア: 60点 | サイン: 明けの明星 | 需給(出来高): 1.2倍 | セクター: 悪 | ROE: 31.5% | 現在値: ¥5,074 | TP: ¥5,203 | SL: ¥5,010"
+      "entry": 4996.0,
+      "tp": 5085.69,
+      "sl": 4951.15,
+      "formatted_line": "【4631】総合スコア: 65点 | サイン: 赤三兵 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 10.2% | 現在値: ¥4,996 | TP: ¥5,086 | SL: ¥4,951"
     },
     {
       "ticker": "6326.T",
@@ -165,13 +211,13 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "たくり線",
-      "vol_ratio": 0.45,
+      "vol_ratio": 0.67,
       "sector_label": "悪",
       "roe_pct": 8.87,
-      "entry": 2972.5,
-      "tp": 3039.17,
-      "sl": 2939.17,
-      "formatted_line": "【6326】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 8.9% | 現在値: ¥2,972 | TP: ¥3,039 | SL: ¥2,939"
+      "entry": 2975.5,
+      "tp": 3042.23,
+      "sl": 2942.13,
+      "formatted_line": "【6326】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 8.9% | 現在値: ¥2,976 | TP: ¥3,042 | SL: ¥2,942"
     },
     {
       "ticker": "4188.T",
@@ -187,14 +233,37 @@
         "technical": 40.0,
         "fundamental": 0.0
       },
-      "quadrant_sign": "ハンマー、たくり線",
-      "vol_ratio": 0.47,
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.84,
       "sector_label": "良",
       "roe_pct": -0.7,
-      "entry": 1110.5,
-      "tp": 1134.47,
-      "sl": 1098.51,
-      "formatted_line": "【4188】総合スコア: 55点 | サイン: ハンマー、たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: -0.7% | 現在値: ¥1,110 | TP: ¥1,134 | SL: ¥1,099"
+      "entry": 1103.0,
+      "tp": 1126.81,
+      "sl": 1091.1,
+      "formatted_line": "【4188】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: -0.7% | 現在値: ¥1,103 | TP: ¥1,127 | SL: ¥1,091"
+    },
+    {
+      "ticker": "2802.T",
+      "name": "AJINOMOTO CO INC",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.6667,
+      "sample_count": 15,
+      "avg_return_pct": 3.4081,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.66,
+      "sector_label": "悪",
+      "roe_pct": 17.5,
+      "entry": 5233.0,
+      "tp": 5411.35,
+      "sl": 5143.83,
+      "formatted_line": "【2802】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 17.5% | 現在値: ¥5,233 | TP: ¥5,411 | SL: ¥5,144"
     },
     {
       "ticker": "5901.T",
@@ -211,13 +280,36 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "包み線",
-      "vol_ratio": 0.56,
+      "vol_ratio": 0.82,
       "sector_label": "悪",
       "roe_pct": 7.97,
-      "entry": 3907.0,
-      "tp": 3985.86,
-      "sl": 3867.57,
-      "formatted_line": "【5901】総合スコア: 50点 | サイン: 包み線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 8.0% | 現在値: ¥3,907 | TP: ¥3,986 | SL: ¥3,868"
+      "entry": 3885.0,
+      "tp": 3963.41,
+      "sl": 3845.79,
+      "formatted_line": "【5901】総合スコア: 50点 | サイン: 包み線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 8.0% | 現在値: ¥3,885 | TP: ¥3,963 | SL: ¥3,846"
+    },
+    {
+      "ticker": "2802.T",
+      "name": "AJINOMOTO CO INC",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.7308,
+      "sample_count": 26,
+      "avg_return_pct": 2.0172,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.66,
+      "sector_label": "悪",
+      "roe_pct": 17.5,
+      "entry": 5233.0,
+      "tp": 5338.56,
+      "sl": 5180.22,
+      "formatted_line": "【2802】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 17.5% | 現在値: ¥5,233 | TP: ¥5,339 | SL: ¥5,180"
     },
     {
       "ticker": "7762.T",
@@ -234,82 +326,13 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "陰線後の陽線",
-      "vol_ratio": 0.69,
+      "vol_ratio": 0.88,
       "sector_label": "良",
       "roe_pct": 11.02,
-      "entry": 2356.0,
-      "tp": 2398.49,
-      "sl": 2334.76,
-      "formatted_line": "【7762】総合スコア: 50点 | サイン: 陰線後の陽線 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 11.0% | 現在値: ¥2,356 | TP: ¥2,398 | SL: ¥2,335"
-    },
-    {
-      "ticker": "6703.T",
-      "name": "OKI ELECTRIC INDUSTRY CO",
-      "pattern_name": "二本たくり線",
-      "win_rate": 0.6364,
-      "sample_count": 11,
-      "avg_return_pct": 1.7482,
-      "quadrant_score": 50.0,
-      "quadrant_breakdown": {
-        "sector": 15,
-        "volume": 0.0,
-        "technical": 15.0,
-        "fundamental": 20.0
-      },
-      "quadrant_sign": "二本たくり線",
-      "vol_ratio": 0.46,
-      "sector_label": "良",
-      "roe_pct": 13.19,
-      "entry": 3490.0,
-      "tp": 3551.01,
-      "sl": 3459.49,
-      "formatted_line": "【6703】総合スコア: 50点 | サイン: 二本たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 13.2% | 現在値: ¥3,490 | TP: ¥3,551 | SL: ¥3,459"
-    },
-    {
-      "ticker": "3863.T",
-      "name": "NIPPON PAPER INDUSTRIES CO LTD",
-      "pattern_name": "包み線",
-      "win_rate": 0.6389,
-      "sample_count": 36,
-      "avg_return_pct": 1.6931,
-      "quadrant_score": 50.0,
-      "quadrant_breakdown": {
-        "sector": 15,
-        "volume": 0.0,
-        "technical": 25.0,
-        "fundamental": 10.0
-      },
-      "quadrant_sign": "明けの明星",
-      "vol_ratio": 0.91,
-      "sector_label": "良",
-      "roe_pct": 2.63,
-      "entry": 1234.0,
-      "tp": 1254.89,
-      "sl": 1223.55,
-      "formatted_line": "【3863】総合スコア: 50点 | サイン: 明けの明星 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 2.6% | 現在値: ¥1,234 | TP: ¥1,255 | SL: ¥1,224"
-    },
-    {
-      "ticker": "1963.T",
-      "name": "JGC HOLDINGS CORPORATION",
-      "pattern_name": "包み線",
-      "win_rate": 0.625,
-      "sample_count": 24,
-      "avg_return_pct": 1.5754,
-      "quadrant_score": 50.0,
-      "quadrant_breakdown": {
-        "sector": 0.0,
-        "volume": 0.0,
-        "technical": 40.0,
-        "fundamental": 10.0
-      },
-      "quadrant_sign": "明けの明星",
-      "vol_ratio": 0.73,
-      "sector_label": "悪",
-      "roe_pct": 10.17,
-      "entry": 2675.5,
-      "tp": 2717.65,
-      "sl": 2654.43,
-      "formatted_line": "【1963】総合スコア: 50点 | サイン: 明けの明星 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 10.2% | 現在値: ¥2,676 | TP: ¥2,718 | SL: ¥2,654"
+      "entry": 2353.0,
+      "tp": 2395.43,
+      "sl": 2331.78,
+      "formatted_line": "【7762】総合スコア: 50点 | サイン: 陰線後の陽線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 11.0% | 現在値: ¥2,353 | TP: ¥2,395 | SL: ¥2,332"
     },
     {
       "ticker": "4506.T",
@@ -326,13 +349,36 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "たくり線",
-      "vol_ratio": 0.78,
+      "vol_ratio": 0.9,
       "sector_label": "悪",
       "roe_pct": 46.27,
-      "entry": 1471.0,
-      "tp": 1563.98,
-      "sl": 1424.51,
-      "formatted_line": "【4506】総合スコア: 45点 | サイン: たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 46.3% | 現在値: ¥1,471 | TP: ¥1,564 | SL: ¥1,425"
+      "entry": 1467.0,
+      "tp": 1559.72,
+      "sl": 1420.64,
+      "formatted_line": "【4506】総合スコア: 45点 | サイン: たくり線 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 46.3% | 現在値: ¥1,467 | TP: ¥1,560 | SL: ¥1,421"
+    },
+    {
+      "ticker": "8058.T",
+      "name": "MITSUBISHI CORP",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6364,
+      "sample_count": 11,
+      "avg_return_pct": 2.1626,
+      "quadrant_score": 45.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.36,
+      "sector_label": "悪",
+      "roe_pct": 8.98,
+      "entry": 4978.0,
+      "tp": 5085.65,
+      "sl": 4924.17,
+      "formatted_line": "【8058】総合スコア: 45点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 悪 | ROE: 9.0% | 現在値: ¥4,978 | TP: ¥5,086 | SL: ¥4,924"
     },
     {
       "ticker": "6981.T",
@@ -349,13 +395,13 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "インサイドバー",
-      "vol_ratio": 0.67,
+      "vol_ratio": 0.72,
       "sector_label": "良",
       "roe_pct": 8.83,
-      "entry": 10605.0,
-      "tp": 10977.88,
-      "sl": 10418.56,
-      "formatted_line": "【6981】総合スコア: 40点 | サイン: インサイドバー | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 8.8% | 現在値: ¥10,605 | TP: ¥10,978 | SL: ¥10,419"
+      "entry": 10535.0,
+      "tp": 10905.42,
+      "sl": 10349.79,
+      "formatted_line": "【6981】総合スコア: 40点 | サイン: インサイドバー | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 8.8% | 現在値: ¥10,535 | TP: ¥10,905 | SL: ¥10,350"
     },
     {
       "ticker": "3436.T",
@@ -363,7 +409,7 @@
       "pattern_name": "陰線後の陽線",
       "win_rate": 0.6226,
       "sample_count": 53,
-      "avg_return_pct": 2.8873,
+      "avg_return_pct": 2.8391,
       "quadrant_score": 40.0,
       "quadrant_breakdown": {
         "sector": 0.0,
@@ -371,14 +417,37 @@
         "technical": 40.0,
         "fundamental": 0.0
       },
-      "quadrant_sign": "上昇三法",
-      "vol_ratio": 0.83,
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.92,
       "sector_label": "悪",
       "roe_pct": -3.48,
-      "entry": 4547.0,
-      "tp": 4678.29,
-      "sl": 4481.36,
-      "formatted_line": "【3436】総合スコア: 40点 | サイン: 上昇三法 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: -3.5% | 現在値: ¥4,547 | TP: ¥4,678 | SL: ¥4,481"
+      "entry": 4477.0,
+      "tp": 4604.11,
+      "sl": 4413.45,
+      "formatted_line": "【3436】総合スコア: 40点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: -3.5% | 現在値: ¥4,477 | TP: ¥4,604 | SL: ¥4,413"
+    },
+    {
+      "ticker": "4005.T",
+      "name": "SUMITOMO CHEMICAL COMPANY",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6,
+      "sample_count": 15,
+      "avg_return_pct": 2.6787,
+      "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "ピンバー",
+      "vol_ratio": 0.78,
+      "sector_label": "良",
+      "roe_pct": 9.99,
+      "entry": 588.6,
+      "tp": 604.37,
+      "sl": 580.72,
+      "formatted_line": "【4005】総合スコア: 40点 | サイン: ピンバー | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 10.0% | 現在値: ¥589 | TP: ¥604 | SL: ¥581"
     },
     {
       "ticker": "6981.T",
@@ -386,7 +455,7 @@
       "pattern_name": "陰線後の陽線",
       "win_rate": 0.68,
       "sample_count": 50,
-      "avg_return_pct": 2.6735,
+      "avg_return_pct": 2.6286,
       "quadrant_score": 40.0,
       "quadrant_breakdown": {
         "sector": 15,
@@ -395,36 +464,36 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "陰線後の陽線",
-      "vol_ratio": 0.67,
+      "vol_ratio": 0.72,
       "sector_label": "良",
       "roe_pct": 8.83,
-      "entry": 10605.0,
-      "tp": 10888.52,
-      "sl": 10463.24,
-      "formatted_line": "【6981】総合スコア: 40点 | サイン: 陰線後の陽線 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 8.8% | 現在値: ¥10,605 | TP: ¥10,889 | SL: ¥10,463"
+      "entry": 10535.0,
+      "tp": 10811.92,
+      "sl": 10396.54,
+      "formatted_line": "【6981】総合スコア: 40点 | サイン: 陰線後の陽線 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 8.8% | 現在値: ¥10,535 | TP: ¥10,812 | SL: ¥10,397"
     },
     {
-      "ticker": "4911.T",
-      "name": "SHISEIDO COMPANY LIMITED",
-      "pattern_name": "ピンバー",
-      "win_rate": 0.7692,
-      "sample_count": 13,
-      "avg_return_pct": 2.5294,
+      "ticker": "3436.T",
+      "name": "SUMCO CORPORATION",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.8333,
+      "sample_count": 6,
+      "avg_return_pct": 2.2653,
       "quadrant_score": 40.0,
       "quadrant_breakdown": {
-        "sector": 15,
+        "sector": 0.0,
         "volume": 0.0,
-        "technical": 25.0,
+        "technical": 40.0,
         "fundamental": 0.0
       },
-      "quadrant_sign": "たくり線",
-      "vol_ratio": 0.41,
-      "sector_label": "良",
-      "roe_pct": -5.58,
-      "entry": 2606.5,
-      "tp": 2672.43,
-      "sl": 2573.54,
-      "formatted_line": "【4911】総合スコア: 40点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: -5.6% | 現在値: ¥2,606 | TP: ¥2,672 | SL: ¥2,574"
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.92,
+      "sector_label": "悪",
+      "roe_pct": -3.48,
+      "entry": 4477.0,
+      "tp": 4578.42,
+      "sl": 4426.29,
+      "formatted_line": "【3436】総合スコア: 40点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: -3.5% | 現在値: ¥4,477 | TP: ¥4,578 | SL: ¥4,426"
     },
     {
       "ticker": "6503.T",
@@ -441,13 +510,13 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "二本たくり線",
-      "vol_ratio": 0.41,
+      "vol_ratio": 0.57,
       "sector_label": "良",
       "roe_pct": 9.96,
-      "entry": 6124.0,
-      "tp": 6248.43,
-      "sl": 6061.78,
-      "formatted_line": "【6503】総合スコア: 40点 | サイン: 二本たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 10.0% | 現在値: ¥6,124 | TP: ¥6,248 | SL: ¥6,062"
+      "entry": 6106.0,
+      "tp": 6230.07,
+      "sl": 6043.97,
+      "formatted_line": "【6503】総合スコア: 40点 | サイン: 二本たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 10.0% | 現在値: ¥6,106 | TP: ¥6,230 | SL: ¥6,044"
     },
     {
       "ticker": "5333.T",
@@ -455,7 +524,7 @@
       "pattern_name": "陰線後の陽線",
       "win_rate": 0.6744,
       "sample_count": 43,
-      "avg_return_pct": 2.0237,
+      "avg_return_pct": 2.0116,
       "quadrant_score": 40.0,
       "quadrant_breakdown": {
         "sector": 0.0,
@@ -464,36 +533,36 @@
         "fundamental": 0.0
       },
       "quadrant_sign": "上昇三法",
-      "vol_ratio": 0.63,
+      "vol_ratio": 0.78,
       "sector_label": "悪",
       "roe_pct": 7.81,
-      "entry": 6517.0,
-      "tp": 6648.88,
-      "sl": 6451.06,
-      "formatted_line": "【5333】総合スコア: 40点 | サイン: 上昇三法 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 7.8% | 現在値: ¥6,517 | TP: ¥6,649 | SL: ¥6,451"
+      "entry": 6474.0,
+      "tp": 6604.23,
+      "sl": 6408.88,
+      "formatted_line": "【5333】総合スコア: 40点 | サイン: 上昇三法 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 7.8% | 現在値: ¥6,474 | TP: ¥6,604 | SL: ¥6,409"
     },
     {
-      "ticker": "8053.T",
-      "name": "SUMITOMO CORP",
-      "pattern_name": "二本たくり線",
-      "win_rate": 0.7143,
-      "sample_count": 7,
-      "avg_return_pct": 5.0354,
-      "quadrant_score": 35.0,
+      "ticker": "4063.T",
+      "name": "SHIN-ETSU CHEMICAL CO",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.7021,
+      "sample_count": 47,
+      "avg_return_pct": 1.8809,
+      "quadrant_score": 40.0,
       "quadrant_breakdown": {
-        "sector": 0.0,
+        "sector": 15,
         "volume": 0.0,
         "technical": 15.0,
-        "fundamental": 20.0
+        "fundamental": 10.0
       },
-      "quadrant_sign": "二本たくり線",
-      "vol_ratio": 0.35,
-      "sector_label": "悪",
-      "roe_pct": 13.52,
-      "entry": 6909.0,
-      "tp": 7256.9,
-      "sl": 6735.05,
-      "formatted_line": "【8053】総合スコア: 35点 | サイン: 二本たくり線 | 需給(出来高): 0.3倍 | セクター: 悪 | ROE: 13.5% | 現在値: ¥6,909 | TP: ¥7,257 | SL: ¥6,735"
+      "quadrant_sign": "陰線後の陽線",
+      "vol_ratio": 0.8,
+      "sector_label": "良",
+      "roe_pct": 10.68,
+      "entry": 7790.0,
+      "tp": 7936.52,
+      "sl": 7716.74,
+      "formatted_line": "【4063】総合スコア: 40点 | サイン: 陰線後の陽線 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 10.7% | 現在値: ¥7,790 | TP: ¥7,937 | SL: ¥7,717"
     },
     {
       "ticker": "8031.T",
@@ -510,13 +579,13 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "たくり線",
-      "vol_ratio": 0.47,
+      "vol_ratio": 0.65,
       "sector_label": "悪",
       "roe_pct": 10.3,
-      "entry": 5093.0,
-      "tp": 5220.64,
-      "sl": 5029.18,
-      "formatted_line": "【8031】総合スコア: 35点 | サイン: たくり線 | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 10.3% | 現在値: ¥5,093 | TP: ¥5,221 | SL: ¥5,029"
+      "entry": 5085.0,
+      "tp": 5212.44,
+      "sl": 5021.28,
+      "formatted_line": "【8031】総合スコア: 35点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 10.3% | 現在値: ¥5,085 | TP: ¥5,212 | SL: ¥5,021"
     },
     {
       "ticker": "7912.T",
@@ -533,21 +602,21 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "リバーサルロー",
-      "vol_ratio": 0.61,
+      "vol_ratio": 0.9,
       "sector_label": "良",
       "roe_pct": 8.63,
-      "entry": 2736.5,
-      "tp": 2797.19,
-      "sl": 2706.15,
-      "formatted_line": "【7912】総合スコア: 35点 | サイン: リバーサルロー | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 8.6% | 現在値: ¥2,736 | TP: ¥2,797 | SL: ¥2,706"
+      "entry": 2734.0,
+      "tp": 2794.64,
+      "sl": 2703.68,
+      "formatted_line": "【7912】総合スコア: 35点 | サイン: リバーサルロー | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 8.6% | 現在値: ¥2,734 | TP: ¥2,795 | SL: ¥2,704"
     },
     {
-      "ticker": "2802.T",
-      "name": "AJINOMOTO CO INC",
-      "pattern_name": "インサイドバー",
-      "win_rate": 0.7308,
-      "sample_count": 26,
-      "avg_return_pct": 2.0172,
+      "ticker": "1963.T",
+      "name": "JGC HOLDINGS CORPORATION",
+      "pattern_name": "包み線",
+      "win_rate": 0.625,
+      "sample_count": 24,
+      "avg_return_pct": 1.5754,
       "quadrant_score": 25.0,
       "quadrant_breakdown": {
         "sector": 0.0,
@@ -555,14 +624,14 @@
         "technical": 15.0,
         "fundamental": 10.0
       },
-      "quadrant_sign": "インサイドバー",
-      "vol_ratio": 0.48,
+      "quadrant_sign": "包み線",
+      "vol_ratio": 0.97,
       "sector_label": "悪",
-      "roe_pct": 17.5,
-      "entry": 5199.0,
-      "tp": 5303.87,
-      "sl": 5146.56,
-      "formatted_line": "【2802】総合スコア: 25点 | サイン: インサイドバー | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 17.5% | 現在値: ¥5,199 | TP: ¥5,304 | SL: ¥5,147"
+      "roe_pct": 10.17,
+      "entry": 2669.0,
+      "tp": 2711.05,
+      "sl": 2647.98,
+      "formatted_line": "【1963】総合スコア: 25点 | サイン: 包み線 | 需給(出来高): 1.0倍 | セクター: 悪 | ROE: 10.2% | 現在値: ¥2,669 | TP: ¥2,711 | SL: ¥2,648"
     },
     {
       "ticker": "4507.T",
@@ -579,13 +648,13 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "インサイドバー",
-      "vol_ratio": 0.35,
+      "vol_ratio": 0.64,
       "sector_label": "悪",
       "roe_pct": 13.51,
-      "entry": 2838.5,
-      "tp": 2885.29,
-      "sl": 2815.1,
-      "formatted_line": "【4507】総合スコア: 20点 | サイン: インサイドバー | 需給(出来高): 0.3倍 | セクター: 悪 | ROE: 13.5% | 現在値: ¥2,838 | TP: ¥2,885 | SL: ¥2,815"
+      "entry": 2827.0,
+      "tp": 2873.6,
+      "sl": 2803.7,
+      "formatted_line": "【4507】総合スコア: 20点 | サイン: インサイドバー | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 13.5% | 現在値: ¥2,827 | TP: ¥2,874 | SL: ¥2,804"
     },
     {
       "ticker": "8267.T",
@@ -602,13 +671,13 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "包み線",
-      "vol_ratio": 0.42,
+      "vol_ratio": 0.63,
       "sector_label": "悪",
       "roe_pct": 5.76,
-      "entry": 1358.5,
-      "tp": 1381.7,
-      "sl": 1346.9,
-      "formatted_line": "【8267】総合スコア: 10点 | サイン: 包み線 | 需給(出来高): 0.4倍 | セクター: 悪 | ROE: 5.8% | 現在値: ¥1,358 | TP: ¥1,382 | SL: ¥1,347"
+      "entry": 1357.5,
+      "tp": 1380.69,
+      "sl": 1345.91,
+      "formatted_line": "【8267】総合スコア: 10点 | サイン: 包み線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 5.8% | 現在値: ¥1,358 | TP: ¥1,381 | SL: ¥1,346"
     }
   ],
   "items_sell": [
@@ -616,20 +685,20 @@
       "ticker": "6526.T",
       "name": "SOCIONEXT INC",
       "pattern_name": "スパイクハイ",
-      "entry": 3035.0,
-      "formatted_line": "【6526.T】スパイクハイ | 勝率: 70% (サンプル20回) | 現在値: ¥3,035"
+      "entry": 2999.0,
+      "formatted_line": "【6526.T】スパイクハイ | 勝率: 70% (サンプル20回) | 現在値: ¥2,999"
     },
     {
       "ticker": "7832.T",
       "name": "BANDAI NAMCO HOLDINGS INC",
       "pattern_name": "スパイクハイ",
-      "entry": 3720.0,
-      "formatted_line": "【7832.T】スパイクハイ | 勝率: 74% (サンプル23回) | 現在値: ¥3,720"
+      "entry": 3721.0,
+      "formatted_line": "【7832.T】スパイクハイ | 勝率: 74% (サンプル23回) | 現在値: ¥3,721"
     }
   ],
   "quadrant_stats": {
-    "before": 26,
-    "after": 26,
+    "before": 29,
+    "after": 29,
     "mode": "rank",
     "dropped_primary": 0,
     "dropped_ma": 0,
