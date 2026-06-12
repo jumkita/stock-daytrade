@@ -1,35 +1,35 @@
 {
-  "updated": "2026-06-12T06:19:24.648104+00:00",
+  "updated": "2026-06-12T10:42:57.749027+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
   "unique_tickers": 1,
   "signal_count": 1,
   "quadrant_top": [
-    "【8002】総合スコア: 20点 | サイン: 二本たくり線 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 13.5% | 現在値: ¥4,874 | TP: ¥5,048 | SL: ¥4,787"
+    "【5711】総合スコア: 25点 | サイン: 上昇三法 | 需給(出来高): 1.0倍 | セクター: 悪 | ROE: 6.5% | 現在値: ¥4,612 | TP: ¥4,729 | SL: ¥4,554"
   ],
   "items": [
     {
-      "ticker": "8002.T",
-      "name": "MARUBENI CORP",
+      "ticker": "5711.T",
+      "name": "MITSUBISHI MATERIALS CORP",
       "pattern_name": "二本たくり線",
-      "win_rate": 0.8,
-      "sample_count": 10,
-      "avg_return_pct": 3.5799,
-      "quadrant_score": 20.0,
+      "win_rate": 0.75,
+      "sample_count": 8,
+      "avg_return_pct": 2.5262,
+      "quadrant_score": 25.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 0.0,
-        "technical": 0.0,
-        "fundamental": 20.0
+        "technical": 25.0,
+        "fundamental": 0.0
       },
-      "quadrant_sign": "二本たくり線",
-      "vol_ratio": 0.93,
+      "quadrant_sign": "上昇三法",
+      "vol_ratio": 1.04,
       "sector_label": "悪",
-      "roe_pct": 13.5,
-      "entry": 4874.0,
-      "tp": 5048.48,
-      "sl": 4786.76,
-      "formatted_line": "【8002】総合スコア: 20点 | サイン: 二本たくり線 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 13.5% | 現在値: ¥4,874 | TP: ¥5,048 | SL: ¥4,787"
+      "roe_pct": 6.5,
+      "entry": 4612.0,
+      "tp": 4728.51,
+      "sl": 4553.75,
+      "formatted_line": "【5711】総合スコア: 25点 | サイン: 上昇三法 | 需給(出来高): 1.0倍 | セクター: 悪 | ROE: 6.5% | 現在値: ¥4,612 | TP: ¥4,729 | SL: ¥4,554"
     }
   ],
   "items_sell": [
@@ -37,22 +37,15 @@
       "ticker": "6103.T",
       "name": "OKUMA CORPORATION",
       "pattern_name": "スパイクハイ",
-      "entry": 4185.0,
-      "formatted_line": "【6103.T】スパイクハイ | 勝率: 73% (サンプル15回) | 現在値: ¥4,185"
+      "entry": 4180.0,
+      "formatted_line": "【6103.T】スパイクハイ | 勝率: 73% (サンプル15回) | 現在値: ¥4,180"
     },
     {
       "ticker": "7911.T",
       "name": "TOPPAN HOLDINGS INC",
       "pattern_name": "リバーサルハイ",
-      "entry": 4511.0,
-      "formatted_line": "【7911.T】リバーサルハイ | 勝率: 75% (サンプル8回) | 現在値: ¥4,511"
-    },
-    {
-      "ticker": "7974.T",
-      "name": "NINTENDO CO LTD",
-      "pattern_name": "たくり",
-      "entry": 7191.0,
-      "formatted_line": "【7974.T】たくり | 勝率: 76% (サンプル25回) | 現在値: ¥7,191"
+      "entry": 4508.0,
+      "formatted_line": "【7911.T】リバーサルハイ | 勝率: 75% (サンプル8回) | 現在値: ¥4,508"
     }
   ],
   "quadrant_stats": {
