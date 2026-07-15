@@ -7,3 +7,6 @@ mplfinance
 matplotlib
 xlrd
 google-genai
+# pyarrow 25.0.0 は Streamlit の ScriptRunner スレッドで SIGSEGV する既知バグ
+# (apache/arrow#50471)。Cloud の "Error running app" / Segmentation fault 対策。
+pyarrow<25.0.0
