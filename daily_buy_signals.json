@@ -1,108 +1,142 @@
 {
-  "updated": "2026-07-17T06:18:27.315375+00:00",
+  "updated": "2026-07-17T08:30:45.135951+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
-  "unique_tickers": 2,
-  "signal_count": 2,
+  "unique_tickers": 4,
+  "signal_count": 4,
   "quadrant_top": [
-    "【9501】総合スコア: 40点 | サイン: 包み線 | 需給(出来高): 1.1倍 | セクター: 良 | ROE: -12.6% | 現在値: ¥503 | TP: ¥513 | SL: ¥497",
-    "【3863】総合スコア: 30点 | サイン: 包み線 | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥1,455 | TP: ¥1,482 | SL: ¥1,441"
+    "【5101】総合スコア: 100点 | サイン: たくり線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 11.8% | 現在値: ¥7,537 | TP: ¥7,665 | SL: ¥7,473",
+    "【7762】総合スコア: 60点 | サイン: 二本たくり線 | 需給(出来高): 1.5倍 | セクター: 悪 | ROE: 11.0% | 現在値: ¥2,187 | TP: ¥2,245 | SL: ¥2,158",
+    "【9501】総合スコア: 50点 | サイン: 包み線 | 需給(出来高): 1.2倍 | セクター: 良 | ROE: -12.6% | 現在値: ¥506 | TP: ¥516 | SL: ¥500",
+    "【6146】総合スコア: 35点 | サイン: 二本たくり線 | 需給(出来高): 1.3倍 | セクター: 悪 | ROE: 25.1% | 現在値: ¥64,590 | TP: ¥66,584 | SL: ¥63,593"
   ],
   "items": [
+    {
+      "ticker": "5101.T",
+      "name": "YOKOHAMA RUBBER CO",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6923,
+      "sample_count": 13,
+      "avg_return_pct": 1.7033,
+      "quadrant_score": 100.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 25,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 1.49,
+      "sector_label": "良",
+      "roe_pct": 11.84,
+      "entry": 7537.0,
+      "tp": 7665.38,
+      "sl": 7472.81,
+      "formatted_line": "【5101】総合スコア: 100点 | サイン: たくり線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 11.8% | 現在値: ¥7,537 | TP: ¥7,665 | SL: ¥7,473"
+    },
+    {
+      "ticker": "7762.T",
+      "name": "CITIZEN WATCH CO LTD",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.75,
+      "sample_count": 8,
+      "avg_return_pct": 2.6578,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 25,
+        "technical": 15.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "二本たくり線",
+      "vol_ratio": 1.51,
+      "sector_label": "悪",
+      "roe_pct": 11.02,
+      "entry": 2187.0,
+      "tp": 2245.13,
+      "sl": 2157.94,
+      "formatted_line": "【7762】総合スコア: 60点 | サイン: 二本たくり線 | 需給(出来高): 1.5倍 | セクター: 悪 | ROE: 11.0% | 現在値: ¥2,187 | TP: ¥2,245 | SL: ¥2,158"
+    },
     {
       "ticker": "9501.T",
       "name": "TOKYO ELEC POWER CO HLDGS INC",
       "pattern_name": "包み線",
       "win_rate": 0.7308,
       "sample_count": 26,
-      "avg_return_pct": 2.1353,
-      "quadrant_score": 40.0,
+      "avg_return_pct": 2.1714,
+      "quadrant_score": 50.0,
       "quadrant_breakdown": {
         "sector": 15,
-        "volume": 0.0,
+        "volume": 10,
         "technical": 25.0,
         "fundamental": 0.0
       },
       "quadrant_sign": "包み線",
-      "vol_ratio": 1.07,
+      "vol_ratio": 1.24,
       "sector_label": "良",
       "roe_pct": -12.62,
-      "entry": 502.7,
-      "tp": 513.43,
-      "sl": 497.33,
-      "formatted_line": "【9501】総合スコア: 40点 | サイン: 包み線 | 需給(出来高): 1.1倍 | セクター: 良 | ROE: -12.6% | 現在値: ¥503 | TP: ¥513 | SL: ¥497"
+      "entry": 505.5,
+      "tp": 516.48,
+      "sl": 500.01,
+      "formatted_line": "【9501】総合スコア: 50点 | サイン: 包み線 | 需給(出来高): 1.2倍 | セクター: 良 | ROE: -12.6% | 現在値: ¥506 | TP: ¥516 | SL: ¥500"
     },
     {
-      "ticker": "3863.T",
-      "name": "NIPPON PAPER INDUSTRIES CO LTD",
-      "pattern_name": "包み線",
-      "win_rate": 0.6571,
-      "sample_count": 35,
-      "avg_return_pct": 1.8577,
-      "quadrant_score": 30.0,
+      "ticker": "6146.T",
+      "name": "DISCO CORPORATION",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.6,
+      "sample_count": 10,
+      "avg_return_pct": 3.0864,
+      "quadrant_score": 35.0,
       "quadrant_breakdown": {
-        "sector": 15,
-        "volume": 0.0,
-        "technical": 15.0,
-        "fundamental": 0.0
+        "sector": 0.0,
+        "volume": 25,
+        "technical": 0.0,
+        "fundamental": 10.0
       },
-      "quadrant_sign": "包み線",
-      "vol_ratio": 1.12,
-      "sector_label": "良",
-      "roe_pct": 5.0,
-      "entry": 1455.0,
-      "tp": 1482.03,
-      "sl": 1441.49,
-      "formatted_line": "【3863】総合スコア: 30点 | サイン: 包み線 | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥1,455 | TP: ¥1,482 | SL: ¥1,441"
+      "quadrant_sign": "二本たくり線",
+      "vol_ratio": 1.33,
+      "sector_label": "悪",
+      "roe_pct": 25.09,
+      "entry": 64590.0,
+      "tp": 66583.51,
+      "sl": 63593.25,
+      "formatted_line": "【6146】総合スコア: 35点 | サイン: 二本たくり線 | 需給(出来高): 1.3倍 | セクター: 悪 | ROE: 25.1% | 現在値: ¥64,590 | TP: ¥66,584 | SL: ¥63,593"
     }
   ],
   "items_sell": [
     {
-      "ticker": "4613.T",
-      "name": "KANSAI PAINT CO LTD",
-      "pattern_name": "黒三兵",
-      "entry": 2650.5,
-      "formatted_line": "【4613.T】黒三兵 | 勝率: 71% (サンプル14回) | 現在値: ¥2,650"
-    },
-    {
       "ticker": "4911.T",
       "name": "SHISEIDO COMPANY LIMITED",
       "pattern_name": "スパイクハイ",
-      "entry": 3033.0,
-      "formatted_line": "【4911.T】スパイクハイ | 勝率: 72% (サンプル18回) | 現在値: ¥3,033"
-    },
-    {
-      "ticker": "5202.T",
-      "name": "NIPPON SHEET GLASS CO",
-      "pattern_name": "リバーサルハイ",
-      "entry": 481.0,
-      "formatted_line": "【5202.T】リバーサルハイ | 勝率: 82% (サンプル11回) | 現在値: ¥481"
+      "entry": 3048.0,
+      "formatted_line": "【4911.T】スパイクハイ | 勝率: 72% (サンプル18回) | 現在値: ¥3,048"
     },
     {
       "ticker": "8252.T",
       "name": "MARUI GROUP CO LTD",
       "pattern_name": "陰のつつみ",
-      "entry": 2966.0,
-      "formatted_line": "【8252.T】陰のつつみ | 勝率: 79% (サンプル33回) | 現在値: ¥2,966"
+      "entry": 2964.5,
+      "formatted_line": "【8252.T】陰のつつみ | 勝率: 79% (サンプル33回) | 現在値: ¥2,964"
     },
     {
-      "ticker": "9005.T",
-      "name": "TOKYU CORP",
-      "pattern_name": "たくり",
-      "entry": 1764.5,
-      "formatted_line": "【9005.T】たくり | 勝率: 73% (サンプル15回) | 現在値: ¥1,764"
+      "ticker": "9020.T",
+      "name": "EAST JAPAN RAILWAY CO",
+      "pattern_name": "リバーサルハイ",
+      "entry": 3599.0,
+      "formatted_line": "【9020.T】リバーサルハイ | 勝率: 70% (サンプル10回) | 現在値: ¥3,599"
     },
     {
       "ticker": "9021.T",
       "name": "WEST JAPAN RAILWAY CO",
       "pattern_name": "スパイクハイ",
-      "entry": 2989.5,
-      "formatted_line": "【9021.T】スパイクハイ | 勝率: 71% (サンプル24回) | 現在値: ¥2,990"
+      "entry": 2984.0,
+      "formatted_line": "【9021.T】スパイクハイ | 勝率: 71% (サンプル24回) | 現在値: ¥2,984"
     }
   ],
   "quadrant_stats": {
-    "before": 2,
-    "after": 2,
+    "before": 4,
+    "after": 4,
     "mode": "rank",
     "dropped_primary": 0,
     "dropped_ma": 0,
