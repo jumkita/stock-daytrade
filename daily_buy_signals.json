@@ -1,15 +1,13 @@
 {
-  "updated": "2026-07-28T06:18:34.541061+00:00",
+  "updated": "2026-07-28T08:53:09.156735+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
-  "unique_tickers": 5,
-  "signal_count": 5,
+  "unique_tickers": 3,
+  "signal_count": 3,
   "quadrant_top": [
-    "【9301】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 14.4% | 現在値: ¥1,634 | TP: ¥1,682 | SL: ¥1,611",
-    "【2002】総合スコア: 65点 | サイン: ハンマー、赤三兵、上昇三法、たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 6.5% | 現在値: ¥2,105 | TP: ¥2,161 | SL: ¥2,077",
-    "【9532】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 8.5% | 現在値: ¥5,541 | TP: ¥5,625 | SL: ¥5,499",
-    "【4502】総合スコア: 30点 | サイン: ピンバー | 需給(出来高): 0.7倍 | セクター: 良 | ROE: -2.1% | 現在値: ¥5,734 | TP: ¥5,847 | SL: ¥5,677",
-    "【3863】総合スコア: 15点 | サイン: ピンバー | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 2.6% | 現在値: ¥1,509 | TP: ¥1,539 | SL: ¥1,494"
+    "【9301】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 14.4% | 現在値: ¥1,638 | TP: ¥1,685 | SL: ¥1,614",
+    "【6367】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 1.1倍 | セクター: 悪 | ROE: 9.3% | 現在値: ¥23,865 | TP: ¥24,269 | SL: ¥23,663",
+    "【3863】総合スコア: 15点 | サイン: ピンバー | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 2.6% | 現在値: ¥1,507 | TP: ¥1,537 | SL: ¥1,492"
   ],
   "items": [
     {
@@ -27,82 +25,36 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "たくり線",
-      "vol_ratio": 0.6,
+      "vol_ratio": 0.92,
       "sector_label": "良",
       "roe_pct": 14.42,
-      "entry": 1634.5,
-      "tp": 1682.29,
-      "sl": 1610.61,
-      "formatted_line": "【9301】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 14.4% | 現在値: ¥1,634 | TP: ¥1,682 | SL: ¥1,611"
+      "entry": 1637.5,
+      "tp": 1685.38,
+      "sl": 1613.56,
+      "formatted_line": "【9301】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 14.4% | 現在値: ¥1,638 | TP: ¥1,685 | SL: ¥1,614"
     },
     {
-      "ticker": "2002.T",
-      "name": "NISSHIN SEIFUN GROUP INC",
-      "pattern_name": "スパイクロー",
-      "win_rate": 0.7143,
-      "sample_count": 7,
-      "avg_return_pct": 2.6414,
-      "quadrant_score": 65.0,
+      "ticker": "6367.T",
+      "name": "DAIKIN INDUSTRIES",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6154,
+      "sample_count": 13,
+      "avg_return_pct": 1.6944,
+      "quadrant_score": 50.0,
       "quadrant_breakdown": {
-        "sector": 15,
+        "sector": 0.0,
         "volume": 0.0,
         "technical": 40.0,
         "fundamental": 10.0
       },
-      "quadrant_sign": "ハンマー、赤三兵、上昇三法、たくり線",
-      "vol_ratio": 0.94,
-      "sector_label": "良",
-      "roe_pct": 6.52,
-      "entry": 2105.0,
-      "tp": 2160.6,
-      "sl": 2077.2,
-      "formatted_line": "【2002】総合スコア: 65点 | サイン: ハンマー、赤三兵、上昇三法、たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 6.5% | 現在値: ¥2,105 | TP: ¥2,161 | SL: ¥2,077"
-    },
-    {
-      "ticker": "9532.T",
-      "name": "OSAKA GAS CO",
-      "pattern_name": "包み線",
-      "win_rate": 0.76,
-      "sample_count": 50,
-      "avg_return_pct": 1.5086,
-      "quadrant_score": 50.0,
-      "quadrant_breakdown": {
-        "sector": 15,
-        "volume": 0.0,
-        "technical": 25.0,
-        "fundamental": 10.0
-      },
       "quadrant_sign": "たくり線",
-      "vol_ratio": 0.55,
-      "sector_label": "良",
-      "roe_pct": 8.5,
-      "entry": 5541.0,
-      "tp": 5624.59,
-      "sl": 5499.2,
-      "formatted_line": "【9532】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 8.5% | 現在値: ¥5,541 | TP: ¥5,625 | SL: ¥5,499"
-    },
-    {
-      "ticker": "4502.T",
-      "name": "TAKEDA PHARMACEUTICAL CO LTD",
-      "pattern_name": "ピンバー",
-      "win_rate": 0.8333,
-      "sample_count": 12,
-      "avg_return_pct": 1.9732,
-      "quadrant_score": 30.0,
-      "quadrant_breakdown": {
-        "sector": 15,
-        "volume": 0.0,
-        "technical": 15.0,
-        "fundamental": 0.0
-      },
-      "quadrant_sign": "ピンバー",
-      "vol_ratio": 0.71,
-      "sector_label": "良",
-      "roe_pct": -2.12,
-      "entry": 5734.0,
-      "tp": 5847.14,
-      "sl": 5677.43,
-      "formatted_line": "【4502】総合スコア: 30点 | サイン: ピンバー | 需給(出来高): 0.7倍 | セクター: 良 | ROE: -2.1% | 現在値: ¥5,734 | TP: ¥5,847 | SL: ¥5,677"
+      "vol_ratio": 1.11,
+      "sector_label": "悪",
+      "roe_pct": 9.26,
+      "entry": 23865.0,
+      "tp": 24269.37,
+      "sl": 23662.82,
+      "formatted_line": "【6367】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 1.1倍 | セクター: 悪 | ROE: 9.3% | 現在値: ¥23,865 | TP: ¥24,269 | SL: ¥23,663"
     },
     {
       "ticker": "3863.T",
@@ -110,7 +62,7 @@
       "pattern_name": "ピンバー",
       "win_rate": 0.8235,
       "sample_count": 17,
-      "avg_return_pct": 2.0116,
+      "avg_return_pct": 1.9922,
       "quadrant_score": 15.0,
       "quadrant_breakdown": {
         "sector": 0.0,
@@ -119,27 +71,27 @@
         "fundamental": 0.0
       },
       "quadrant_sign": "ピンバー",
-      "vol_ratio": 0.57,
+      "vol_ratio": 0.77,
       "sector_label": "悪",
       "roe_pct": 2.63,
-      "entry": 1509.0,
-      "tp": 1539.36,
-      "sl": 1493.82,
-      "formatted_line": "【3863】総合スコア: 15点 | サイン: ピンバー | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 2.6% | 現在値: ¥1,509 | TP: ¥1,539 | SL: ¥1,494"
+      "entry": 1507.0,
+      "tp": 1537.02,
+      "sl": 1491.99,
+      "formatted_line": "【3863】総合スコア: 15点 | サイン: ピンバー | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 2.6% | 現在値: ¥1,507 | TP: ¥1,537 | SL: ¥1,492"
     }
   ],
   "items_sell": [
     {
-      "ticker": "9022.T",
-      "name": "CENTRAL JAPAN RAILWAY CO",
-      "pattern_name": "赤三兵の先詰",
-      "entry": 4086.0,
-      "formatted_line": "【9022.T】赤三兵の先詰 | 勝率: 80% (サンプル5回) | 現在値: ¥4,086"
+      "ticker": "9005.T",
+      "name": "TOKYU CORP",
+      "pattern_name": "たくり",
+      "entry": 1796.5,
+      "formatted_line": "【9005.T】たくり | 勝率: 79% (サンプル14回) | 現在値: ¥1,796"
     }
   ],
   "quadrant_stats": {
-    "before": 5,
-    "after": 5,
+    "before": 3,
+    "after": 3,
     "mode": "rank",
     "dropped_primary": 0,
     "dropped_ma": 0,
