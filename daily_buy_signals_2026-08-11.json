@@ -1,15 +1,15 @@
 {
-  "updated": "2026-08-11T06:18:46.222643+00:00",
+  "updated": "2026-08-11T07:37:12.737320+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
   "unique_tickers": 16,
   "signal_count": 16,
   "quadrant_top": [
-    "【6098】総合スコア: 100点 | サイン: ハンマー、上昇三法、たくり線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥16,165 | TP: ¥16,662 | SL: ¥15,916",
-    "【5706】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 2.4倍 | セクター: 良 | ROE: 30.6% | 現在値: ¥27,740 | TP: ¥28,739 | SL: ¥27,241",
-    "【5714】総合スコア: 65点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 18.5% | 現在値: ¥9,539 | TP: ¥9,784 | SL: ¥9,416",
-    "【6326】総合スコア: 60点 | サイン: ハンマー、赤三兵、上昇三法、たくり線 | 需給(出来高): 0.4倍 | セクター: 悪 | ROE: 10.0% | 現在値: ¥2,768 | TP: ¥2,850 | SL: ¥2,726",
-    "【6954】総合スコア: 45点 | サイン: 明けの明星 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 10.1% | 現在値: ¥6,533 | TP: ¥6,711 | SL: ¥6,444"
+    "【6098】総合スコア: 80点 | サイン: ハンマー、上昇三法、たくり線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥16,165 | TP: ¥16,662 | SL: ¥15,916",
+    "【5706】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 2.4倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥27,740 | TP: ¥28,739 | SL: ¥27,241",
+    "【5714】総合スコア: 55点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥9,539 | TP: ¥9,784 | SL: ¥9,416",
+    "【6326】総合スコア: 40点 | サイン: ハンマー、赤三兵、上昇三法、たくり線 | 需給(出来高): 0.4倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥2,768 | TP: ¥2,850 | SL: ¥2,726",
+    "【8697】総合スコア: 40点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥2,260 | TP: ¥2,314 | SL: ¥2,234"
   ],
   "items": [
     {
@@ -19,21 +19,21 @@
       "win_rate": 0.7333,
       "sample_count": 15,
       "avg_return_pct": 3.0773,
-      "quadrant_score": 100.0,
+      "quadrant_score": 80.0,
       "quadrant_breakdown": {
         "sector": 15,
         "volume": 25,
         "technical": 40.0,
-        "fundamental": 20.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "ハンマー、上昇三法、たくり線",
       "vol_ratio": 1.49,
       "sector_label": "良",
-      "roe_pct": 36.22,
+      "roe_pct": 5.0,
       "entry": 16165.0,
       "tp": 16662.45,
       "sl": 15916.28,
-      "formatted_line": "【6098】総合スコア: 100点 | サイン: ハンマー、上昇三法、たくり線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥16,165 | TP: ¥16,662 | SL: ¥15,916"
+      "formatted_line": "【6098】総合スコア: 80点 | サイン: ハンマー、上昇三法、たくり線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥16,165 | TP: ¥16,662 | SL: ¥15,916"
     },
     {
       "ticker": "5706.T",
@@ -42,21 +42,21 @@
       "win_rate": 0.75,
       "sample_count": 8,
       "avg_return_pct": 3.5999,
-      "quadrant_score": 75.0,
+      "quadrant_score": 65.0,
       "quadrant_breakdown": {
         "sector": 15,
         "volume": 25,
         "technical": 25.0,
-        "fundamental": 10.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "たくり線",
       "vol_ratio": 2.44,
       "sector_label": "良",
-      "roe_pct": 30.62,
+      "roe_pct": 5.0,
       "entry": 27740.0,
       "tp": 28738.61,
       "sl": 27240.69,
-      "formatted_line": "【5706】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 2.4倍 | セクター: 良 | ROE: 30.6% | 現在値: ¥27,740 | TP: ¥28,739 | SL: ¥27,241"
+      "formatted_line": "【5706】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 2.4倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥27,740 | TP: ¥28,739 | SL: ¥27,241"
     },
     {
       "ticker": "5714.T",
@@ -65,21 +65,21 @@
       "win_rate": 0.72,
       "sample_count": 25,
       "avg_return_pct": 2.5704,
-      "quadrant_score": 65.0,
+      "quadrant_score": 55.0,
       "quadrant_breakdown": {
         "sector": 15,
         "volume": 0.0,
         "technical": 40.0,
-        "fundamental": 10.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "包み線、上昇三法",
       "vol_ratio": 1.04,
       "sector_label": "良",
-      "roe_pct": 18.46,
+      "roe_pct": 5.0,
       "entry": 9539.0,
       "tp": 9784.19,
       "sl": 9416.4,
-      "formatted_line": "【5714】総合スコア: 65点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 18.5% | 現在値: ¥9,539 | TP: ¥9,784 | SL: ¥9,416"
+      "formatted_line": "【5714】総合スコア: 55点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥9,539 | TP: ¥9,784 | SL: ¥9,416"
     },
     {
       "ticker": "6326.T",
@@ -88,44 +88,21 @@
       "win_rate": 1.0,
       "sample_count": 4,
       "avg_return_pct": 2.9729,
-      "quadrant_score": 60.0,
+      "quadrant_score": 40.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 0.0,
         "technical": 40.0,
-        "fundamental": 20.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "ハンマー、赤三兵、上昇三法、たくり線",
       "vol_ratio": 0.43,
       "sector_label": "悪",
-      "roe_pct": 10.01,
+      "roe_pct": 5.0,
       "entry": 2767.5,
       "tp": 2849.78,
       "sl": 2726.36,
-      "formatted_line": "【6326】総合スコア: 60点 | サイン: ハンマー、赤三兵、上昇三法、たくり線 | 需給(出来高): 0.4倍 | セクター: 悪 | ROE: 10.0% | 現在値: ¥2,768 | TP: ¥2,850 | SL: ¥2,726"
-    },
-    {
-      "ticker": "6954.T",
-      "name": "FANUC CORPORATION",
-      "pattern_name": "インサイドバー",
-      "win_rate": 0.65,
-      "sample_count": 20,
-      "avg_return_pct": 2.7207,
-      "quadrant_score": 45.0,
-      "quadrant_breakdown": {
-        "sector": 0.0,
-        "volume": 0.0,
-        "technical": 25.0,
-        "fundamental": 20.0
-      },
-      "quadrant_sign": "明けの明星",
-      "vol_ratio": 0.62,
-      "sector_label": "悪",
-      "roe_pct": 10.05,
-      "entry": 6533.0,
-      "tp": 6710.74,
-      "sl": 6444.13,
-      "formatted_line": "【6954】総合スコア: 45点 | サイン: 明けの明星 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 10.1% | 現在値: ¥6,533 | TP: ¥6,711 | SL: ¥6,444"
+      "formatted_line": "【6326】総合スコア: 40点 | サイン: ハンマー、赤三兵、上昇三法、たくり線 | 需給(出来高): 0.4倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥2,768 | TP: ¥2,850 | SL: ¥2,726"
     },
     {
       "ticker": "8697.T",
@@ -151,27 +128,50 @@
       "formatted_line": "【8697】総合スコア: 40点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥2,260 | TP: ¥2,314 | SL: ¥2,234"
     },
     {
+      "ticker": "6954.T",
+      "name": "FANUC CORPORATION",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.65,
+      "sample_count": 20,
+      "avg_return_pct": 2.7207,
+      "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "明けの明星",
+      "vol_ratio": 0.62,
+      "sector_label": "悪",
+      "roe_pct": 5.0,
+      "entry": 6533.0,
+      "tp": 6710.74,
+      "sl": 6444.13,
+      "formatted_line": "【6954】総合スコア: 25点 | サイン: 明けの明星 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥6,533 | TP: ¥6,711 | SL: ¥6,444"
+    },
+    {
       "ticker": "3407.T",
       "name": "ASAHI KASEI CORP",
       "pattern_name": "ピンバー",
       "win_rate": 0.7,
       "sample_count": 10,
       "avg_return_pct": 1.9543,
-      "quadrant_score": 35.0,
+      "quadrant_score": 25.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 0.0,
         "technical": 25.0,
-        "fundamental": 10.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "たくり線",
       "vol_ratio": 0.66,
       "sector_label": "悪",
-      "roe_pct": 9.75,
+      "roe_pct": 5.0,
       "entry": 1689.5,
       "tp": 1722.52,
       "sl": 1672.99,
-      "formatted_line": "【3407】総合スコア: 35点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 9.8% | 現在値: ¥1,690 | TP: ¥1,723 | SL: ¥1,673"
+      "formatted_line": "【3407】総合スコア: 25点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥1,690 | TP: ¥1,723 | SL: ¥1,673"
     },
     {
       "ticker": "8750.T",
@@ -180,21 +180,21 @@
       "win_rate": 0.75,
       "sample_count": 12,
       "avg_return_pct": 1.5437,
-      "quadrant_score": 35.0,
+      "quadrant_score": 25.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 10,
         "technical": 15.0,
-        "fundamental": 10.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "二本たくり線",
       "vol_ratio": 1.23,
       "sector_label": "悪",
-      "roe_pct": 13.58,
+      "roe_pct": 5.0,
       "entry": 1849.5,
       "tp": 1878.05,
       "sl": 1835.22,
-      "formatted_line": "【8750】総合スコア: 35点 | サイン: 二本たくり線 | 需給(出来高): 1.2倍 | セクター: 悪 | ROE: 13.6% | 現在値: ¥1,850 | TP: ¥1,878 | SL: ¥1,835"
+      "formatted_line": "【8750】総合スコア: 25点 | サイン: 二本たくり線 | 需給(出来高): 1.2倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥1,850 | TP: ¥1,878 | SL: ¥1,835"
     },
     {
       "ticker": "5801.T",
@@ -203,21 +203,21 @@
       "win_rate": 0.625,
       "sample_count": 48,
       "avg_return_pct": 5.2085,
-      "quadrant_score": 25.0,
+      "quadrant_score": 15.0,
       "quadrant_breakdown": {
         "sector": 15,
         "volume": 0.0,
         "technical": 0.0,
-        "fundamental": 10.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "陰線後の陽線",
       "vol_ratio": 0.95,
       "sector_label": "良",
-      "roe_pct": 22.57,
+      "roe_pct": 5.0,
       "entry": 3936.0,
       "tp": 4141.01,
       "sl": 3833.5,
-      "formatted_line": "【5801】総合スコア: 25点 | サイン: 陰線後の陽線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 22.6% | 現在値: ¥3,936 | TP: ¥4,141 | SL: ¥3,834"
+      "formatted_line": "【5801】総合スコア: 15点 | サイン: 陰線後の陽線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥3,936 | TP: ¥4,141 | SL: ¥3,834"
     },
     {
       "ticker": "6752.T",
@@ -226,21 +226,21 @@
       "win_rate": 0.6818,
       "sample_count": 22,
       "avg_return_pct": 1.9863,
-      "quadrant_score": 25.0,
+      "quadrant_score": 15.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 0.0,
         "technical": 15.0,
-        "fundamental": 10.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "インサイドバー",
       "vol_ratio": 0.69,
       "sector_label": "悪",
-      "roe_pct": 5.25,
+      "roe_pct": 5.0,
       "entry": 4414.0,
       "tp": 4501.68,
       "sl": 4370.16,
-      "formatted_line": "【6752】総合スコア: 25点 | サイン: インサイドバー | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 5.2% | 現在値: ¥4,414 | TP: ¥4,502 | SL: ¥4,370"
+      "formatted_line": "【6752】総合スコア: 15点 | サイン: インサイドバー | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥4,414 | TP: ¥4,502 | SL: ¥4,370"
     },
     {
       "ticker": "6981.T",
@@ -249,21 +249,21 @@
       "win_rate": 0.6296,
       "sample_count": 27,
       "avg_return_pct": 2.6243,
-      "quadrant_score": 20.0,
+      "quadrant_score": 0.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 0.0,
         "technical": 0.0,
-        "fundamental": 20.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "インサイドバー",
       "vol_ratio": 0.59,
       "sector_label": "悪",
-      "roe_pct": 10.06,
+      "roe_pct": 5.0,
       "entry": 7273.0,
       "tp": 7463.87,
       "sl": 7177.57,
-      "formatted_line": "【6981】総合スコア: 20点 | サイン: インサイドバー | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 10.1% | 現在値: ¥7,273 | TP: ¥7,464 | SL: ¥7,178"
+      "formatted_line": "【6981】総合スコア: 0点 | サイン: インサイドバー | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥7,273 | TP: ¥7,464 | SL: ¥7,178"
     },
     {
       "ticker": "6703.T",
@@ -272,21 +272,21 @@
       "win_rate": 0.7143,
       "sample_count": 21,
       "avg_return_pct": 2.3499,
-      "quadrant_score": 20.0,
+      "quadrant_score": 0.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 0.0,
         "technical": 0.0,
-        "fundamental": 20.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "インサイドバー",
       "vol_ratio": 0.71,
       "sector_label": "悪",
-      "roe_pct": 16.4,
+      "roe_pct": 5.0,
       "entry": 2783.0,
       "tp": 2848.4,
       "sl": 2750.3,
-      "formatted_line": "【6703】総合スコア: 20点 | サイン: インサイドバー | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 16.4% | 現在値: ¥2,783 | TP: ¥2,848 | SL: ¥2,750"
+      "formatted_line": "【6703】総合スコア: 0点 | サイン: インサイドバー | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥2,783 | TP: ¥2,848 | SL: ¥2,750"
     },
     {
       "ticker": "8035.T",
@@ -295,21 +295,21 @@
       "win_rate": 0.7143,
       "sample_count": 49,
       "avg_return_pct": 2.0958,
-      "quadrant_score": 10.0,
+      "quadrant_score": 0.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 0.0,
         "technical": 0.0,
-        "fundamental": 10.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "陰線後の陽線",
       "vol_ratio": 0.79,
       "sector_label": "悪",
-      "roe_pct": 30.93,
+      "roe_pct": 5.0,
       "entry": 56720.0,
       "tp": 57908.74,
       "sl": 56125.63,
-      "formatted_line": "【8035】総合スコア: 10点 | サイン: 陰線後の陽線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 30.9% | 現在値: ¥56,720 | TP: ¥57,909 | SL: ¥56,126"
+      "formatted_line": "【8035】総合スコア: 0点 | サイン: 陰線後の陽線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥56,720 | TP: ¥57,909 | SL: ¥56,126"
     },
     {
       "ticker": "6503.T",
@@ -318,21 +318,21 @@
       "win_rate": 0.65,
       "sample_count": 20,
       "avg_return_pct": 2.0867,
-      "quadrant_score": 10.0,
+      "quadrant_score": 0.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 0.0,
         "technical": 0.0,
-        "fundamental": 10.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "二本たくり線",
       "vol_ratio": 0.74,
       "sector_label": "悪",
-      "roe_pct": 10.28,
+      "roe_pct": 5.0,
       "entry": 5867.0,
       "tp": 5989.43,
       "sl": 5805.79,
-      "formatted_line": "【6503】総合スコア: 10点 | サイン: 二本たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 10.3% | 現在値: ¥5,867 | TP: ¥5,989 | SL: ¥5,806"
+      "formatted_line": "【6503】総合スコア: 0点 | サイン: 二本たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥5,867 | TP: ¥5,989 | SL: ¥5,806"
     },
     {
       "ticker": "4004.T",
@@ -341,21 +341,21 @@
       "win_rate": 0.7,
       "sample_count": 10,
       "avg_return_pct": 1.8366,
-      "quadrant_score": 10.0,
+      "quadrant_score": 0.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 0.0,
         "technical": 0.0,
-        "fundamental": 10.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "二本たくり線",
       "vol_ratio": 0.7,
       "sector_label": "悪",
-      "roe_pct": 8.14,
+      "roe_pct": 5.0,
       "entry": 16335.0,
       "tp": 16635.01,
       "sl": 16185.0,
-      "formatted_line": "【4004】総合スコア: 10点 | サイン: 二本たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 8.1% | 現在値: ¥16,335 | TP: ¥16,635 | SL: ¥16,185"
+      "formatted_line": "【4004】総合スコア: 0点 | サイン: 二本たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥16,335 | TP: ¥16,635 | SL: ¥16,185"
     },
     {
       "ticker": "4063.T",
@@ -364,21 +364,21 @@
       "win_rate": 0.6667,
       "sample_count": 51,
       "avg_return_pct": 1.5533,
-      "quadrant_score": 10.0,
+      "quadrant_score": 0.0,
       "quadrant_breakdown": {
         "sector": 0.0,
         "volume": 0.0,
         "technical": 0.0,
-        "fundamental": 10.0
+        "fundamental": 0.0
       },
       "quadrant_sign": "陰線後の陽線",
       "vol_ratio": 0.94,
       "sector_label": "悪",
-      "roe_pct": 11.23,
+      "roe_pct": 5.0,
       "entry": 6271.0,
       "tp": 6368.41,
       "sl": 6222.3,
-      "formatted_line": "【4063】総合スコア: 10点 | サイン: 陰線後の陽線 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 11.2% | 現在値: ¥6,271 | TP: ¥6,368 | SL: ¥6,222"
+      "formatted_line": "【4063】総合スコア: 0点 | サイン: 陰線後の陽線 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥6,271 | TP: ¥6,368 | SL: ¥6,222"
     }
   ],
   "items_sell": [
