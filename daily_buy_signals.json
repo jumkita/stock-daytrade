@@ -1,46 +1,153 @@
 {
-  "updated": "2026-08-19T06:19:06.875142+00:00",
+  "updated": "2026-08-19T07:07:01.225481+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
-  "unique_tickers": 0,
-  "signal_count": 0,
-  "quadrant_top": [],
-  "items": [],
+  "unique_tickers": 4,
+  "signal_count": 4,
+  "quadrant_top": [
+    "【2002】総合スコア: 65点 | サイン: ハンマー、たくり線 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 6.1% | 現在値: ¥2,038 | TP: ¥2,085 | SL: ¥2,014",
+    "【9107】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 7.6% | 現在値: ¥3,181 | TP: ¥3,253 | SL: ¥3,145",
+    "【8697】総合スコア: 40点 | サイン: リバーサルロー | 需給(出来高): 1.3倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥2,198 | TP: ¥2,245 | SL: ¥2,174",
+    "【5711】総合スコア: 40点 | サイン: 二本たくり線 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 14.5% | 現在値: ¥5,072 | TP: ¥5,180 | SL: ¥5,018"
+  ],
+  "items": [
+    {
+      "ticker": "2002.T",
+      "name": "NISSHIN SEIFUN GROUP INC",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.7143,
+      "sample_count": 7,
+      "avg_return_pct": 2.3419,
+      "quadrant_score": 65.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "ハンマー、たくり線",
+      "vol_ratio": 1.0,
+      "sector_label": "良",
+      "roe_pct": 6.1,
+      "entry": 2037.5,
+      "tp": 2085.22,
+      "sl": 2013.64,
+      "formatted_line": "【2002】総合スコア: 65点 | サイン: ハンマー、たくり線 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 6.1% | 現在値: ¥2,038 | TP: ¥2,085 | SL: ¥2,014"
+    },
+    {
+      "ticker": "9107.T",
+      "name": "KAWASAKI KISEN KAISHA",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.7222,
+      "sample_count": 18,
+      "avg_return_pct": 2.2626,
+      "quadrant_score": 55.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 1.08,
+      "sector_label": "良",
+      "roe_pct": 7.56,
+      "entry": 3181.0,
+      "tp": 3252.97,
+      "sl": 3145.01,
+      "formatted_line": "【9107】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 7.6% | 現在値: ¥3,181 | TP: ¥3,253 | SL: ¥3,145"
+    },
+    {
+      "ticker": "8697.T",
+      "name": "JAPAN EXCHANGE GROUP",
+      "pattern_name": "リバーサルロー",
+      "win_rate": 0.7143,
+      "sample_count": 7,
+      "avg_return_pct": 2.1512,
+      "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 25,
+        "technical": 15.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "リバーサルロー",
+      "vol_ratio": 1.33,
+      "sector_label": "悪",
+      "roe_pct": 5.0,
+      "entry": 2197.5,
+      "tp": 2244.77,
+      "sl": 2173.86,
+      "formatted_line": "【8697】総合スコア: 40点 | サイン: リバーサルロー | 需給(出来高): 1.3倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥2,198 | TP: ¥2,245 | SL: ¥2,174"
+    },
+    {
+      "ticker": "5711.T",
+      "name": "MITSUBISHI MATERIALS CORP",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.7,
+      "sample_count": 10,
+      "avg_return_pct": 2.1372,
+      "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "二本たくり線",
+      "vol_ratio": 0.82,
+      "sector_label": "良",
+      "roe_pct": 14.46,
+      "entry": 5072.0,
+      "tp": 5180.4,
+      "sl": 5017.8,
+      "formatted_line": "【5711】総合スコア: 40点 | サイン: 二本たくり線 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 14.5% | 現在値: ¥5,072 | TP: ¥5,180 | SL: ¥5,018"
+    }
+  ],
   "items_sell": [
     {
       "ticker": "1925.T",
       "name": "DAIWA HOUSE INDUSTRY CO",
       "pattern_name": "アウトサイドバー",
-      "entry": 4564.0,
-      "formatted_line": "【1925.T】アウトサイドバー | 勝率: 73% (サンプル11回) | 現在値: ¥4,564"
+      "entry": 4574.0,
+      "formatted_line": "【1925.T】アウトサイドバー | 勝率: 73% (サンプル11回) | 現在値: ¥4,574"
     },
     {
       "ticker": "2502.T",
       "name": "ASAHI GROUP HLDGS",
       "pattern_name": "陰のつつみ",
-      "entry": 1649.5,
-      "formatted_line": "【2502.T】陰のつつみ | 勝率: 70% (サンプル30回) | 現在値: ¥1,650"
+      "entry": 1653.5,
+      "formatted_line": "【2502.T】陰のつつみ | 勝率: 70% (サンプル30回) | 現在値: ¥1,654"
     },
     {
       "ticker": "6971.T",
       "name": "KYOCERA CORP",
       "pattern_name": "黒三兵",
-      "entry": 3624.0,
-      "formatted_line": "【6971.T】黒三兵 | 勝率: 75% (サンプル4回) | 現在値: ¥3,624"
+      "entry": 3647.0,
+      "formatted_line": "【6971.T】黒三兵 | 勝率: 75% (サンプル4回) | 現在値: ¥3,647"
     },
     {
       "ticker": "8601.T",
       "name": "DAIWA SECURITIES GROUP",
       "pattern_name": "黒三兵",
-      "entry": 1727.0,
-      "formatted_line": "【8601.T】黒三兵 | 勝率: 75% (サンプル12回) | 現在値: ¥1,727"
+      "entry": 1733.5,
+      "formatted_line": "【8601.T】黒三兵 | 勝率: 75% (サンプル12回) | 現在値: ¥1,734"
     },
     {
       "ticker": "9020.T",
       "name": "EAST JAPAN RAILWAY CO",
       "pattern_name": "アウトサイドバー",
-      "entry": 3420.0,
-      "formatted_line": "【9020.T】アウトサイドバー | 勝率: 80% (サンプル20回) | 現在値: ¥3,420"
+      "entry": 3418.0,
+      "formatted_line": "【9020.T】アウトサイドバー | 勝率: 80% (サンプル20回) | 現在値: ¥3,418"
     }
-  ]
+  ],
+  "quadrant_stats": {
+    "before": 4,
+    "after": 4,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
 }
