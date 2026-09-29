@@ -1,15 +1,86 @@
 {
-  "updated": "2026-09-29T06:19:34.195613+00:00",
+  "updated": "2026-09-29T12:51:27.642317+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
-  "unique_tickers": 2,
-  "signal_count": 3,
+  "unique_tickers": 5,
+  "signal_count": 6,
   "quadrant_top": [
-    "【6302】総合スコア: 25点 | サイン: インサイドバー | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 6.1% | 現在値: ¥5,954 | TP: ¥6,112 | SL: ¥5,875",
-    "【6981】総合スコア: 25点 | サイン: 陰線後の陽線 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 10.1% | 現在値: ¥8,033 | TP: ¥8,203 | SL: ¥7,948",
-    "【6302】総合スコア: 25点 | サイン: 包み線 | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 6.1% | 現在値: ¥5,954 | TP: ¥6,078 | SL: ¥5,892"
+    "【7762】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 10.9% | 現在値: ¥2,359 | TP: ¥2,421 | SL: ¥2,328",
+    "【8035】総合スコア: 60点 | サイン: 上昇三法 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 30.9% | 現在値: ¥11,440 | TP: ¥11,615 | SL: ¥11,353",
+    "【4911】総合スコア: 25点 | サイン: ピンバー | 需給(出来高): 1.2倍 | セクター: 悪 | ROE: -3.1% | 現在値: ¥3,423 | TP: ¥3,592 | SL: ¥3,338",
+    "【6302】総合スコア: 25点 | サイン: インサイドバー | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 6.1% | 現在値: ¥5,941 | TP: ¥6,099 | SL: ¥5,862",
+    "【6981】総合スコア: 25点 | サイン: 陰線後の陽線 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 10.1% | 現在値: ¥8,066 | TP: ¥8,239 | SL: ¥7,980"
   ],
   "items": [
+    {
+      "ticker": "7762.T",
+      "name": "CITIZEN WATCH CO LTD",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6923,
+      "sample_count": 13,
+      "avg_return_pct": 2.6287,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.94,
+      "sector_label": "良",
+      "roe_pct": 10.87,
+      "entry": 2359.0,
+      "tp": 2421.01,
+      "sl": 2327.99,
+      "formatted_line": "【7762】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 10.9% | 現在値: ¥2,359 | TP: ¥2,421 | SL: ¥2,328"
+    },
+    {
+      "ticker": "8035.T",
+      "name": "TOKYO ELECTRON",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.6809,
+      "sample_count": 47,
+      "avg_return_pct": 1.5286,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "上昇三法",
+      "vol_ratio": 0.68,
+      "sector_label": "良",
+      "roe_pct": 30.93,
+      "entry": 11440.0,
+      "tp": 11614.87,
+      "sl": 11352.56,
+      "formatted_line": "【8035】総合スコア: 60点 | サイン: 上昇三法 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 30.9% | 現在値: ¥11,440 | TP: ¥11,615 | SL: ¥11,353"
+    },
+    {
+      "ticker": "4911.T",
+      "name": "SHISEIDO COMPANY LIMITED",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.9167,
+      "sample_count": 12,
+      "avg_return_pct": 4.9403,
+      "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 10,
+        "technical": 15.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "ピンバー",
+      "vol_ratio": 1.21,
+      "sector_label": "悪",
+      "roe_pct": -3.08,
+      "entry": 3423.0,
+      "tp": 3592.11,
+      "sl": 3338.45,
+      "formatted_line": "【4911】総合スコア: 25点 | サイン: ピンバー | 需給(出来高): 1.2倍 | セクター: 悪 | ROE: -3.1% | 現在値: ¥3,423 | TP: ¥3,592 | SL: ¥3,338"
+    },
     {
       "ticker": "6302.T",
       "name": "SUMITOMO HEAVY INDUSTRIES",
@@ -25,13 +96,13 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "インサイドバー",
-      "vol_ratio": 0.45,
+      "vol_ratio": 0.78,
       "sector_label": "悪",
       "roe_pct": 6.07,
-      "entry": 5954.0,
-      "tp": 6112.22,
-      "sl": 5874.89,
-      "formatted_line": "【6302】総合スコア: 25点 | サイン: インサイドバー | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 6.1% | 現在値: ¥5,954 | TP: ¥6,112 | SL: ¥5,875"
+      "entry": 5941.0,
+      "tp": 6098.87,
+      "sl": 5862.06,
+      "formatted_line": "【6302】総合スコア: 25点 | サイン: インサイドバー | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 6.1% | 現在値: ¥5,941 | TP: ¥6,099 | SL: ¥5,862"
     },
     {
       "ticker": "6981.T",
@@ -39,7 +110,7 @@
       "pattern_name": "陰線後の陽線",
       "win_rate": 0.6809,
       "sample_count": 47,
-      "avg_return_pct": 2.1223,
+      "avg_return_pct": 2.1424,
       "quadrant_score": 25.0,
       "quadrant_breakdown": {
         "sector": 15,
@@ -48,13 +119,13 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "陰線後の陽線",
-      "vol_ratio": 0.7,
+      "vol_ratio": 0.82,
       "sector_label": "良",
       "roe_pct": 10.06,
-      "entry": 8033.0,
-      "tp": 8203.48,
-      "sl": 7947.76,
-      "formatted_line": "【6981】総合スコア: 25点 | サイン: 陰線後の陽線 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 10.1% | 現在値: ¥8,033 | TP: ¥8,203 | SL: ¥7,948"
+      "entry": 8066.0,
+      "tp": 8238.81,
+      "sl": 7979.6,
+      "formatted_line": "【6981】総合スコア: 25点 | サイン: 陰線後の陽線 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 10.1% | 現在値: ¥8,066 | TP: ¥8,239 | SL: ¥7,980"
     },
     {
       "ticker": "6302.T",
@@ -71,13 +142,13 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "包み線",
-      "vol_ratio": 0.45,
+      "vol_ratio": 0.78,
       "sector_label": "悪",
       "roe_pct": 6.07,
-      "entry": 5954.0,
-      "tp": 6077.72,
-      "sl": 5892.14,
-      "formatted_line": "【6302】総合スコア: 25点 | サイン: 包み線 | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 6.1% | 現在値: ¥5,954 | TP: ¥6,078 | SL: ¥5,892"
+      "entry": 5941.0,
+      "tp": 6064.45,
+      "sl": 5879.28,
+      "formatted_line": "【6302】総合スコア: 25点 | サイン: 包み線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 6.1% | 現在値: ¥5,941 | TP: ¥6,064 | SL: ¥5,879"
     }
   ],
   "items_sell": [
@@ -85,34 +156,27 @@
       "ticker": "2502.T",
       "name": "ASAHI GROUP HLDGS",
       "pattern_name": "陰のつつみ",
-      "entry": 1584.0,
-      "formatted_line": "【2502.T】陰のつつみ | 勝率: 74% (サンプル27回) | 現在値: ¥1,584"
+      "entry": 1585.5,
+      "formatted_line": "【2502.T】陰のつつみ | 勝率: 71% (サンプル28回) | 現在値: ¥1,586"
     },
     {
       "ticker": "5233.T",
       "name": "TAIHEIYO CEMENT CORP",
       "pattern_name": "陰のつつみ",
-      "entry": 4030.0,
-      "formatted_line": "【5233.T】陰のつつみ | 勝率: 72% (サンプル39回) | 現在値: ¥4,030"
+      "entry": 4025.0,
+      "formatted_line": "【5233.T】陰のつつみ | 勝率: 72% (サンプル40回) | 現在値: ¥4,025"
     },
     {
       "ticker": "9201.T",
       "name": "JAPAN AIRLINES CO LTD",
       "pattern_name": "リバーサルハイ",
-      "entry": 3019.0,
-      "formatted_line": "【9201.T】リバーサルハイ | 勝率: 80% (サンプル10回) | 現在値: ¥3,019"
-    },
-    {
-      "ticker": "9602.T",
-      "name": "TOHO CO LTD",
-      "pattern_name": "黒三兵",
-      "entry": 1547.5,
-      "formatted_line": "【9602.T】黒三兵 | 勝率: 71% (サンプル14回) | 現在値: ¥1,548"
+      "entry": 3018.0,
+      "formatted_line": "【9201.T】リバーサルハイ | 勝率: 80% (サンプル10回) | 現在値: ¥3,018"
     }
   ],
   "quadrant_stats": {
-    "before": 3,
-    "after": 3,
+    "before": 6,
+    "after": 6,
     "mode": "rank",
     "dropped_primary": 0,
     "dropped_ma": 0,
