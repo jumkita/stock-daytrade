@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-09T13:15:02.889529+00:00",
+  "updated": "2026-10-12T06:18:16.755939+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
   "unique_tickers": 18,
@@ -407,9 +407,9 @@
       "ticker": "5901.T",
       "name": "TOYO SEIKAN GROUP HOLDINGS LIMI",
       "pattern_name": "インサイドバー",
-      "win_rate": 0.6471,
-      "sample_count": 34,
-      "avg_return_pct": 2.1726,
+      "win_rate": 0.6389,
+      "sample_count": 36,
+      "avg_return_pct": 2.297,
       "quadrant_score": 15.0,
       "quadrant_breakdown": {
         "sector": 0.0,
@@ -422,9 +422,9 @@
       "sector_label": "悪",
       "roe_pct": 7.84,
       "entry": 4344.0,
-      "tp": 4438.38,
-      "sl": 4296.81,
-      "formatted_line": "【5901】総合スコア: 15点 | サイン: インサイドバー | 需給(出来高): 1.1倍 | セクター: 悪 | ROE: 7.8% | 現在値: ¥4,344 | TP: ¥4,438 | SL: ¥4,297"
+      "tp": 4443.78,
+      "sl": 4294.11,
+      "formatted_line": "【5901】総合スコア: 15点 | サイン: インサイドバー | 需給(出来高): 1.1倍 | セクター: 悪 | ROE: 7.8% | 現在値: ¥4,344 | TP: ¥4,444 | SL: ¥4,294"
     },
     {
       "ticker": "6506.T",
@@ -443,11 +443,11 @@
       "quadrant_sign": "リバーサルロー",
       "vol_ratio": 1.07,
       "sector_label": "良",
-      "roe_pct": 7.51,
+      "roe_pct": 7.64,
       "entry": 4790.0,
       "tp": 4893.8,
       "sl": 4738.1,
-      "formatted_line": "【6506】総合スコア: 15点 | サイン: リバーサルロー | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 7.5% | 現在値: ¥4,790 | TP: ¥4,894 | SL: ¥4,738"
+      "formatted_line": "【6506】総合スコア: 15点 | サイン: リバーサルロー | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 7.6% | 現在値: ¥4,790 | TP: ¥4,894 | SL: ¥4,738"
     }
   ],
   "items_sell": [
