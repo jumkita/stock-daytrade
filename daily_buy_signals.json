@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-12T06:18:16.755939+00:00",
+  "updated": "2026-10-12T15:20:11.879999+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
   "unique_tickers": 18,
@@ -133,7 +133,7 @@
       "pattern_name": "リバーサルロー",
       "win_rate": 0.6,
       "sample_count": 5,
-      "avg_return_pct": 2.0819,
+      "avg_return_pct": 2.0818,
       "quadrant_score": 65.0,
       "quadrant_breakdown": {
         "sector": 15,
@@ -146,8 +146,8 @@
       "sector_label": "良",
       "roe_pct": 11.68,
       "entry": 9445.0,
-      "tp": 9641.64,
-      "sl": 9346.68,
+      "tp": 9641.63,
+      "sl": 9346.69,
       "formatted_line": "【5713】総合スコア: 65点 | サイン: 包み線 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 11.7% | 現在値: ¥9,445 | TP: ¥9,642 | SL: ¥9,347"
     },
     {
@@ -443,11 +443,11 @@
       "quadrant_sign": "リバーサルロー",
       "vol_ratio": 1.07,
       "sector_label": "良",
-      "roe_pct": 7.64,
+      "roe_pct": 7.51,
       "entry": 4790.0,
       "tp": 4893.8,
       "sl": 4738.1,
-      "formatted_line": "【6506】総合スコア: 15点 | サイン: リバーサルロー | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 7.6% | 現在値: ¥4,790 | TP: ¥4,894 | SL: ¥4,738"
+      "formatted_line": "【6506】総合スコア: 15点 | サイン: リバーサルロー | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 7.5% | 現在値: ¥4,790 | TP: ¥4,894 | SL: ¥4,738"
     }
   ],
   "items_sell": [
