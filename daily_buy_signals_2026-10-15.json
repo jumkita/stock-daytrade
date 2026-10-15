@@ -1,0 +1,115 @@
+{
+  "updated": "2026-10-15T06:19:35.325523+00:00",
+  "backtest_driven": true,
+  "quadrant_screening": true,
+  "unique_tickers": 3,
+  "signal_count": 3,
+  "quadrant_top": [
+    "【8015】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 16.1% | 現在値: ¥7,294 | TP: ¥7,534 | SL: ¥7,174",
+    "【5019】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 22.5% | 現在値: ¥1,546 | TP: ¥1,577 | SL: ¥1,530",
+    "【2413】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 12.0% | 現在値: ¥1,896 | TP: ¥1,941 | SL: ¥1,873"
+  ],
+  "items": [
+    {
+      "ticker": "8015.T",
+      "name": "TOYOTA TSUSHO CORP",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.7143,
+      "sample_count": 7,
+      "avg_return_pct": 3.2869,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.69,
+      "sector_label": "悪",
+      "roe_pct": 16.06,
+      "entry": 7294.0,
+      "tp": 7533.75,
+      "sl": 7174.13,
+      "formatted_line": "【8015】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 16.1% | 現在値: ¥7,294 | TP: ¥7,534 | SL: ¥7,174"
+    },
+    {
+      "ticker": "5019.T",
+      "name": "IDEMITSU KOSAN CO.LTD",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.8,
+      "sample_count": 5,
+      "avg_return_pct": 2.0073,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.68,
+      "sector_label": "悪",
+      "roe_pct": 22.52,
+      "entry": 1545.5,
+      "tp": 1576.52,
+      "sl": 1529.99,
+      "formatted_line": "【5019】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 22.5% | 現在値: ¥1,546 | TP: ¥1,577 | SL: ¥1,530"
+    },
+    {
+      "ticker": "2413.T",
+      "name": "M3 INC",
+      "pattern_name": "二本たくり線",
+      "win_rate": 1.0,
+      "sample_count": 4,
+      "avg_return_pct": 2.4043,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.76,
+      "sector_label": "悪",
+      "roe_pct": 11.98,
+      "entry": 1895.5,
+      "tp": 1941.07,
+      "sl": 1872.71,
+      "formatted_line": "【2413】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 12.0% | 現在値: ¥1,896 | TP: ¥1,941 | SL: ¥1,873"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "6367.T",
+      "name": "DAIKIN INDUSTRIES",
+      "pattern_name": "リバーサルハイ",
+      "entry": 21340.0,
+      "formatted_line": "【6367.T】リバーサルハイ | 勝率: 80% (サンプル5回) | 現在値: ¥21,340"
+    },
+    {
+      "ticker": "7974.T",
+      "name": "NINTENDO CO LTD",
+      "pattern_name": "リバーサルハイ",
+      "entry": 8169.0,
+      "formatted_line": "【7974.T】リバーサルハイ | 勝率: 71% (サンプル7回) | 現在値: ¥8,169"
+    },
+    {
+      "ticker": "9005.T",
+      "name": "TOKYU CORP",
+      "pattern_name": "たくり",
+      "entry": 1579.5,
+      "formatted_line": "【9005.T】たくり | 勝率: 84% (サンプル19回) | 現在値: ¥1,580"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 3,
+    "after": 3,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
+}
