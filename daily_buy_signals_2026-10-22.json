@@ -1,15 +1,39 @@
 {
-  "updated": "2026-10-22T06:18:11.348055+00:00",
+  "updated": "2026-10-22T11:48:56.297791+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
-  "unique_tickers": 3,
-  "signal_count": 3,
+  "unique_tickers": 4,
+  "signal_count": 4,
   "quadrant_top": [
-    "【4507】総合スコア: 75点 | サイン: 赤三兵 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 16.8% | 現在値: ¥3,031 | TP: ¥3,083 | SL: ¥3,005",
-    "【3863】総合スコア: 65点 | サイン: 包み線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 2.2% | 現在値: ¥1,291 | TP: ¥1,312 | SL: ¥1,280",
-    "【5401】総合スコア: 50点 | サイン: 包み線、上昇三法 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 5.5% | 現在値: ¥668 | TP: ¥685 | SL: ¥660"
+    "【6098】総合スコア: 75点 | サイン: 上昇三法 | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥19,240 | TP: ¥19,707 | SL: ¥19,006",
+    "【4507】総合スコア: 75点 | サイン: 赤三兵 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 16.8% | 現在値: ¥3,041 | TP: ¥3,093 | SL: ¥3,015",
+    "【3863】総合スコア: 65点 | サイン: 包み線 | 需給(出来高): 1.9倍 | セクター: 良 | ROE: 2.2% | 現在値: ¥1,295 | TP: ¥1,317 | SL: ¥1,284",
+    "【5401】総合スコア: 50点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.1倍 | セクター: 悪 | ROE: 5.5% | 現在値: ¥668 | TP: ¥684 | SL: ¥660"
   ],
   "items": [
+    {
+      "ticker": "6098.T",
+      "name": "RECRUIT HOLDINGS CO LTD",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.6364,
+      "sample_count": 44,
+      "avg_return_pct": 2.4295,
+      "quadrant_score": 75.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "上昇三法",
+      "vol_ratio": 1.11,
+      "sector_label": "良",
+      "roe_pct": 36.22,
+      "entry": 19240.0,
+      "tp": 19707.44,
+      "sl": 19006.28,
+      "formatted_line": "【6098】総合スコア: 75点 | サイン: 上昇三法 | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥19,240 | TP: ¥19,707 | SL: ¥19,006"
+    },
     {
       "ticker": "4507.T",
       "name": "SHIONOGI & CO",
@@ -25,21 +49,21 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "赤三兵",
-      "vol_ratio": 0.59,
+      "vol_ratio": 0.97,
       "sector_label": "良",
       "roe_pct": 16.77,
-      "entry": 3031.0,
-      "tp": 3083.29,
-      "sl": 3004.86,
-      "formatted_line": "【4507】総合スコア: 75点 | サイン: 赤三兵 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 16.8% | 現在値: ¥3,031 | TP: ¥3,083 | SL: ¥3,005"
+      "entry": 3041.0,
+      "tp": 3093.46,
+      "sl": 3014.77,
+      "formatted_line": "【4507】総合スコア: 75点 | サイン: 赤三兵 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 16.8% | 現在値: ¥3,041 | TP: ¥3,093 | SL: ¥3,015"
     },
     {
       "ticker": "3863.T",
       "name": "NIPPON PAPER INDUSTRIES CO LTD",
       "pattern_name": "包み線",
-      "win_rate": 0.6286,
-      "sample_count": 35,
-      "avg_return_pct": 1.6585,
+      "win_rate": 0.6216,
+      "sample_count": 37,
+      "avg_return_pct": 1.7135,
       "quadrant_score": 65.0,
       "quadrant_breakdown": {
         "sector": 15,
@@ -48,13 +72,13 @@
         "fundamental": 0.0
       },
       "quadrant_sign": "包み線",
-      "vol_ratio": 1.5,
+      "vol_ratio": 1.87,
       "sector_label": "良",
       "roe_pct": 2.21,
-      "entry": 1291.0,
-      "tp": 1312.41,
-      "sl": 1280.29,
-      "formatted_line": "【3863】総合スコア: 65点 | サイン: 包み線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 2.2% | 現在値: ¥1,291 | TP: ¥1,312 | SL: ¥1,280"
+      "entry": 1295.0,
+      "tp": 1317.19,
+      "sl": 1283.91,
+      "formatted_line": "【3863】総合スコア: 65点 | サイン: 包み線 | 需給(出来高): 1.9倍 | セクター: 良 | ROE: 2.2% | 現在値: ¥1,295 | TP: ¥1,317 | SL: ¥1,284"
     },
     {
       "ticker": "5401.T",
@@ -71,41 +95,48 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "包み線、上昇三法",
-      "vol_ratio": 0.89,
+      "vol_ratio": 1.13,
       "sector_label": "悪",
       "roe_pct": 5.5,
-      "entry": 668.3,
-      "tp": 684.67,
-      "sl": 660.12,
-      "formatted_line": "【5401】総合スコア: 50点 | サイン: 包み線、上昇三法 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 5.5% | 現在値: ¥668 | TP: ¥685 | SL: ¥660"
+      "entry": 667.9,
+      "tp": 684.26,
+      "sl": 659.72,
+      "formatted_line": "【5401】総合スコア: 50点 | サイン: 包み線、上昇三法 | 需給(出来高): 1.1倍 | セクター: 悪 | ROE: 5.5% | 現在値: ¥668 | TP: ¥684 | SL: ¥660"
     }
   ],
   "items_sell": [
     {
+      "ticker": "1802.T",
+      "name": "OBAYASHI CORP",
+      "pattern_name": "たくり",
+      "entry": 2904.0,
+      "formatted_line": "【1802.T】たくり | 勝率: 74% (サンプル19回) | 現在値: ¥2,904"
+    },
+    {
       "ticker": "5233.T",
       "name": "TAIHEIYO CEMENT CORP",
       "pattern_name": "陰のつつみ",
-      "entry": 4061.0,
-      "formatted_line": "【5233.T】陰のつつみ | 勝率: 71% (サンプル41回) | 現在値: ¥4,061"
+      "entry": 4074.0,
+      "formatted_line": "【5233.T】陰のつつみ | 勝率: 71% (サンプル41回) | 現在値: ¥4,074"
     },
     {
       "ticker": "6503.T",
       "name": "MITSUBISHI ELECTRIC CORP",
       "pattern_name": "陰のつつみ",
-      "entry": 4860.0,
-      "formatted_line": "【6503.T】陰のつつみ | 勝率: 70% (サンプル37回) | 現在値: ¥4,860"
+      "entry": 4881.0,
+      "formatted_line": "【6503.T】陰のつつみ | 勝率: 70% (サンプル37回) | 現在値: ¥4,881"
     },
     {
       "ticker": "8252.T",
       "name": "MARUI GROUP CO LTD",
       "pattern_name": "アウトサイドバー",
-      "entry": 2798.0,
-      "formatted_line": "【8252.T】アウトサイドバー | 勝率: 75% (サンプル16回) | 現在値: ¥2,798"
+      "entry": 2800.0,
+      "formatted_line": "【8252.T】アウトサイドバー | 勝率: 75% (サンプル16回) | 現在値: ¥2,800"
     }
   ],
   "quadrant_stats": {
-    "before": 3,
-    "after": 3,
+    "before": 4,
+    "after": 4,
     "mode": "rank",
     "dropped_primary": 0,
     "dropped_ma": 0,
