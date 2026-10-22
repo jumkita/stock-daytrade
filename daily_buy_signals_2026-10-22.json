@@ -1,0 +1,115 @@
+{
+  "updated": "2026-10-22T06:18:11.348055+00:00",
+  "backtest_driven": true,
+  "quadrant_screening": true,
+  "unique_tickers": 3,
+  "signal_count": 3,
+  "quadrant_top": [
+    "【4507】総合スコア: 75点 | サイン: 赤三兵 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 16.8% | 現在値: ¥3,031 | TP: ¥3,083 | SL: ¥3,005",
+    "【3863】総合スコア: 65点 | サイン: 包み線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 2.2% | 現在値: ¥1,291 | TP: ¥1,312 | SL: ¥1,280",
+    "【5401】総合スコア: 50点 | サイン: 包み線、上昇三法 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 5.5% | 現在値: ¥668 | TP: ¥685 | SL: ¥660"
+  ],
+  "items": [
+    {
+      "ticker": "4507.T",
+      "name": "SHIONOGI & CO",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.625,
+      "sample_count": 32,
+      "avg_return_pct": 1.7251,
+      "quadrant_score": 75.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "赤三兵",
+      "vol_ratio": 0.59,
+      "sector_label": "良",
+      "roe_pct": 16.77,
+      "entry": 3031.0,
+      "tp": 3083.29,
+      "sl": 3004.86,
+      "formatted_line": "【4507】総合スコア: 75点 | サイン: 赤三兵 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 16.8% | 現在値: ¥3,031 | TP: ¥3,083 | SL: ¥3,005"
+    },
+    {
+      "ticker": "3863.T",
+      "name": "NIPPON PAPER INDUSTRIES CO LTD",
+      "pattern_name": "包み線",
+      "win_rate": 0.6286,
+      "sample_count": 35,
+      "avg_return_pct": 1.6585,
+      "quadrant_score": 65.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 25,
+        "technical": 25.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "包み線",
+      "vol_ratio": 1.5,
+      "sector_label": "良",
+      "roe_pct": 2.21,
+      "entry": 1291.0,
+      "tp": 1312.41,
+      "sl": 1280.29,
+      "formatted_line": "【3863】総合スコア: 65点 | サイン: 包み線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 2.2% | 現在値: ¥1,291 | TP: ¥1,312 | SL: ¥1,280"
+    },
+    {
+      "ticker": "5401.T",
+      "name": "NIPPON STEEL CORPORATION",
+      "pattern_name": "包み線",
+      "win_rate": 0.7143,
+      "sample_count": 21,
+      "avg_return_pct": 2.4488,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "包み線、上昇三法",
+      "vol_ratio": 0.89,
+      "sector_label": "悪",
+      "roe_pct": 5.5,
+      "entry": 668.3,
+      "tp": 684.67,
+      "sl": 660.12,
+      "formatted_line": "【5401】総合スコア: 50点 | サイン: 包み線、上昇三法 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 5.5% | 現在値: ¥668 | TP: ¥685 | SL: ¥660"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "5233.T",
+      "name": "TAIHEIYO CEMENT CORP",
+      "pattern_name": "陰のつつみ",
+      "entry": 4061.0,
+      "formatted_line": "【5233.T】陰のつつみ | 勝率: 71% (サンプル41回) | 現在値: ¥4,061"
+    },
+    {
+      "ticker": "6503.T",
+      "name": "MITSUBISHI ELECTRIC CORP",
+      "pattern_name": "陰のつつみ",
+      "entry": 4860.0,
+      "formatted_line": "【6503.T】陰のつつみ | 勝率: 70% (サンプル37回) | 現在値: ¥4,860"
+    },
+    {
+      "ticker": "8252.T",
+      "name": "MARUI GROUP CO LTD",
+      "pattern_name": "アウトサイドバー",
+      "entry": 2798.0,
+      "formatted_line": "【8252.T】アウトサイドバー | 勝率: 75% (サンプル16回) | 現在値: ¥2,798"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 3,
+    "after": 3,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
+}
