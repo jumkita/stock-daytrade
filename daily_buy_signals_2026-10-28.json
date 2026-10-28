@@ -1,0 +1,241 @@
+{
+  "updated": "2026-10-28T06:19:22.772147+00:00",
+  "backtest_driven": true,
+  "quadrant_screening": true,
+  "unique_tickers": 7,
+  "signal_count": 9,
+  "quadrant_top": [
+    "【6981】総合スコア: 45点 | サイン: 上昇三法 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 10.1% | 現在値: ¥6,748 | TP: ¥6,877 | SL: ¥6,684",
+    "【5706】総合スコア: 35点 | サイン: たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 30.6% | 現在値: ¥2,161 | TP: ¥2,259 | SL: ¥2,112",
+    "【6752】総合スコア: 35点 | サイン: 明けの明星、たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 5.2% | 現在値: ¥3,783 | TP: ¥3,930 | SL: ¥3,710",
+    "【6503】総合スコア: 35点 | サイン: 明けの明星、たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 10.3% | 現在値: ¥4,805 | TP: ¥4,971 | SL: ¥4,722",
+    "【6503】総合スコア: 35点 | サイン: 明けの明星、たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 10.3% | 現在値: ¥4,805 | TP: ¥4,959 | SL: ¥4,728"
+  ],
+  "items": [
+    {
+      "ticker": "6981.T",
+      "name": "MURATA MANUFACTURING CO",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.6596,
+      "sample_count": 47,
+      "avg_return_pct": 1.908,
+      "quadrant_score": 45.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "上昇三法",
+      "vol_ratio": 0.86,
+      "sector_label": "悪",
+      "roe_pct": 10.06,
+      "entry": 6748.0,
+      "tp": 6876.75,
+      "sl": 6683.62,
+      "formatted_line": "【6981】総合スコア: 45点 | サイン: 上昇三法 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 10.1% | 現在値: ¥6,748 | TP: ¥6,877 | SL: ¥6,684"
+    },
+    {
+      "ticker": "5706.T",
+      "name": "MITSUI KINZOKU CO LTD",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.8571,
+      "sample_count": 7,
+      "avg_return_pct": 4.5568,
+      "quadrant_score": 35.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.75,
+      "sector_label": "悪",
+      "roe_pct": 30.62,
+      "entry": 2161.0,
+      "tp": 2259.47,
+      "sl": 2111.76,
+      "formatted_line": "【5706】総合スコア: 35点 | サイン: たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 30.6% | 現在値: ¥2,161 | TP: ¥2,259 | SL: ¥2,112"
+    },
+    {
+      "ticker": "6752.T",
+      "name": "PANASONIC HOLDINGS CORP",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.8571,
+      "sample_count": 7,
+      "avg_return_pct": 3.8778,
+      "quadrant_score": 35.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "明けの明星、たくり線",
+      "vol_ratio": 0.57,
+      "sector_label": "悪",
+      "roe_pct": 5.25,
+      "entry": 3783.0,
+      "tp": 3929.7,
+      "sl": 3709.65,
+      "formatted_line": "【6752】総合スコア: 35点 | サイン: 明けの明星、たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 5.2% | 現在値: ¥3,783 | TP: ¥3,930 | SL: ¥3,710"
+    },
+    {
+      "ticker": "6503.T",
+      "name": "MITSUBISHI ELECTRIC CORP",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.9091,
+      "sample_count": 11,
+      "avg_return_pct": 3.4468,
+      "quadrant_score": 35.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "明けの明星、たくり線",
+      "vol_ratio": 0.84,
+      "sector_label": "悪",
+      "roe_pct": 10.28,
+      "entry": 4805.0,
+      "tp": 4970.62,
+      "sl": 4722.19,
+      "formatted_line": "【6503】総合スコア: 35点 | サイン: 明けの明星、たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 10.3% | 現在値: ¥4,805 | TP: ¥4,971 | SL: ¥4,722"
+    },
+    {
+      "ticker": "6503.T",
+      "name": "MITSUBISHI ELECTRIC CORP",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.8333,
+      "sample_count": 12,
+      "avg_return_pct": 3.2108,
+      "quadrant_score": 35.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "明けの明星、たくり線",
+      "vol_ratio": 0.84,
+      "sector_label": "悪",
+      "roe_pct": 10.28,
+      "entry": 4805.0,
+      "tp": 4959.28,
+      "sl": 4727.86,
+      "formatted_line": "【6503】総合スコア: 35点 | サイン: 明けの明星、たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 10.3% | 現在値: ¥4,805 | TP: ¥4,959 | SL: ¥4,728"
+    },
+    {
+      "ticker": "6503.T",
+      "name": "MITSUBISHI ELECTRIC CORP",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.7647,
+      "sample_count": 17,
+      "avg_return_pct": 2.9571,
+      "quadrant_score": 35.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "明けの明星、たくり線",
+      "vol_ratio": 0.84,
+      "sector_label": "悪",
+      "roe_pct": 10.28,
+      "entry": 4805.0,
+      "tp": 4947.09,
+      "sl": 4733.96,
+      "formatted_line": "【6503】総合スコア: 35点 | サイン: 明けの明星、たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 10.3% | 現在値: ¥4,805 | TP: ¥4,947 | SL: ¥4,734"
+    },
+    {
+      "ticker": "2531.T",
+      "name": "TAKARA HOLDINGS INC",
+      "pattern_name": "包み線",
+      "win_rate": 0.6,
+      "sample_count": 45,
+      "avg_return_pct": 1.8759,
+      "quadrant_score": 30.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "包み線",
+      "vol_ratio": 0.49,
+      "sector_label": "良",
+      "roe_pct": 2.68,
+      "entry": 2732.5,
+      "tp": 2783.76,
+      "sl": 2706.87,
+      "formatted_line": "【2531】総合スコア: 30点 | サイン: 包み線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 2.7% | 現在値: ¥2,732 | TP: ¥2,784 | SL: ¥2,707"
+    },
+    {
+      "ticker": "6506.T",
+      "name": "YASKAWA ELECTRIC CORP",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.6667,
+      "sample_count": 9,
+      "avg_return_pct": 1.8728,
+      "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "ハンマー、明けの明星、たくり線",
+      "vol_ratio": 0.55,
+      "sector_label": "悪",
+      "roe_pct": 7.64,
+      "entry": 4204.0,
+      "tp": 4282.73,
+      "sl": 4164.63,
+      "formatted_line": "【6506】総合スコア: 25点 | サイン: ハンマー、明けの明星、たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 7.6% | 現在値: ¥4,204 | TP: ¥4,283 | SL: ¥4,165"
+    },
+    {
+      "ticker": "3086.T",
+      "name": "J FRONT RETAILING CO LTD",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.6897,
+      "sample_count": 29,
+      "avg_return_pct": 2.0653,
+      "quadrant_score": 15.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 0.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "インサイドバー",
+      "vol_ratio": 0.58,
+      "sector_label": "良",
+      "roe_pct": 6.4,
+      "entry": 2746.5,
+      "tp": 2803.22,
+      "sl": 2718.14,
+      "formatted_line": "【3086】総合スコア: 15点 | サイン: インサイドバー | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 6.4% | 現在値: ¥2,746 | TP: ¥2,803 | SL: ¥2,718"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "7974.T",
+      "name": "NINTENDO CO LTD",
+      "pattern_name": "スパイクハイ",
+      "entry": 8303.0,
+      "formatted_line": "【7974.T】スパイクハイ | 勝率: 70% (サンプル27回) | 現在値: ¥8,303"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 9,
+    "after": 9,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
+}
