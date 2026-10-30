@@ -1,39 +1,39 @@
 {
-  "updated": "2026-10-30T06:18:50.526321+00:00",
+  "updated": "2026-10-30T12:50:11.764605+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
-  "unique_tickers": 6,
-  "signal_count": 7,
+  "unique_tickers": 5,
+  "signal_count": 5,
   "quadrant_top": [
-    "【2802】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 18.5% | 現在値: ¥5,098 | TP: ¥5,311 | SL: ¥4,992",
-    "【6098】総合スコア: 50点 | サイン: 陰線後の陽線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥19,125 | TP: ¥19,655 | SL: ¥18,860",
-    "【2802】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 18.5% | 現在値: ¥5,098 | TP: ¥5,236 | SL: ¥5,029",
-    "【8697】総合スコア: 40点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥2,112 | TP: ¥2,161 | SL: ¥2,087",
-    "【8604】総合スコア: 35点 | サイン: ピンバー | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 11.2% | 現在値: ¥1,492 | TP: ¥1,523 | SL: ¥1,477"
+    "【7735】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 1.2倍 | セクター: 悪 | ROE: 18.9% | 現在値: ¥11,385 | TP: ¥11,971 | SL: ¥11,092",
+    "【6098】総合スコア: 50点 | サイン: 陰線後の陽線 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥19,100 | TP: ¥19,629 | SL: ¥18,836",
+    "【8604】総合スコア: 35点 | サイン: ピンバー | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 11.5% | 現在値: ¥1,491 | TP: ¥1,521 | SL: ¥1,476",
+    "【2802】総合スコア: 25点 | サイン: 二本たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 18.5% | 現在値: ¥5,067 | TP: ¥5,278 | SL: ¥4,961",
+    "【6146】総合スコア: 20点 | サイン: 二本たくり線 | 需給(出来高): 1.0倍 | セクター: 悪 | ROE: 27.9% | 現在値: ¥49,340 | TP: ¥50,794 | SL: ¥48,613"
   ],
   "items": [
     {
-      "ticker": "2802.T",
-      "name": "AJINOMOTO CO INC",
+      "ticker": "7735.T",
+      "name": "SCREEN HOLDINGS CO LTD",
       "pattern_name": "二本たくり線",
-      "win_rate": 0.7778,
-      "sample_count": 9,
-      "avg_return_pct": 4.1699,
-      "quadrant_score": 50.0,
+      "win_rate": 0.75,
+      "sample_count": 8,
+      "avg_return_pct": 5.1466,
+      "quadrant_score": 55.0,
       "quadrant_breakdown": {
-        "sector": 15,
-        "volume": 0.0,
+        "sector": 0.0,
+        "volume": 10,
         "technical": 25.0,
-        "fundamental": 10.0
+        "fundamental": 20.0
       },
       "quadrant_sign": "たくり線",
-      "vol_ratio": 0.59,
-      "sector_label": "良",
-      "roe_pct": 18.49,
-      "entry": 5098.0,
-      "tp": 5310.58,
-      "sl": 4991.71,
-      "formatted_line": "【2802】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 18.5% | 現在値: ¥5,098 | TP: ¥5,311 | SL: ¥4,992"
+      "vol_ratio": 1.19,
+      "sector_label": "悪",
+      "roe_pct": 18.87,
+      "entry": 11385.0,
+      "tp": 11970.94,
+      "sl": 11092.03,
+      "formatted_line": "【7735】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 1.2倍 | セクター: 悪 | ROE: 18.9% | 現在値: ¥11,385 | TP: ¥11,971 | SL: ¥11,092"
     },
     {
       "ticker": "6098.T",
@@ -50,59 +50,13 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "陰線後の陽線",
-      "vol_ratio": 0.44,
+      "vol_ratio": 0.72,
       "sector_label": "良",
       "roe_pct": 36.22,
-      "entry": 19125.0,
-      "tp": 19654.57,
-      "sl": 18860.21,
-      "formatted_line": "【6098】総合スコア: 50点 | サイン: 陰線後の陽線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥19,125 | TP: ¥19,655 | SL: ¥18,860"
-    },
-    {
-      "ticker": "2802.T",
-      "name": "AJINOMOTO CO INC",
-      "pattern_name": "ピンバー",
-      "win_rate": 0.7692,
-      "sample_count": 13,
-      "avg_return_pct": 2.714,
-      "quadrant_score": 50.0,
-      "quadrant_breakdown": {
-        "sector": 15,
-        "volume": 0.0,
-        "technical": 25.0,
-        "fundamental": 10.0
-      },
-      "quadrant_sign": "たくり線",
-      "vol_ratio": 0.59,
-      "sector_label": "良",
-      "roe_pct": 18.49,
-      "entry": 5098.0,
-      "tp": 5236.36,
-      "sl": 5028.82,
-      "formatted_line": "【2802】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 18.5% | 現在値: ¥5,098 | TP: ¥5,236 | SL: ¥5,029"
-    },
-    {
-      "ticker": "8697.T",
-      "name": "JAPAN EXCHANGE GROUP",
-      "pattern_name": "スパイクロー",
-      "win_rate": 0.6667,
-      "sample_count": 9,
-      "avg_return_pct": 2.3522,
-      "quadrant_score": 40.0,
-      "quadrant_breakdown": {
-        "sector": 15,
-        "volume": 0.0,
-        "technical": 25.0,
-        "fundamental": 0.0
-      },
-      "quadrant_sign": "たくり線",
-      "vol_ratio": 0.43,
-      "sector_label": "良",
-      "roe_pct": 5.0,
-      "entry": 2111.5,
-      "tp": 2161.17,
-      "sl": 2086.67,
-      "formatted_line": "【8697】総合スコア: 40点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥2,112 | TP: ¥2,161 | SL: ¥2,087"
+      "entry": 19100.0,
+      "tp": 19628.88,
+      "sl": 18835.56,
+      "formatted_line": "【6098】総合スコア: 50点 | サイン: 陰線後の陽線 | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥19,100 | TP: ¥19,629 | SL: ¥18,836"
     },
     {
       "ticker": "8604.T",
@@ -119,13 +73,36 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "ピンバー",
-      "vol_ratio": 0.68,
+      "vol_ratio": 1.07,
       "sector_label": "良",
-      "roe_pct": 11.16,
-      "entry": 1492.5,
-      "tp": 1522.61,
-      "sl": 1477.44,
-      "formatted_line": "【8604】総合スコア: 35点 | サイン: ピンバー | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 11.2% | 現在値: ¥1,492 | TP: ¥1,523 | SL: ¥1,477"
+      "roe_pct": 11.51,
+      "entry": 1491.0,
+      "tp": 1521.08,
+      "sl": 1475.96,
+      "formatted_line": "【8604】総合スコア: 35点 | サイン: ピンバー | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 11.5% | 現在値: ¥1,491 | TP: ¥1,521 | SL: ¥1,476"
+    },
+    {
+      "ticker": "2802.T",
+      "name": "AJINOMOTO CO INC",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.7778,
+      "sample_count": 9,
+      "avg_return_pct": 4.1699,
+      "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 0.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "二本たくり線",
+      "vol_ratio": 0.95,
+      "sector_label": "良",
+      "roe_pct": 18.49,
+      "entry": 5067.0,
+      "tp": 5278.29,
+      "sl": 4961.36,
+      "formatted_line": "【2802】総合スコア: 25点 | サイン: 二本たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 18.5% | 現在値: ¥5,067 | TP: ¥5,278 | SL: ¥4,961"
     },
     {
       "ticker": "6146.T",
@@ -142,36 +119,13 @@
         "fundamental": 20.0
       },
       "quadrant_sign": "二本たくり線",
-      "vol_ratio": 0.93,
+      "vol_ratio": 1.03,
       "sector_label": "悪",
       "roe_pct": 27.93,
-      "entry": 49300.0,
-      "tp": 50752.58,
-      "sl": 48573.71,
-      "formatted_line": "【6146】総合スコア: 20点 | サイン: 二本たくり線 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 27.9% | 現在値: ¥49,300 | TP: ¥50,753 | SL: ¥48,574"
-    },
-    {
-      "ticker": "5232.T",
-      "name": "SUMITOMO OSAKA CEMENT CO",
-      "pattern_name": "二本たくり線",
-      "win_rate": 0.7,
-      "sample_count": 10,
-      "avg_return_pct": 2.0904,
-      "quadrant_score": 0.0,
-      "quadrant_breakdown": {
-        "sector": 0.0,
-        "volume": 0.0,
-        "technical": 0.0,
-        "fundamental": 0.0
-      },
-      "quadrant_sign": "二本たくり線",
-      "vol_ratio": 0.8,
-      "sector_label": "悪",
-      "roe_pct": 6.18,
-      "entry": 1763.5,
-      "tp": 1800.36,
-      "sl": 1745.07,
-      "formatted_line": "【5232】総合スコア: 0点 | サイン: 二本たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 6.2% | 現在値: ¥1,764 | TP: ¥1,800 | SL: ¥1,745"
+      "entry": 49340.0,
+      "tp": 50793.75,
+      "sl": 48613.12,
+      "formatted_line": "【6146】総合スコア: 20点 | サイン: 二本たくり線 | 需給(出来高): 1.0倍 | セクター: 悪 | ROE: 27.9% | 現在値: ¥49,340 | TP: ¥50,794 | SL: ¥48,613"
     }
   ],
   "items_sell": [
@@ -179,69 +133,62 @@
       "ticker": "3401.T",
       "name": "TEIJIN LTD",
       "pattern_name": "たくり",
-      "entry": 1609.0,
-      "formatted_line": "【3401.T】たくり | 勝率: 71% (サンプル21回) | 現在値: ¥1,609"
+      "entry": 1607.0,
+      "formatted_line": "【3401.T】たくり | 勝率: 71% (サンプル21回) | 現在値: ¥1,607"
     },
     {
       "ticker": "4188.T",
       "name": "MITSUBISHI CHEMICAL GROUP CORP",
       "pattern_name": "スパイクハイ",
-      "entry": 1164.5,
-      "formatted_line": "【4188.T】スパイクハイ | 勝率: 71% (サンプル14回) | 現在値: ¥1,164"
+      "entry": 1163.0,
+      "formatted_line": "【4188.T】スパイクハイ | 勝率: 71% (サンプル14回) | 現在値: ¥1,163"
     },
     {
       "ticker": "6305.T",
       "name": "HITACHI CONSTRUCTION MACHINERY",
       "pattern_name": "スパイクハイ",
-      "entry": 5168.0,
-      "formatted_line": "【6305.T】スパイクハイ | 勝率: 91% (サンプル11回) | 現在値: ¥5,168"
+      "entry": 5162.0,
+      "formatted_line": "【6305.T】スパイクハイ | 勝率: 91% (サンプル11回) | 現在値: ¥5,162"
     },
     {
       "ticker": "6471.T",
       "name": "NSK",
       "pattern_name": "リバーサルハイ",
-      "entry": 999.4000244140625,
-      "formatted_line": "【6471.T】リバーサルハイ | 勝率: 73% (サンプル15回) | 現在値: ¥999"
+      "entry": 997.5999755859375,
+      "formatted_line": "【6471.T】リバーサルハイ | 勝率: 73% (サンプル15回) | 現在値: ¥998"
     },
     {
       "ticker": "6479.T",
       "name": "MINEBEA MITSUMI INC",
       "pattern_name": "黒三兵",
-      "entry": 3128.0,
-      "formatted_line": "【6479.T】黒三兵 | 勝率: 71% (サンプル17回) | 現在値: ¥3,128"
+      "entry": 3116.0,
+      "formatted_line": "【6479.T】黒三兵 | 勝率: 71% (サンプル17回) | 現在値: ¥3,116"
     },
     {
       "ticker": "6594.T",
       "name": "NIDEC CORPORATION",
       "pattern_name": "リバーサルハイ",
-      "entry": 1813.0,
-      "formatted_line": "【6594.T】リバーサルハイ | 勝率: 86% (サンプル7回) | 現在値: ¥1,813"
+      "entry": 1819.0,
+      "formatted_line": "【6594.T】リバーサルハイ | 勝率: 86% (サンプル7回) | 現在値: ¥1,819"
     },
     {
       "ticker": "7202.T",
       "name": "ISUZU MOTORS",
       "pattern_name": "黒三兵",
-      "entry": 2051.0,
-      "formatted_line": "【7202.T】黒三兵 | 勝率: 70% (サンプル10回) | 現在値: ¥2,051"
-    },
-    {
-      "ticker": "7974.T",
-      "name": "NINTENDO CO LTD",
-      "pattern_name": "たくり",
-      "entry": 8311.0,
-      "formatted_line": "【7974.T】たくり | 勝率: 76% (サンプル25回) | 現在値: ¥8,311"
+      "entry": 2050.0,
+      "formatted_line": "【7202.T】黒三兵 | 勝率: 70% (サンプル10回) | 現在値: ¥2,050"
     },
     {
       "ticker": "7974.T",
       "name": "NINTENDO CO LTD",
       "pattern_name": "スパイクハイ",
-      "entry": 8311.0,
-      "formatted_line": "【7974.T】スパイクハイ | 勝率: 73% (サンプル26回) | 現在値: ¥8,311"
+      "entry": 8285.0,
+      "formatted_line": "【7974.T】スパイクハイ | 勝率: 73% (サンプル26回) | 現在値: ¥8,285"
     }
   ],
   "quadrant_stats": {
-    "before": 7,
-    "after": 7,
+    "before": 5,
+    "after": 5,
     "mode": "rank",
     "dropped_primary": 0,
     "dropped_ma": 0,
