@@ -1,0 +1,338 @@
+{
+  "updated": "2026-11-04T06:18:47.772561+00:00",
+  "backtest_driven": true,
+  "quadrant_screening": true,
+  "unique_tickers": 11,
+  "signal_count": 12,
+  "quadrant_top": [
+    "【7269】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 15.3% | 現在値: ¥2,104 | TP: ¥2,148 | SL: ¥2,083",
+    "【9503】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 9.5% | 現在値: ¥2,680 | TP: ¥2,726 | SL: ¥2,658",
+    "【4911】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: -3.1% | 現在値: ¥3,760 | TP: ¥3,904 | SL: ¥3,688",
+    "【4911】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: -3.1% | 現在値: ¥3,760 | TP: ¥3,897 | SL: ¥3,691",
+    "【7267】総合スコア: 55点 | サイン: 赤三兵、上昇三法、たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: -0.8% | 現在値: ¥1,804 | TP: ¥1,849 | SL: ¥1,781"
+  ],
+  "items": [
+    {
+      "ticker": "7269.T",
+      "name": "SUZUKI MOTOR CORP",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.7778,
+      "sample_count": 9,
+      "avg_return_pct": 2.0766,
+      "quadrant_score": 75.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.52,
+      "sector_label": "良",
+      "roe_pct": 15.32,
+      "entry": 2104.5,
+      "tp": 2148.2,
+      "sl": 2082.65,
+      "formatted_line": "【7269】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 15.3% | 現在値: ¥2,104 | TP: ¥2,148 | SL: ¥2,083"
+    },
+    {
+      "ticker": "9503.T",
+      "name": "KANSAI ELECTRIC POWER CO INC",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.6471,
+      "sample_count": 17,
+      "avg_return_pct": 1.7102,
+      "quadrant_score": 75.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 1.07,
+      "sector_label": "良",
+      "roe_pct": 9.48,
+      "entry": 2680.5,
+      "tp": 2726.34,
+      "sl": 2657.58,
+      "formatted_line": "【9503】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 1.1倍 | セクター: 良 | ROE: 9.5% | 現在値: ¥2,680 | TP: ¥2,726 | SL: ¥2,658"
+    },
+    {
+      "ticker": "4911.T",
+      "name": "SHISEIDO COMPANY LIMITED",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.7692,
+      "sample_count": 13,
+      "avg_return_pct": 3.8269,
+      "quadrant_score": 55.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.56,
+      "sector_label": "良",
+      "roe_pct": -3.08,
+      "entry": 3760.0,
+      "tp": 3903.89,
+      "sl": 3688.05,
+      "formatted_line": "【4911】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: -3.1% | 現在値: ¥3,760 | TP: ¥3,904 | SL: ¥3,688"
+    },
+    {
+      "ticker": "4911.T",
+      "name": "SHISEIDO COMPANY LIMITED",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.7143,
+      "sample_count": 7,
+      "avg_return_pct": 3.6497,
+      "quadrant_score": 55.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.56,
+      "sector_label": "良",
+      "roe_pct": -3.08,
+      "entry": 3760.0,
+      "tp": 3897.23,
+      "sl": 3691.39,
+      "formatted_line": "【4911】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: -3.1% | 現在値: ¥3,760 | TP: ¥3,897 | SL: ¥3,691"
+    },
+    {
+      "ticker": "7267.T",
+      "name": "HONDA MOTOR CO",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6667,
+      "sample_count": 12,
+      "avg_return_pct": 2.5026,
+      "quadrant_score": 55.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "赤三兵、上昇三法、たくり線",
+      "vol_ratio": 0.62,
+      "sector_label": "良",
+      "roe_pct": -0.76,
+      "entry": 1803.5,
+      "tp": 1848.63,
+      "sl": 1780.93,
+      "formatted_line": "【7267】総合スコア: 55点 | サイン: 赤三兵、上昇三法、たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: -0.8% | 現在値: ¥1,804 | TP: ¥1,849 | SL: ¥1,781"
+    },
+    {
+      "ticker": "5714.T",
+      "name": "DOWA HOLDINGS",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.8,
+      "sample_count": 10,
+      "avg_return_pct": 2.3665,
+      "quadrant_score": 55.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 10,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 1.24,
+      "sector_label": "悪",
+      "roe_pct": 18.46,
+      "entry": 7758.0,
+      "tp": 7941.59,
+      "sl": 7666.2,
+      "formatted_line": "【5714】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 1.2倍 | セクター: 悪 | ROE: 18.5% | 現在値: ¥7,758 | TP: ¥7,942 | SL: ¥7,666"
+    },
+    {
+      "ticker": "5401.T",
+      "name": "NIPPON STEEL CORPORATION",
+      "pattern_name": "包み線",
+      "win_rate": 0.6522,
+      "sample_count": 23,
+      "avg_return_pct": 2.2134,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "ハンマー、たくり線",
+      "vol_ratio": 0.87,
+      "sector_label": "悪",
+      "roe_pct": 5.5,
+      "entry": 658.9,
+      "tp": 673.48,
+      "sl": 651.61,
+      "formatted_line": "【5401】総合スコア: 50点 | サイン: ハンマー、たくり線 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 5.5% | 現在値: ¥659 | TP: ¥673 | SL: ¥652"
+    },
+    {
+      "ticker": "7261.T",
+      "name": "MAZDA MOTOR CORP",
+      "pattern_name": "リバーサルロー",
+      "win_rate": 0.6667,
+      "sample_count": 12,
+      "avg_return_pct": 1.5564,
+      "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.97,
+      "sector_label": "良",
+      "roe_pct": 5.88,
+      "entry": 1087.0,
+      "tp": 1103.92,
+      "sl": 1078.54,
+      "formatted_line": "【7261】総合スコア: 40点 | サイン: 上昇三法、たくり線 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 5.9% | 現在値: ¥1,087 | TP: ¥1,104 | SL: ¥1,079"
+    },
+    {
+      "ticker": "7202.T",
+      "name": "ISUZU MOTORS",
+      "pattern_name": "リバーサルロー",
+      "win_rate": 0.75,
+      "sample_count": 4,
+      "avg_return_pct": 2.8832,
+      "quadrant_score": 35.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 0.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "リバーサルロー",
+      "vol_ratio": 0.63,
+      "sector_label": "良",
+      "roe_pct": 11.6,
+      "entry": 2047.5,
+      "tp": 2106.53,
+      "sl": 2017.98,
+      "formatted_line": "【7202】総合スコア: 35点 | サイン: リバーサルロー | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 11.6% | 現在値: ¥2,048 | TP: ¥2,107 | SL: ¥2,018"
+    },
+    {
+      "ticker": "4543.T",
+      "name": "TERUMO CORP",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.8333,
+      "sample_count": 6,
+      "avg_return_pct": 2.7294,
+      "quadrant_score": 35.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "二本たくり線",
+      "vol_ratio": 0.75,
+      "sector_label": "悪",
+      "roe_pct": 10.85,
+      "entry": 2383.5,
+      "tp": 2448.56,
+      "sl": 2350.97,
+      "formatted_line": "【4543】総合スコア: 35点 | サイン: 二本たくり線 | 需給(出来高): 0.8倍 | セクター: 悪 | ROE: 10.8% | 現在値: ¥2,384 | TP: ¥2,449 | SL: ¥2,351"
+    },
+    {
+      "ticker": "3405.T",
+      "name": "KURARAY CO",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.8125,
+      "sample_count": 16,
+      "avg_return_pct": 1.6254,
+      "quadrant_score": 30.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "ピンバー",
+      "vol_ratio": 0.71,
+      "sector_label": "良",
+      "roe_pct": 0.82,
+      "entry": 1874.0,
+      "tp": 1904.46,
+      "sl": 1858.77,
+      "formatted_line": "【3405】総合スコア: 30点 | サイン: ピンバー | 需給(出来高): 0.7倍 | セクター: 良 | ROE: 0.8% | 現在値: ¥1,874 | TP: ¥1,904 | SL: ¥1,859"
+    },
+    {
+      "ticker": "4188.T",
+      "name": "MITSUBISHI CHEMICAL GROUP CORP",
+      "pattern_name": "リバーサルロー",
+      "win_rate": 0.6667,
+      "sample_count": 6,
+      "avg_return_pct": 2.8101,
+      "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 10,
+        "technical": 0.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "リバーサルロー",
+      "vol_ratio": 1.21,
+      "sector_label": "良",
+      "roe_pct": 1.42,
+      "entry": 1163.0,
+      "tp": 1195.68,
+      "sl": 1146.66,
+      "formatted_line": "【4188】総合スコア: 25点 | サイン: リバーサルロー | 需給(出来高): 1.2倍 | セクター: 良 | ROE: 1.4% | 現在値: ¥1,163 | TP: ¥1,196 | SL: ¥1,147"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "3086.T",
+      "name": "J FRONT RETAILING CO LTD",
+      "pattern_name": "リバーサルハイ",
+      "entry": 2856.0,
+      "formatted_line": "【3086.T】リバーサルハイ | 勝率: 75% (サンプル8回) | 現在値: ¥2,856"
+    },
+    {
+      "ticker": "5802.T",
+      "name": "SUMITOMO ELECTRIC INDUSTRIES",
+      "pattern_name": "黒三兵",
+      "entry": 1535.5,
+      "formatted_line": "【5802.T】黒三兵 | 勝率: 71% (サンプル7回) | 現在値: ¥1,536"
+    },
+    {
+      "ticker": "6301.T",
+      "name": "KOMATSU",
+      "pattern_name": "アウトサイドバー",
+      "entry": 6252.0,
+      "formatted_line": "【6301.T】アウトサイドバー | 勝率: 71% (サンプル24回) | 現在値: ¥6,252"
+    },
+    {
+      "ticker": "6971.T",
+      "name": "KYOCERA CORP",
+      "pattern_name": "黒三兵",
+      "entry": 3000.0,
+      "formatted_line": "【6971.T】黒三兵 | 勝率: 71% (サンプル7回) | 現在値: ¥3,000"
+    },
+    {
+      "ticker": "7832.T",
+      "name": "BANDAI NAMCO HOLDINGS INC",
+      "pattern_name": "陰のつつみ",
+      "entry": 6265.0,
+      "formatted_line": "【7832.T】陰のつつみ | 勝率: 77% (サンプル31回) | 現在値: ¥6,265"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 12,
+    "after": 12,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
+}
