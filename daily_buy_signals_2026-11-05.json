@@ -1,0 +1,202 @@
+{
+  "updated": "2026-11-05T06:18:36.172878+00:00",
+  "backtest_driven": true,
+  "quadrant_screening": true,
+  "unique_tickers": 7,
+  "signal_count": 7,
+  "quadrant_top": [
+    "【6098】総合スコア: 60点 | サイン: 陰線後の陽線 | 需給(出来高): 1.2倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥18,125 | TP: ¥18,627 | SL: ¥17,874",
+    "【3407】総合スコア: 60点 | サイン: 二本たくり線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 9.8% | 現在値: ¥1,593 | TP: ¥1,624 | SL: ¥1,578",
+    "【1721】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 10.2% | 現在値: ¥5,452 | TP: ¥5,554 | SL: ¥5,401",
+    "【6326】総合スコア: 45点 | サイン: 上昇三法 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 10.0% | 現在値: ¥2,697 | TP: ¥2,774 | SL: ¥2,659",
+    "【8697】総合スコア: 40点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥2,184 | TP: ¥2,236 | SL: ¥2,159"
+  ],
+  "items": [
+    {
+      "ticker": "6098.T",
+      "name": "RECRUIT HOLDINGS CO LTD",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.6744,
+      "sample_count": 43,
+      "avg_return_pct": 2.769,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 10,
+        "technical": 15.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "陰線後の陽線",
+      "vol_ratio": 1.23,
+      "sector_label": "良",
+      "roe_pct": 36.22,
+      "entry": 18125.0,
+      "tp": 18626.88,
+      "sl": 17874.06,
+      "formatted_line": "【6098】総合スコア: 60点 | サイン: 陰線後の陽線 | 需給(出来高): 1.2倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥18,125 | TP: ¥18,627 | SL: ¥17,874"
+    },
+    {
+      "ticker": "3407.T",
+      "name": "ASAHI KASEI CORP",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.8,
+      "sample_count": 5,
+      "avg_return_pct": 1.9233,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 25,
+        "technical": 0.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "二本たくり線",
+      "vol_ratio": 1.52,
+      "sector_label": "良",
+      "roe_pct": 9.75,
+      "entry": 1593.0,
+      "tp": 1623.64,
+      "sl": 1577.68,
+      "formatted_line": "【3407】総合スコア: 60点 | サイン: 二本たくり線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 9.8% | 現在値: ¥1,593 | TP: ¥1,624 | SL: ¥1,578"
+    },
+    {
+      "ticker": "1721.T",
+      "name": "COMSYS HOLDINGS CORP",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.875,
+      "sample_count": 8,
+      "avg_return_pct": 1.8627,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.63,
+      "sector_label": "悪",
+      "roe_pct": 10.16,
+      "entry": 5452.0,
+      "tp": 5553.55,
+      "sl": 5401.22,
+      "formatted_line": "【1721】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 10.2% | 現在値: ¥5,452 | TP: ¥5,554 | SL: ¥5,401"
+    },
+    {
+      "ticker": "6326.T",
+      "name": "KUBOTA CORP",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.8,
+      "sample_count": 5,
+      "avg_return_pct": 2.8471,
+      "quadrant_score": 45.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "上昇三法",
+      "vol_ratio": 0.86,
+      "sector_label": "悪",
+      "roe_pct": 10.01,
+      "entry": 2697.0,
+      "tp": 2773.79,
+      "sl": 2658.61,
+      "formatted_line": "【6326】総合スコア: 45点 | サイン: 上昇三法 | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 10.0% | 現在値: ¥2,697 | TP: ¥2,774 | SL: ¥2,659"
+    },
+    {
+      "ticker": "8697.T",
+      "name": "JAPAN EXCHANGE GROUP",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.6667,
+      "sample_count": 9,
+      "avg_return_pct": 2.3522,
+      "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.52,
+      "sector_label": "良",
+      "roe_pct": 5.0,
+      "entry": 2184.5,
+      "tp": 2235.88,
+      "sl": 2158.81,
+      "formatted_line": "【8697】総合スコア: 40点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 5.0% | 現在値: ¥2,184 | TP: ¥2,236 | SL: ¥2,159"
+    },
+    {
+      "ticker": "8304.T",
+      "name": "AOZORA BANK",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.8889,
+      "sample_count": 9,
+      "avg_return_pct": 1.5538,
+      "quadrant_score": 35.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "上昇三法",
+      "vol_ratio": 0.96,
+      "sector_label": "悪",
+      "roe_pct": 6.56,
+      "entry": 3081.0,
+      "tp": 3128.87,
+      "sl": 3057.06,
+      "formatted_line": "【8304】総合スコア: 35点 | サイン: 上昇三法 | 需給(出来高): 1.0倍 | セクター: 悪 | ROE: 6.6% | 現在値: ¥3,081 | TP: ¥3,129 | SL: ¥3,057"
+    },
+    {
+      "ticker": "2802.T",
+      "name": "AJINOMOTO CO INC",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.6957,
+      "sample_count": 23,
+      "avg_return_pct": 1.8999,
+      "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 0.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "インサイドバー",
+      "vol_ratio": 0.83,
+      "sector_label": "良",
+      "roe_pct": 18.49,
+      "entry": 4868.0,
+      "tp": 4960.49,
+      "sl": 4821.76,
+      "formatted_line": "【2802】総合スコア: 25点 | サイン: インサイドバー | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 18.5% | 現在値: ¥4,868 | TP: ¥4,960 | SL: ¥4,822"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "5802.T",
+      "name": "SUMITOMO ELECTRIC INDUSTRIES",
+      "pattern_name": "黒三兵",
+      "entry": 1410.0,
+      "formatted_line": "【5802.T】黒三兵 | 勝率: 71% (サンプル7回) | 現在値: ¥1,410"
+    },
+    {
+      "ticker": "6971.T",
+      "name": "KYOCERA CORP",
+      "pattern_name": "黒三兵",
+      "entry": 2936.5,
+      "formatted_line": "【6971.T】黒三兵 | 勝率: 71% (サンプル7回) | 現在値: ¥2,936"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 7,
+    "after": 7,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
+}
