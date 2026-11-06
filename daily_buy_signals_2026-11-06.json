@@ -1,13 +1,132 @@
 {
-  "updated": "2026-11-06T06:18:20.486440+00:00",
+  "updated": "2026-11-06T14:13:02.368243+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
-  "unique_tickers": 1,
-  "signal_count": 1,
+  "unique_tickers": 5,
+  "signal_count": 6,
   "quadrant_top": [
-    "【8304】総合スコア: 35点 | サイン: 二本たくり線 | 需給(出来高): 1.3倍 | セクター: 悪 | ROE: 6.6% | 現在値: ¥2,940 | TP: ¥2,986 | SL: ¥2,918"
+    "【5301】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 1.9倍 | セクター: 良 | ROE: 7.2% | 現在値: ¥1,553 | TP: ¥1,639 | SL: ¥1,510",
+    "【4061】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 2.6% | 現在値: ¥2,741 | TP: ¥2,819 | SL: ¥2,702",
+    "【7186】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 1.5倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥1,576 | TP: ¥1,615 | SL: ¥1,557",
+    "【4183】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 8.0% | 現在値: ¥1,726 | TP: ¥1,766 | SL: ¥1,707",
+    "【7186】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 1.5倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥1,576 | TP: ¥1,604 | SL: ¥1,563"
   ],
   "items": [
+    {
+      "ticker": "5301.T",
+      "name": "TOKAI CARBON CO",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.7692,
+      "sample_count": 13,
+      "avg_return_pct": 5.5077,
+      "quadrant_score": 75.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 25,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 1.87,
+      "sector_label": "良",
+      "roe_pct": 7.15,
+      "entry": 1553.0,
+      "tp": 1638.53,
+      "sl": 1510.23,
+      "formatted_line": "【5301】総合スコア: 75点 | サイン: たくり線 | 需給(出来高): 1.9倍 | セクター: 良 | ROE: 7.2% | 現在値: ¥1,553 | TP: ¥1,639 | SL: ¥1,510"
+    },
+    {
+      "ticker": "4061.T",
+      "name": "DENKA COMPANY LIMITED",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6667,
+      "sample_count": 12,
+      "avg_return_pct": 2.8444,
+      "quadrant_score": 65.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 25,
+        "technical": 25.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 1.51,
+      "sector_label": "良",
+      "roe_pct": 2.62,
+      "entry": 2741.0,
+      "tp": 2818.97,
+      "sl": 2702.02,
+      "formatted_line": "【4061】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 1.5倍 | セクター: 良 | ROE: 2.6% | 現在値: ¥2,741 | TP: ¥2,819 | SL: ¥2,702"
+    },
+    {
+      "ticker": "7186.T",
+      "name": "YOKOHAMA FINANCIAL GROUP INC",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.6667,
+      "sample_count": 3,
+      "avg_return_pct": 2.4366,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 25,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 1.48,
+      "sector_label": "悪",
+      "roe_pct": 5.0,
+      "entry": 1576.5,
+      "tp": 1614.91,
+      "sl": 1557.29,
+      "formatted_line": "【7186】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 1.5倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥1,576 | TP: ¥1,615 | SL: ¥1,557"
+    },
+    {
+      "ticker": "4183.T",
+      "name": "MITSUI CHEMICALS INC",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.6364,
+      "sample_count": 11,
+      "avg_return_pct": 2.2927,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.93,
+      "sector_label": "良",
+      "roe_pct": 8.04,
+      "entry": 1726.5,
+      "tp": 1766.08,
+      "sl": 1706.71,
+      "formatted_line": "【4183】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 8.0% | 現在値: ¥1,726 | TP: ¥1,766 | SL: ¥1,707"
+    },
+    {
+      "ticker": "7186.T",
+      "name": "YOKOHAMA FINANCIAL GROUP INC",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6667,
+      "sample_count": 12,
+      "avg_return_pct": 1.7498,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 25,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 1.48,
+      "sector_label": "悪",
+      "roe_pct": 5.0,
+      "entry": 1576.5,
+      "tp": 1604.09,
+      "sl": 1562.71,
+      "formatted_line": "【7186】総合スコア: 60点 | サイン: たくり線 | 需給(出来高): 1.5倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥1,576 | TP: ¥1,604 | SL: ¥1,563"
+    },
     {
       "ticker": "8304.T",
       "name": "AOZORA BANK",
@@ -23,13 +142,13 @@
         "fundamental": 10.0
       },
       "quadrant_sign": "二本たくり線",
-      "vol_ratio": 1.3,
+      "vol_ratio": 1.58,
       "sector_label": "悪",
       "roe_pct": 6.56,
-      "entry": 2940.5,
-      "tp": 2986.19,
-      "sl": 2917.66,
-      "formatted_line": "【8304】総合スコア: 35点 | サイン: 二本たくり線 | 需給(出来高): 1.3倍 | セクター: 悪 | ROE: 6.6% | 現在値: ¥2,940 | TP: ¥2,986 | SL: ¥2,918"
+      "entry": 2948.5,
+      "tp": 2994.31,
+      "sl": 2925.59,
+      "formatted_line": "【8304】総合スコア: 35点 | サイン: 二本たくり線 | 需給(出来高): 1.6倍 | セクター: 悪 | ROE: 6.6% | 現在値: ¥2,948 | TP: ¥2,994 | SL: ¥2,926"
     }
   ],
   "items_sell": [
@@ -41,23 +160,30 @@
       "formatted_line": "【2871.T】リバーサルハイ | 勝率: 75% (サンプル8回) | 現在値: ¥2,122"
     },
     {
+      "ticker": "6954.T",
+      "name": "FANUC CORPORATION",
+      "pattern_name": "たくり",
+      "entry": 5338.0,
+      "formatted_line": "【6954.T】たくり | 勝率: 70% (サンプル20回) | 現在値: ¥5,338"
+    },
+    {
       "ticker": "7974.T",
       "name": "NINTENDO CO LTD",
       "pattern_name": "たくり",
-      "entry": 8147.0,
-      "formatted_line": "【7974.T】たくり | 勝率: 76% (サンプル25回) | 現在値: ¥8,147"
+      "entry": 8136.0,
+      "formatted_line": "【7974.T】たくり | 勝率: 76% (サンプル25回) | 現在値: ¥8,136"
     },
     {
       "ticker": "9843.T",
       "name": "NITORI HOLDINGS CO LTD",
       "pattern_name": "陰のつつみ",
-      "entry": 3235.0,
-      "formatted_line": "【9843.T】陰のつつみ | 勝率: 72% (サンプル29回) | 現在値: ¥3,235"
+      "entry": 3247.0,
+      "formatted_line": "【9843.T】陰のつつみ | 勝率: 70% (サンプル30回) | 現在値: ¥3,247"
     }
   ],
   "quadrant_stats": {
-    "before": 1,
-    "after": 1,
+    "before": 6,
+    "after": 6,
     "mode": "rank",
     "dropped_primary": 0,
     "dropped_ma": 0,
