@@ -1,0 +1,232 @@
+{
+  "updated": "2026-11-09T06:18:16.686887+00:00",
+  "backtest_driven": true,
+  "quadrant_screening": true,
+  "unique_tickers": 7,
+  "signal_count": 8,
+  "quadrant_top": [
+    "【6098】総合スコア: 50点 | サイン: 陰線後の陽線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥17,600 | TP: ¥18,064 | SL: ¥17,368",
+    "【6098】総合スコア: 50点 | サイン: インサイドバー | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥17,600 | TP: ¥17,881 | SL: ¥17,459",
+    "【6674】総合スコア: 45点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 12.7% | 現在値: ¥4,378 | TP: ¥4,585 | SL: ¥4,274",
+    "【3086】総合スコア: 30点 | サイン: インサイドバー | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 6.4% | 現在値: ¥2,942 | TP: ¥3,010 | SL: ¥2,907",
+    "【2501】総合スコア: 30点 | サイン: インサイドバー | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 2.4% | 現在値: ¥2,236 | TP: ¥2,273 | SL: ¥2,217"
+  ],
+  "items": [
+    {
+      "ticker": "6098.T",
+      "name": "RECRUIT HOLDINGS CO LTD",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.6744,
+      "sample_count": 43,
+      "avg_return_pct": 2.636,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "陰線後の陽線",
+      "vol_ratio": 0.47,
+      "sector_label": "良",
+      "roe_pct": 36.22,
+      "entry": 17600.0,
+      "tp": 18063.94,
+      "sl": 17368.03,
+      "formatted_line": "【6098】総合スコア: 50点 | サイン: 陰線後の陽線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥17,600 | TP: ¥18,064 | SL: ¥17,368"
+    },
+    {
+      "ticker": "6098.T",
+      "name": "RECRUIT HOLDINGS CO LTD",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.6923,
+      "sample_count": 26,
+      "avg_return_pct": 1.5984,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "インサイドバー",
+      "vol_ratio": 0.47,
+      "sector_label": "良",
+      "roe_pct": 36.22,
+      "entry": 17600.0,
+      "tp": 17881.32,
+      "sl": 17459.34,
+      "formatted_line": "【6098】総合スコア: 50点 | サイン: インサイドバー | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥17,600 | TP: ¥17,881 | SL: ¥17,459"
+    },
+    {
+      "ticker": "6674.T",
+      "name": "GS YUASA CORP",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.8333,
+      "sample_count": 12,
+      "avg_return_pct": 4.7339,
+      "quadrant_score": 45.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.58,
+      "sector_label": "悪",
+      "roe_pct": 12.74,
+      "entry": 4378.0,
+      "tp": 4585.25,
+      "sl": 4274.37,
+      "formatted_line": "【6674】総合スコア: 45点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 12.7% | 現在値: ¥4,378 | TP: ¥4,585 | SL: ¥4,274"
+    },
+    {
+      "ticker": "3086.T",
+      "name": "J FRONT RETAILING CO LTD",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.7,
+      "sample_count": 30,
+      "avg_return_pct": 2.3361,
+      "quadrant_score": 30.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "インサイドバー",
+      "vol_ratio": 0.43,
+      "sector_label": "良",
+      "roe_pct": 6.4,
+      "entry": 2941.5,
+      "tp": 3010.22,
+      "sl": 2907.14,
+      "formatted_line": "【3086】総合スコア: 30点 | サイン: インサイドバー | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 6.4% | 現在値: ¥2,942 | TP: ¥3,010 | SL: ¥2,907"
+    },
+    {
+      "ticker": "2501.T",
+      "name": "SAPPORO BREWERIES LTD",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.7222,
+      "sample_count": 36,
+      "avg_return_pct": 1.6759,
+      "quadrant_score": 30.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "インサイドバー",
+      "vol_ratio": 0.41,
+      "sector_label": "良",
+      "roe_pct": 2.38,
+      "entry": 2235.5,
+      "tp": 2272.96,
+      "sl": 2216.77,
+      "formatted_line": "【2501】総合スコア: 30点 | サイン: インサイドバー | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 2.4% | 現在値: ¥2,236 | TP: ¥2,273 | SL: ¥2,217"
+    },
+    {
+      "ticker": "8830.T",
+      "name": "SUMITOMO REALTY & DEVELOPMENT C",
+      "pattern_name": "リバーサルロー",
+      "win_rate": 0.7,
+      "sample_count": 10,
+      "avg_return_pct": 2.0228,
+      "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 0.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "リバーサルロー",
+      "vol_ratio": 0.57,
+      "sector_label": "良",
+      "roe_pct": 9.36,
+      "entry": 3302.0,
+      "tp": 3368.79,
+      "sl": 3268.6,
+      "formatted_line": "【8830】総合スコア: 25点 | サイン: リバーサルロー | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 9.4% | 現在値: ¥3,302 | TP: ¥3,369 | SL: ¥3,269"
+    },
+    {
+      "ticker": "5901.T",
+      "name": "TOYO SEIKAN GROUP HOLDINGS LIMI",
+      "pattern_name": "リバーサルロー",
+      "win_rate": 0.6667,
+      "sample_count": 9,
+      "avg_return_pct": 1.7264,
+      "quadrant_score": 15.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "リバーサルロー",
+      "vol_ratio": 0.93,
+      "sector_label": "悪",
+      "roe_pct": 6.85,
+      "entry": 4445.0,
+      "tp": 4521.74,
+      "sl": 4406.63,
+      "formatted_line": "【5901】総合スコア: 15点 | サイン: リバーサルロー | 需給(出来高): 0.9倍 | セクター: 悪 | ROE: 6.8% | 現在値: ¥4,445 | TP: ¥4,522 | SL: ¥4,407"
+    },
+    {
+      "ticker": "5301.T",
+      "name": "TOKAI CARBON CO",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.625,
+      "sample_count": 8,
+      "avg_return_pct": 4.9514,
+      "quadrant_score": 10.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 0.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "二本たくり線",
+      "vol_ratio": 0.74,
+      "sector_label": "悪",
+      "roe_pct": 7.22,
+      "entry": 1569.0,
+      "tp": 1646.69,
+      "sl": 1530.16,
+      "formatted_line": "【5301】総合スコア: 10点 | サイン: 二本たくり線 | 需給(出来高): 0.7倍 | セクター: 悪 | ROE: 7.2% | 現在値: ¥1,569 | TP: ¥1,647 | SL: ¥1,530"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "4188.T",
+      "name": "MITSUBISHI CHEMICAL GROUP CORP",
+      "pattern_name": "スパイクハイ",
+      "entry": 1012.0,
+      "formatted_line": "【4188.T】スパイクハイ | 勝率: 73% (サンプル15回) | 現在値: ¥1,012"
+    },
+    {
+      "ticker": "6526.T",
+      "name": "SOCIONEXT INC",
+      "pattern_name": "スパイクハイ",
+      "entry": 1583.5,
+      "formatted_line": "【6526.T】スパイクハイ | 勝率: 73% (サンプル22回) | 現在値: ¥1,584"
+    },
+    {
+      "ticker": "9531.T",
+      "name": "TOKYO GAS CO",
+      "pattern_name": "たくり",
+      "entry": 6373.0,
+      "formatted_line": "【9531.T】たくり | 勝率: 72% (サンプル18回) | 現在値: ¥6,373"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 8,
+    "after": 8,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
+}
