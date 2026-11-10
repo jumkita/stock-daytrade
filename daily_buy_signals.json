@@ -1,10 +1,370 @@
 {
-  "updated": "2026-11-09T16:09:46.247270+00:00",
+  "updated": "2026-11-10T06:18:33.613877+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
-  "unique_tickers": 0,
-  "signal_count": 0,
-  "quadrant_top": [],
-  "items": [],
-  "items_sell": []
+  "unique_tickers": 12,
+  "signal_count": 14,
+  "quadrant_top": [
+    "【4661】総合スコア: 65点 | サイン: ハンマー、たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 12.4% | 現在値: ¥3,722 | TP: ¥3,815 | SL: ¥3,675",
+    "【9021】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 9.0% | 現在値: ¥3,288 | TP: ¥3,350 | SL: ¥3,257",
+    "【9009】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 9.0% | 現在値: ¥1,482 | TP: ¥1,505 | SL: ¥1,471",
+    "【2531】総合スコア: 55点 | サイン: ハンマー、たくり線 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 2.7% | 現在値: ¥2,861 | TP: ¥2,949 | SL: ¥2,817",
+    "【3405】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 0.8% | 現在値: ¥1,925 | TP: ¥1,962 | SL: ¥1,906"
+  ],
+  "items": [
+    {
+      "ticker": "4661.T",
+      "name": "ORIENTAL LAND CO",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.75,
+      "sample_count": 4,
+      "avg_return_pct": 2.5008,
+      "quadrant_score": 65.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "ハンマー、たくり線",
+      "vol_ratio": 0.62,
+      "sector_label": "良",
+      "roe_pct": 12.44,
+      "entry": 3722.0,
+      "tp": 3815.08,
+      "sl": 3675.46,
+      "formatted_line": "【4661】総合スコア: 65点 | サイン: ハンマー、たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 12.4% | 現在値: ¥3,722 | TP: ¥3,815 | SL: ¥3,675"
+    },
+    {
+      "ticker": "9021.T",
+      "name": "WEST JAPAN RAILWAY CO",
+      "pattern_name": "スパイクロー",
+      "win_rate": 1.0,
+      "sample_count": 6,
+      "avg_return_pct": 1.8805,
+      "quadrant_score": 65.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.39,
+      "sector_label": "良",
+      "roe_pct": 8.96,
+      "entry": 3288.0,
+      "tp": 3349.83,
+      "sl": 3257.08,
+      "formatted_line": "【9021】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 9.0% | 現在値: ¥3,288 | TP: ¥3,350 | SL: ¥3,257"
+    },
+    {
+      "ticker": "9009.T",
+      "name": "KEISEI ELECTRIC RAILWAY CO",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.7,
+      "sample_count": 10,
+      "avg_return_pct": 1.5407,
+      "quadrant_score": 65.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.49,
+      "sector_label": "良",
+      "roe_pct": 8.99,
+      "entry": 1482.0,
+      "tp": 1504.83,
+      "sl": 1470.58,
+      "formatted_line": "【9009】総合スコア: 65点 | サイン: たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 9.0% | 現在値: ¥1,482 | TP: ¥1,505 | SL: ¥1,471"
+    },
+    {
+      "ticker": "2531.T",
+      "name": "TAKARA HOLDINGS INC",
+      "pattern_name": "リバーサルロー",
+      "win_rate": 0.7,
+      "sample_count": 10,
+      "avg_return_pct": 3.0605,
+      "quadrant_score": 55.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "ハンマー、たくり線",
+      "vol_ratio": 0.76,
+      "sector_label": "良",
+      "roe_pct": 2.68,
+      "entry": 2861.0,
+      "tp": 2948.56,
+      "sl": 2817.22,
+      "formatted_line": "【2531】総合スコア: 55点 | サイン: ハンマー、たくり線 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 2.7% | 現在値: ¥2,861 | TP: ¥2,949 | SL: ¥2,817"
+    },
+    {
+      "ticker": "3405.T",
+      "name": "KURARAY CO",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.8235,
+      "sample_count": 17,
+      "avg_return_pct": 1.9425,
+      "quadrant_score": 55.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.43,
+      "sector_label": "良",
+      "roe_pct": 0.82,
+      "entry": 1925.0,
+      "tp": 1962.39,
+      "sl": 1906.3,
+      "formatted_line": "【3405】総合スコア: 55点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 0.8% | 現在値: ¥1,925 | TP: ¥1,962 | SL: ¥1,906"
+    },
+    {
+      "ticker": "2531.T",
+      "name": "TAKARA HOLDINGS INC",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.6226,
+      "sample_count": 53,
+      "avg_return_pct": 1.7055,
+      "quadrant_score": 55.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "ハンマー、たくり線",
+      "vol_ratio": 0.76,
+      "sector_label": "良",
+      "roe_pct": 2.68,
+      "entry": 2861.0,
+      "tp": 2909.79,
+      "sl": 2836.6,
+      "formatted_line": "【2531】総合スコア: 55点 | サイン: ハンマー、たくり線 | 需給(出来高): 0.8倍 | セクター: 良 | ROE: 2.7% | 現在値: ¥2,861 | TP: ¥2,910 | SL: ¥2,837"
+    },
+    {
+      "ticker": "4004.T",
+      "name": "RESONAC HOLDINGS CORPORATION",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6364,
+      "sample_count": 11,
+      "avg_return_pct": 3.363,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.6,
+      "sector_label": "良",
+      "roe_pct": 8.14,
+      "entry": 12035.0,
+      "tp": 12439.74,
+      "sl": 11832.63,
+      "formatted_line": "【4004】総合スコア: 50点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 8.1% | 現在値: ¥12,035 | TP: ¥12,440 | SL: ¥11,833"
+    },
+    {
+      "ticker": "2282.T",
+      "name": "NH FOODS LTD",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.8,
+      "sample_count": 5,
+      "avg_return_pct": 2.0405,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.43,
+      "sector_label": "良",
+      "roe_pct": 5.84,
+      "entry": 1963.5,
+      "tp": 2003.57,
+      "sl": 1943.47,
+      "formatted_line": "【2282】総合スコア: 50点 | サイン: たくり線 | 需給(出来高): 0.4倍 | セクター: 良 | ROE: 5.8% | 現在値: ¥1,964 | TP: ¥2,004 | SL: ¥1,943"
+    },
+    {
+      "ticker": "6723.T",
+      "name": "RENESAS ELECTRONICS CORP",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6923,
+      "sample_count": 13,
+      "avg_return_pct": 6.3826,
+      "quadrant_score": 45.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.5,
+      "sector_label": "悪",
+      "roe_pct": 23.6,
+      "entry": 2749.0,
+      "tp": 2924.46,
+      "sl": 2661.27,
+      "formatted_line": "【6723】総合スコア: 45点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 23.6% | 現在値: ¥2,749 | TP: ¥2,924 | SL: ¥2,661"
+    },
+    {
+      "ticker": "6723.T",
+      "name": "RENESAS ELECTRONICS CORP",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.6667,
+      "sample_count": 12,
+      "avg_return_pct": 5.2077,
+      "quadrant_score": 45.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.5,
+      "sector_label": "悪",
+      "roe_pct": 23.6,
+      "entry": 2749.0,
+      "tp": 2892.16,
+      "sl": 2677.42,
+      "formatted_line": "【6723】総合スコア: 45点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 23.6% | 現在値: ¥2,749 | TP: ¥2,892 | SL: ¥2,677"
+    },
+    {
+      "ticker": "7735.T",
+      "name": "SCREEN HOLDINGS CO LTD",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.6667,
+      "sample_count": 9,
+      "avg_return_pct": 2.6331,
+      "quadrant_score": 45.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.49,
+      "sector_label": "悪",
+      "roe_pct": 20.55,
+      "entry": 8514.0,
+      "tp": 8738.18,
+      "sl": 8401.91,
+      "formatted_line": "【7735】総合スコア: 45点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 20.6% | 現在値: ¥8,514 | TP: ¥8,738 | SL: ¥8,402"
+    },
+    {
+      "ticker": "6981.T",
+      "name": "MURATA MANUFACTURING CO",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.7143,
+      "sample_count": 7,
+      "avg_return_pct": 1.7377,
+      "quadrant_score": 45.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.53,
+      "sector_label": "悪",
+      "roe_pct": 10.74,
+      "entry": 5283.0,
+      "tp": 5374.8,
+      "sl": 5237.1,
+      "formatted_line": "【6981】総合スコア: 45点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 10.7% | 現在値: ¥5,283 | TP: ¥5,375 | SL: ¥5,237"
+    },
+    {
+      "ticker": "6752.T",
+      "name": "PANASONIC HOLDINGS CORP",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.7143,
+      "sample_count": 7,
+      "avg_return_pct": 2.08,
+      "quadrant_score": 35.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.48,
+      "sector_label": "悪",
+      "roe_pct": 6.51,
+      "entry": 3192.0,
+      "tp": 3258.39,
+      "sl": 3158.8,
+      "formatted_line": "【6752】総合スコア: 35点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.5倍 | セクター: 悪 | ROE: 6.5% | 現在値: ¥3,192 | TP: ¥3,258 | SL: ¥3,159"
+    },
+    {
+      "ticker": "6971.T",
+      "name": "KYOCERA CORP",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.7,
+      "sample_count": 10,
+      "avg_return_pct": 2.0753,
+      "quadrant_score": 25.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.34,
+      "sector_label": "悪",
+      "roe_pct": 4.99,
+      "entry": 2935.5,
+      "tp": 2996.42,
+      "sl": 2905.04,
+      "formatted_line": "【6971】総合スコア: 25点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.3倍 | セクター: 悪 | ROE: 5.0% | 現在値: ¥2,936 | TP: ¥2,996 | SL: ¥2,905"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "4506.T",
+      "name": "SUMITOMO PHARMA CO LTD",
+      "pattern_name": "たくり",
+      "entry": 1933.5,
+      "formatted_line": "【4506.T】たくり | 勝率: 71% (サンプル24回) | 現在値: ¥1,934"
+    },
+    {
+      "ticker": "8252.T",
+      "name": "MARUI GROUP CO LTD",
+      "pattern_name": "アウトサイドバー",
+      "entry": 2846.0,
+      "formatted_line": "【8252.T】アウトサイドバー | 勝率: 81% (サンプル16回) | 現在値: ¥2,846"
+    },
+    {
+      "ticker": "9005.T",
+      "name": "TOKYU CORP",
+      "pattern_name": "たくり",
+      "entry": 1641.5,
+      "formatted_line": "【9005.T】たくり | 勝率: 88% (サンプル17回) | 現在値: ¥1,642"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 14,
+    "after": 14,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
 }
