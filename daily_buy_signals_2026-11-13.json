@@ -1,10 +1,276 @@
 {
-  "updated": "2026-11-12T15:07:21.917440+00:00",
+  "updated": "2026-11-13T06:18:09.346291+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
-  "unique_tickers": 0,
-  "signal_count": 0,
-  "quadrant_top": [],
-  "items": [],
-  "items_sell": []
+  "unique_tickers": 9,
+  "signal_count": 9,
+  "quadrant_top": [
+    "【9101】総合スコア: 65点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 10.4% | 現在値: ¥6,900 | TP: ¥7,082 | SL: ¥6,809",
+    "【2801】総合スコア: 60点 | サイン: 赤三兵、上昇三法、たくり線 | 需給(出来高): 0.4倍 | セクター: 悪 | ROE: 12.3% | 現在値: ¥1,751 | TP: ¥1,778 | SL: ¥1,738",
+    "【6098】総合スコア: 50点 | サイン: 陰線後の陽線 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥17,620 | TP: ¥18,105 | SL: ¥17,377",
+    "【7974】総合スコア: 50点 | サイン: 包み線 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 15.4% | 現在値: ¥8,791 | TP: ¥9,008 | SL: ¥8,682",
+    "【8604】総合スコア: 50点 | サイン: ピンバー | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 11.5% | 現在値: ¥1,548 | TP: ¥1,583 | SL: ¥1,531"
+  ],
+  "items": [
+    {
+      "ticker": "9101.T",
+      "name": "NIPPON YUSEN KABUSHIKI KAISHA",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.8,
+      "sample_count": 5,
+      "avg_return_pct": 2.6363,
+      "quadrant_score": 65.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "上昇三法、たくり線",
+      "vol_ratio": 0.45,
+      "sector_label": "良",
+      "roe_pct": 10.41,
+      "entry": 6900.0,
+      "tp": 7081.9,
+      "sl": 6809.05,
+      "formatted_line": "【9101】総合スコア: 65点 | サイン: 上昇三法、たくり線 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 10.4% | 現在値: ¥6,900 | TP: ¥7,082 | SL: ¥6,809"
+    },
+    {
+      "ticker": "2801.T",
+      "name": "KIKKOMAN CORP",
+      "pattern_name": "スパイクロー",
+      "win_rate": 0.75,
+      "sample_count": 4,
+      "avg_return_pct": 1.5138,
+      "quadrant_score": 60.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 40.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "赤三兵、上昇三法、たくり線",
+      "vol_ratio": 0.38,
+      "sector_label": "悪",
+      "roe_pct": 12.31,
+      "entry": 1751.0,
+      "tp": 1777.51,
+      "sl": 1737.75,
+      "formatted_line": "【2801】総合スコア: 60点 | サイン: 赤三兵、上昇三法、たくり線 | 需給(出来高): 0.4倍 | セクター: 悪 | ROE: 12.3% | 現在値: ¥1,751 | TP: ¥1,778 | SL: ¥1,738"
+    },
+    {
+      "ticker": "6098.T",
+      "name": "RECRUIT HOLDINGS CO LTD",
+      "pattern_name": "陰線後の陽線",
+      "win_rate": 0.6818,
+      "sample_count": 44,
+      "avg_return_pct": 2.7549,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "陰線後の陽線",
+      "vol_ratio": 1.02,
+      "sector_label": "良",
+      "roe_pct": 36.22,
+      "entry": 17620.0,
+      "tp": 18105.41,
+      "sl": 17377.29,
+      "formatted_line": "【6098】総合スコア: 50点 | サイン: 陰線後の陽線 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 36.2% | 現在値: ¥17,620 | TP: ¥18,105 | SL: ¥17,377"
+    },
+    {
+      "ticker": "7974.T",
+      "name": "NINTENDO CO LTD",
+      "pattern_name": "包み線",
+      "win_rate": 0.6154,
+      "sample_count": 13,
+      "avg_return_pct": 2.4711,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "包み線",
+      "vol_ratio": 0.96,
+      "sector_label": "良",
+      "roe_pct": 15.38,
+      "entry": 8791.0,
+      "tp": 9008.23,
+      "sl": 8682.38,
+      "formatted_line": "【7974】総合スコア: 50点 | サイン: 包み線 | 需給(出来高): 1.0倍 | セクター: 良 | ROE: 15.4% | 現在値: ¥8,791 | TP: ¥9,008 | SL: ¥8,682"
+    },
+    {
+      "ticker": "8604.T",
+      "name": "NOMURA HOLDINGS INC.",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.6923,
+      "sample_count": 13,
+      "avg_return_pct": 2.26,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "ピンバー",
+      "vol_ratio": 0.46,
+      "sector_label": "良",
+      "roe_pct": 11.51,
+      "entry": 1548.0,
+      "tp": 1582.98,
+      "sl": 1530.51,
+      "formatted_line": "【8604】総合スコア: 50点 | サイン: ピンバー | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 11.5% | 現在値: ¥1,548 | TP: ¥1,583 | SL: ¥1,531"
+    },
+    {
+      "ticker": "3863.T",
+      "name": "NIPPON PAPER INDUSTRIES CO LTD",
+      "pattern_name": "包み線",
+      "win_rate": 0.6053,
+      "sample_count": 38,
+      "avg_return_pct": 1.568,
+      "quadrant_score": 50.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "赤三兵、上昇三法",
+      "vol_ratio": 0.5,
+      "sector_label": "良",
+      "roe_pct": 3.38,
+      "entry": 1240.0,
+      "tp": 1259.44,
+      "sl": 1230.28,
+      "formatted_line": "【3863】総合スコア: 50点 | サイン: 赤三兵、上昇三法 | 需給(出来高): 0.5倍 | セクター: 良 | ROE: 3.4% | 現在値: ¥1,240 | TP: ¥1,259 | SL: ¥1,230"
+    },
+    {
+      "ticker": "7733.T",
+      "name": "OLYMPUS CORPORATION",
+      "pattern_name": "ピンバー",
+      "win_rate": 0.8333,
+      "sample_count": 6,
+      "avg_return_pct": 2.164,
+      "quadrant_score": 45.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.55,
+      "sector_label": "悪",
+      "roe_pct": 12.24,
+      "entry": 1782.5,
+      "tp": 1821.07,
+      "sl": 1763.21,
+      "formatted_line": "【7733】総合スコア: 45点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 12.2% | 現在値: ¥1,782 | TP: ¥1,821 | SL: ¥1,763"
+    },
+    {
+      "ticker": "8304.T",
+      "name": "AOZORA BANK",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.9,
+      "sample_count": 10,
+      "avg_return_pct": 2.1941,
+      "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.63,
+      "sector_label": "良",
+      "roe_pct": 6.65,
+      "entry": 3198.0,
+      "tp": 3268.17,
+      "sl": 3162.92,
+      "formatted_line": "【8304】総合スコア: 40点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 6.7% | 現在値: ¥3,198 | TP: ¥3,268 | SL: ¥3,163"
+    },
+    {
+      "ticker": "8331.T",
+      "name": "CHIBA BANK",
+      "pattern_name": "インサイドバー",
+      "win_rate": 0.7143,
+      "sample_count": 21,
+      "avg_return_pct": 1.8946,
+      "quadrant_score": 35.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 0.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "インサイドバー",
+      "vol_ratio": 0.59,
+      "sector_label": "良",
+      "roe_pct": 8.49,
+      "entry": 2599.0,
+      "tp": 2648.24,
+      "sl": 2574.38,
+      "formatted_line": "【8331】総合スコア: 35点 | サイン: インサイドバー | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 8.5% | 現在値: ¥2,599 | TP: ¥2,648 | SL: ¥2,574"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "1801.T",
+      "name": "TAISEI CORP",
+      "pattern_name": "スパイクハイ",
+      "entry": 12465.0,
+      "formatted_line": "【1801.T】スパイクハイ | 勝率: 76% (サンプル21回) | 現在値: ¥12,465"
+    },
+    {
+      "ticker": "4704.T",
+      "name": "TREND MICRO INC",
+      "pattern_name": "アウトサイドバー",
+      "entry": 7202.0,
+      "formatted_line": "【4704.T】アウトサイドバー | 勝率: 73% (サンプル15回) | 現在値: ¥7,202"
+    },
+    {
+      "ticker": "6594.T",
+      "name": "NIDEC CORPORATION",
+      "pattern_name": "リバーサルハイ",
+      "entry": 1775.0,
+      "formatted_line": "【6594.T】リバーサルハイ | 勝率: 88% (サンプル8回) | 現在値: ¥1,775"
+    },
+    {
+      "ticker": "8252.T",
+      "name": "MARUI GROUP CO LTD",
+      "pattern_name": "アウトサイドバー",
+      "entry": 2906.0,
+      "formatted_line": "【8252.T】アウトサイドバー | 勝率: 76% (サンプル17回) | 現在値: ¥2,906"
+    },
+    {
+      "ticker": "9501.T",
+      "name": "TOKYO ELEC POWER CO HLDGS INC",
+      "pattern_name": "リバーサルハイ",
+      "entry": 452.1000061035156,
+      "formatted_line": "【9501.T】リバーサルハイ | 勝率: 70% (サンプル10回) | 現在値: ¥452"
+    },
+    {
+      "ticker": "9843.T",
+      "name": "NITORI HOLDINGS CO LTD",
+      "pattern_name": "陰のつつみ",
+      "entry": 3372.0,
+      "formatted_line": "【9843.T】陰のつつみ | 勝率: 70% (サンプル30回) | 現在値: ¥3,372"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 9,
+    "after": 9,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
 }
