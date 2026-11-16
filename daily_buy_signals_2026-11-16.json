@@ -1,0 +1,140 @@
+{
+  "updated": "2026-11-16T06:18:34.130852+00:00",
+  "backtest_driven": true,
+  "quadrant_screening": true,
+  "unique_tickers": 2,
+  "signal_count": 2,
+  "quadrant_top": [
+    "【8304】総合スコア: 40点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 6.7% | 現在値: ¥3,239 | TP: ¥3,310 | SL: ¥3,203",
+    "【1605】総合スコア: 20点 | サイン: 二本たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 11.2% | 現在値: ¥3,659 | TP: ¥3,716 | SL: ¥3,630"
+  ],
+  "items": [
+    {
+      "ticker": "8304.T",
+      "name": "AOZORA BANK",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.9,
+      "sample_count": 10,
+      "avg_return_pct": 2.1941,
+      "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 25.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "たくり線",
+      "vol_ratio": 0.64,
+      "sector_label": "良",
+      "roe_pct": 6.65,
+      "entry": 3239.0,
+      "tp": 3310.07,
+      "sl": 3203.47,
+      "formatted_line": "【8304】総合スコア: 40点 | サイン: たくり線 | 需給(出来高): 0.6倍 | セクター: 良 | ROE: 6.7% | 現在値: ¥3,239 | TP: ¥3,310 | SL: ¥3,203"
+    },
+    {
+      "ticker": "1605.T",
+      "name": "INPEX CORPORATION",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.6667,
+      "sample_count": 6,
+      "avg_return_pct": 1.5643,
+      "quadrant_score": 20.0,
+      "quadrant_breakdown": {
+        "sector": 0.0,
+        "volume": 0.0,
+        "technical": 0.0,
+        "fundamental": 20.0
+      },
+      "quadrant_sign": "二本たくり線",
+      "vol_ratio": 0.63,
+      "sector_label": "悪",
+      "roe_pct": 11.17,
+      "entry": 3659.0,
+      "tp": 3716.24,
+      "sl": 3630.38,
+      "formatted_line": "【1605】総合スコア: 20点 | サイン: 二本たくり線 | 需給(出来高): 0.6倍 | セクター: 悪 | ROE: 11.2% | 現在値: ¥3,659 | TP: ¥3,716 | SL: ¥3,630"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "1812.T",
+      "name": "KAJIMA CORP",
+      "pattern_name": "リバーサルハイ",
+      "entry": 4976.0,
+      "formatted_line": "【1812.T】リバーサルハイ | 勝率: 70% (サンプル10回) | 現在値: ¥4,976"
+    },
+    {
+      "ticker": "2002.T",
+      "name": "NISSHIN SEIFUN GROUP INC",
+      "pattern_name": "赤三兵の先詰",
+      "entry": 2481.0,
+      "formatted_line": "【2002.T】赤三兵の先詰 | 勝率: 75% (サンプル4回) | 現在値: ¥2,481"
+    },
+    {
+      "ticker": "4506.T",
+      "name": "SUMITOMO PHARMA CO LTD",
+      "pattern_name": "たくり",
+      "entry": 2021.5,
+      "formatted_line": "【4506.T】たくり | 勝率: 71% (サンプル24回) | 現在値: ¥2,022"
+    },
+    {
+      "ticker": "5802.T",
+      "name": "SUMITOMO ELECTRIC INDUSTRIES",
+      "pattern_name": "黒三兵",
+      "entry": 1412.5,
+      "formatted_line": "【5802.T】黒三兵 | 勝率: 70% (サンプル10回) | 現在値: ¥1,412"
+    },
+    {
+      "ticker": "6988.T",
+      "name": "NITTO DENKO CORP",
+      "pattern_name": "赤三兵の先詰",
+      "entry": 3589.0,
+      "formatted_line": "【6988.T】赤三兵の先詰 | 勝率: 75% (サンプル4回) | 現在値: ¥3,589"
+    },
+    {
+      "ticker": "7974.T",
+      "name": "NINTENDO CO LTD",
+      "pattern_name": "たくり",
+      "entry": 8872.0,
+      "formatted_line": "【7974.T】たくり | 勝率: 72% (サンプル25回) | 現在値: ¥8,872"
+    },
+    {
+      "ticker": "8830.T",
+      "name": "SUMITOMO REALTY & DEVELOPMENT C",
+      "pattern_name": "スパイクハイ",
+      "entry": 3611.0,
+      "formatted_line": "【8830.T】スパイクハイ | 勝率: 75% (サンプル12回) | 現在値: ¥3,611"
+    },
+    {
+      "ticker": "9022.T",
+      "name": "CENTRAL JAPAN RAILWAY CO",
+      "pattern_name": "赤三兵の先詰",
+      "entry": 4563.0,
+      "formatted_line": "【9022.T】赤三兵の先詰 | 勝率: 100% (サンプル4回) | 現在値: ¥4,563"
+    },
+    {
+      "ticker": "9201.T",
+      "name": "JAPAN AIRLINES CO LTD",
+      "pattern_name": "赤三兵の先詰",
+      "entry": 3555.0,
+      "formatted_line": "【9201.T】赤三兵の先詰 | 勝率: 100% (サンプル3回) | 現在値: ¥3,555"
+    },
+    {
+      "ticker": "9434.T",
+      "name": "SOFTBANK CORP.",
+      "pattern_name": "赤三兵の先詰",
+      "entry": 243.5,
+      "formatted_line": "【9434.T】赤三兵の先詰 | 勝率: 100% (サンプル3回) | 現在値: ¥244"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 2,
+    "after": 2,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
+}
