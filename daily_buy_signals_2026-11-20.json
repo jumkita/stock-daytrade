@@ -1,10 +1,88 @@
 {
-  "updated": "2026-11-19T15:41:21.622457+00:00",
+  "updated": "2026-11-20T06:17:37.657242+00:00",
   "backtest_driven": true,
   "quadrant_screening": true,
-  "unique_tickers": 0,
-  "signal_count": 0,
-  "quadrant_top": [],
-  "items": [],
-  "items_sell": []
+  "unique_tickers": 1,
+  "signal_count": 1,
+  "quadrant_top": [
+    "【4661】総合スコア: 40点 | サイン: 二本たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 12.4% | 現在値: ¥3,854 | TP: ¥3,983 | SL: ¥3,790"
+  ],
+  "items": [
+    {
+      "ticker": "4661.T",
+      "name": "ORIENTAL LAND CO",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.6154,
+      "sample_count": 13,
+      "avg_return_pct": 3.342,
+      "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 0.0,
+        "technical": 15.0,
+        "fundamental": 10.0
+      },
+      "quadrant_sign": "二本たくり線",
+      "vol_ratio": 0.93,
+      "sector_label": "良",
+      "roe_pct": 12.44,
+      "entry": 3854.0,
+      "tp": 3982.8,
+      "sl": 3789.6,
+      "formatted_line": "【4661】総合スコア: 40点 | サイン: 二本たくり線 | 需給(出来高): 0.9倍 | セクター: 良 | ROE: 12.4% | 現在値: ¥3,854 | TP: ¥3,983 | SL: ¥3,790"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "2801.T",
+      "name": "KIKKOMAN CORP",
+      "pattern_name": "スパイクハイ",
+      "entry": 1776.0,
+      "formatted_line": "【2801.T】スパイクハイ | 勝率: 71% (サンプル24回) | 現在値: ¥1,776"
+    },
+    {
+      "ticker": "5802.T",
+      "name": "SUMITOMO ELECTRIC INDUSTRIES",
+      "pattern_name": "黒三兵",
+      "entry": 1243.5,
+      "formatted_line": "【5802.T】黒三兵 | 勝率: 73% (サンプル11回) | 現在値: ¥1,244"
+    },
+    {
+      "ticker": "6971.T",
+      "name": "KYOCERA CORP",
+      "pattern_name": "黒三兵",
+      "entry": 2732.5,
+      "formatted_line": "【6971.T】黒三兵 | 勝率: 70% (サンプル10回) | 現在値: ¥2,732"
+    },
+    {
+      "ticker": "8233.T",
+      "name": "TAKASHIMAYA CO",
+      "pattern_name": "黒三兵",
+      "entry": 2104.0,
+      "formatted_line": "【8233.T】黒三兵 | 勝率: 74% (サンプル23回) | 現在値: ¥2,104"
+    },
+    {
+      "ticker": "8750.T",
+      "name": "DAIICHI LIFE GROUP INC",
+      "pattern_name": "スパイクハイ",
+      "entry": 1711.5,
+      "formatted_line": "【8750.T】スパイクハイ | 勝率: 71% (サンプル14回) | 現在値: ¥1,712"
+    },
+    {
+      "ticker": "9531.T",
+      "name": "TOKYO GAS CO",
+      "pattern_name": "たくり",
+      "entry": 6548.0,
+      "formatted_line": "【9531.T】たくり | 勝率: 72% (サンプル18回) | 現在値: ¥6,548"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 1,
+    "after": 1,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
 }
