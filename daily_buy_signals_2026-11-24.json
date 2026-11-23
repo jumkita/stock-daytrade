@@ -1,0 +1,88 @@
+{
+  "updated": "2026-11-23T18:00:24.946731+00:00",
+  "backtest_driven": true,
+  "quadrant_screening": true,
+  "unique_tickers": 1,
+  "signal_count": 1,
+  "quadrant_top": [
+    "【4613】総合スコア: 40点 | サイン: 二本たくり線 | 需給(出来高): 1.2倍 | セクター: 良 | ROE: 7.9% | 現在値: ¥2,897 | TP: ¥2,961 | SL: ¥2,865"
+  ],
+  "items": [
+    {
+      "ticker": "4613.T",
+      "name": "KANSAI PAINT CO LTD",
+      "pattern_name": "二本たくり線",
+      "win_rate": 0.8,
+      "sample_count": 5,
+      "avg_return_pct": 2.2256,
+      "quadrant_score": 40.0,
+      "quadrant_breakdown": {
+        "sector": 15,
+        "volume": 10,
+        "technical": 15.0,
+        "fundamental": 0.0
+      },
+      "quadrant_sign": "二本たくり線",
+      "vol_ratio": 1.17,
+      "sector_label": "良",
+      "roe_pct": 7.91,
+      "entry": 2897.0,
+      "tp": 2961.48,
+      "sl": 2864.76,
+      "formatted_line": "【4613】総合スコア: 40点 | サイン: 二本たくり線 | 需給(出来高): 1.2倍 | セクター: 良 | ROE: 7.9% | 現在値: ¥2,897 | TP: ¥2,961 | SL: ¥2,865"
+    }
+  ],
+  "items_sell": [
+    {
+      "ticker": "1802.T",
+      "name": "OBAYASHI CORP",
+      "pattern_name": "たくり",
+      "entry": 3221.0,
+      "formatted_line": "【1802.T】たくり | 勝率: 70% (サンプル20回) | 現在値: ¥3,221"
+    },
+    {
+      "ticker": "2801.T",
+      "name": "KIKKOMAN CORP",
+      "pattern_name": "スパイクハイ",
+      "entry": 1780.0,
+      "formatted_line": "【2801.T】スパイクハイ | 勝率: 71% (サンプル24回) | 現在値: ¥1,780"
+    },
+    {
+      "ticker": "5802.T",
+      "name": "SUMITOMO ELECTRIC INDUSTRIES",
+      "pattern_name": "黒三兵",
+      "entry": 1237.0,
+      "formatted_line": "【5802.T】黒三兵 | 勝率: 73% (サンプル11回) | 現在値: ¥1,237"
+    },
+    {
+      "ticker": "6971.T",
+      "name": "KYOCERA CORP",
+      "pattern_name": "黒三兵",
+      "entry": 2736.5,
+      "formatted_line": "【6971.T】黒三兵 | 勝率: 70% (サンプル10回) | 現在値: ¥2,736"
+    },
+    {
+      "ticker": "8233.T",
+      "name": "TAKASHIMAYA CO",
+      "pattern_name": "黒三兵",
+      "entry": 2106.0,
+      "formatted_line": "【8233.T】黒三兵 | 勝率: 74% (サンプル23回) | 現在値: ¥2,106"
+    },
+    {
+      "ticker": "8750.T",
+      "name": "DAIICHI LIFE GROUP INC",
+      "pattern_name": "スパイクハイ",
+      "entry": 1712.5,
+      "formatted_line": "【8750.T】スパイクハイ | 勝率: 71% (サンプル14回) | 現在値: ¥1,712"
+    }
+  ],
+  "quadrant_stats": {
+    "before": 1,
+    "after": 1,
+    "mode": "rank",
+    "dropped_primary": 0,
+    "dropped_ma": 0,
+    "dropped_score": 0,
+    "unscored_kept": 0
+  }
+}
